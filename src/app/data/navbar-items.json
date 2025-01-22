@@ -1,0 +1,24 @@
+[
+  {
+    "title": "Accueil",
+    "url": "/"
+  },
+  {
+    "title": "Produits",
+    "url": "/products"
+  },
+  {
+    "title": "La Pâte Dorée",
+    "url": "/",
+    "main": true,
+    "image": "/logo/logo-3.webp"
+  },
+  {
+    "title": "Contact",
+    "url": "/contact"
+  },
+  {
+    "title": "Commander",
+    "url": "/orders"
+  }
+]

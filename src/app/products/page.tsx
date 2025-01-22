@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-export default function HomePage() {
+export default function ProductsPage() {
   return (
-    <div className='home'>
+    <div className='products'>
 
     </div>
   );
