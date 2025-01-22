@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
-import Navbar from './components/navbar/navbar';
 import { Geist, Geist_Mono } from 'next/font/google';
 import React from 'react';
+
+import Navbar from './components/navbar/navbar';
+import Footer from './components/footer/footer';
 
 import './globals.scss';
 
@@ -32,6 +34,7 @@ export default function RootLayout({
       >
         <Navbar/>
         {children}
+        <Footer/>
       </body>
     </html>
   );

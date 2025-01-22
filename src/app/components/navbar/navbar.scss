@@ -9,7 +9,7 @@
     gap: var(--outer-2);
 
     &-title {
-      font-size: var(--font-size-2);
+      font-size: var(--font-size-3);
       font-weight: var(--font-weight-2);
       text-transform: uppercase;
       cursor: pointer;
@@ -20,11 +20,6 @@
 
       &:hover {
         color: var(--color-4);
-      }
-
-      &.main {
-        // margin-left: var(--outer-2);
-        // margin-right: var(--outer-2);
       }
     }
   }
