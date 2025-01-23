@@ -10,6 +10,7 @@
     &.shadowed {
       color: var(--white);
       background-color: var(--color-5-b);
+      z-index: 200;
     }
   }
 }

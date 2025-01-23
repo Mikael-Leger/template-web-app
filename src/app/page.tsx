@@ -17,21 +17,39 @@ export default function HomePage() {
     <div className='home w-full h-full flex'>
       <Card size='big'>
         <Title
-          text='Text and image absolute center opacity-.5'
+          text='Text and image absolute center carousel swipe'
           orientation='center'
           size='medium'/>
         <DescriptionAndImage
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-          imagePaths={['/images/sample_1.png', '/images/sample_2.png']}
-          opacity={.5}
-          absolute/>
+          imagePaths={['/images/sample_1.png', '/images/sample_2.png', '/images/sample_3.png', '/images/sample_4.png']}
+          opacity={.7}
+          absolute
+          delayMs={12000}
+          button={{
+            title: 'Next',
+            position: 'end',
+            onClick: handleFirstButtonClick
+          }}/>
           
         <Title
-          text='Image absolute center'
+          text='Text and image absolute center carousel circle'
+          orientation='center'
+          size='medium'/>
+        <DescriptionAndImage
+          imagePaths={['/images/sample_1.png', '/images/sample_2.png', '/images/sample_3.png', '/images/sample_4.png']}
+          opacity={.7}
+          absolute
+          transition='circle'
+          delayMs={7000}/>
+          
+        <Title
+          text='Image absolute center opacity'
           orientation='center'
           size='medium'/>
         <DescriptionAndImage
           imagePaths={['/images/sample_1.png']}
+          opacity={.7}
           absolute/>
           
         <Title

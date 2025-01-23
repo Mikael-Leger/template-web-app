@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Carousel from '../carousel/carousel';
+
 import './description-and-image.scss';
 
 interface DescriptionAndImageProps {
@@ -8,13 +10,17 @@ interface DescriptionAndImageProps {
   imagePaths?: string[];
   opacity?: number;
   absolute?: boolean;
+  transition?: 'swipe' | 'circle';
+  delayMs?: number;
   button?: {
     title: string;
     position: 'start' | 'center' | 'end';
     onClick: (_payload?: any) => any};
 }
 
-export default function DescriptionAndImage({text, imagePaths, button, orientation = 'center', opacity = 1, absolute = false}: DescriptionAndImageProps) {
+type TextAlign = 'start' |'center' |'end';
+
+export default function DescriptionAndImage({text, imagePaths, button, transition = 'swipe', delayMs = -1, orientation = 'center', opacity = 1, absolute = false}: DescriptionAndImageProps) {
   const renderText = () => {
     if (!text) return;
 
@@ -28,10 +34,11 @@ export default function DescriptionAndImage({text, imagePaths, button, orientati
   const renderButton = () => {
     if (!button) return;
 
-    const justifyPosition = `justify-${button.position}`;
-
     return (
-      <div className={`description-and-image-button flex ${justifyPosition}`} onClick={button.onClick}>
+      <div
+        className={'description-and-image-button flex'}
+        style={{justifyContent: button.position}}
+        onClick={button.onClick}>
         <button>
           {button.title}
         </button>
@@ -42,10 +49,11 @@ export default function DescriptionAndImage({text, imagePaths, button, orientati
   const renderPanel = () => {
     if (!text && !button) return;
 
-    const textOrientation = `text-${orientation}`;
-
     return (
-      <div className={`description-and-image-panel flex flex-col ${textOrientation} ${absolute && 'self-center absolute z-10 shadowed w-1/2'}`} key='panel'>
+      <div
+        className={`description-and-image-panel flex flex-col ${absolute && 'self-center absolute shadowed w-1/2'}`}
+        style={{textAlign: orientation as TextAlign}}
+        key='panel'>
         {renderText()}
         {renderButton()}
       </div>
@@ -54,13 +62,23 @@ export default function DescriptionAndImage({text, imagePaths, button, orientati
 
   const renderImage = () => {
     if (!imagePaths) return;
-    const opacityStyle = `opacity-${opacity * 100}`;
 
     if (imagePaths.length === 1) return (
-      <img className={`${opacityStyle} ${absolute ? 'w-full' : 'w-1/2'}`} src={imagePaths[0]} key='img'/>
+      <img
+        className={`${absolute ? 'w-full' : 'w-1/2'}`}
+        src={imagePaths[0]}
+        style={{opacity}}
+        key='img'/>
     );
 
-    return <div></div>;
+    return (
+      <div className={`${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
+        <Carousel
+          imagePaths={imagePaths}
+          transition={transition}
+          delayMs={delayMs}/>
+      </div>
+    );
   };
 
   const renderContent = (orientation: string) => {

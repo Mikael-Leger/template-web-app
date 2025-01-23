@@ -1,0 +1,30 @@
+.carousel {
+  position: relative;
+
+  img:not(:first-child) {
+    opacity: 0;
+  }
+
+  &-actions {
+    &-left {
+      left: var(--outer-2);
+    }
+
+    &-right {
+      right: var(--outer-2);
+    }
+
+    &-left,
+    &-right {
+      padding: var(--inner-1);
+      border-radius: var(--border-radius);
+      background-color: var(--grey-opacity);
+      cursor: pointer;
+      z-index: 100;
+
+      &:hover {
+        filter: brightness(90%);
+      }
+    }
+  }
+}
