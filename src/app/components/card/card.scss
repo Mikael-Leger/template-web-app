@@ -1,0 +1,14 @@
+.card {
+  width: 60vw;
+  background-color: var(--white);
+  color: var(--color-6);
+  border-radius: var(--border-radius);
+
+  &-medium {
+    width: 80vw;
+  }
+
+  &-big {
+    width: 100%;
+  }
+}

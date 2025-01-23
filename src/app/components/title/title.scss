@@ -1,8 +1,7 @@
 .title {
-  color: var(--color-6);
   font-size: var(--font-size-3);
   font-family: "Cormorant Garamond", serif;
-  margin: var(--outer-1) 0;
+  margin: var(--inner-2);
 
   &-medium {
     font-size: var(--font-size-4);
@@ -10,6 +9,7 @@
 
   &-big {
     font-size: var(--font-size-5);
+    font-weight: var(--font-weight-2);
   }
 
   &-underline {

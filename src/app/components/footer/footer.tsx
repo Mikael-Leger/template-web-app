@@ -33,7 +33,7 @@ export default function Footer() {
   };
 
   return (
-    <div className='footer w-full absolute bottom-0'>
+    <div className='footer w-full'>
       <div className='footer-content h-full w-full flex flex-row justify-center items-center'>
         {footerItems.map((item, index) => (
           <div className='footer-content-container flex flex-row justify-center items-center'

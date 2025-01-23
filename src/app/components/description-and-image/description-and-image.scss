@@ -1,0 +1,15 @@
+.description-and-image {
+  &-container {
+    gap: var(--inner-2);
+  }
+
+  &-panel {
+    padding: var(--inner-2);
+    border-radius: var(--border-radius);
+    
+    &.shadowed {
+      color: var(--white);
+      background-color: var(--color-5-b);
+    }
+  }
+}
