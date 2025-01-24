@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 
 import Carousel from '../carousel/carousel';
 import Button from '../button/button';
@@ -14,6 +15,7 @@ interface DescriptionAndImageProps {
     path: string;
     caption?: string;
   }[];
+  flip?: boolean;
   opacity?: number;
   absolute?: boolean;
   shape?: 'none' | 'circle';
@@ -24,7 +26,53 @@ interface DescriptionAndImageProps {
 
 type TextAlign = 'start' |'center' |'end';
 
-export default function DescriptionAndImage({text, images, buttons, shape = 'none', transition = 'swipe', delayMs = -1, orientation = 'center', axis = 'row', opacity = 1, absolute = false}: DescriptionAndImageProps) {
+export default function DescriptionAndImage({
+  text,
+  images,
+  buttons,
+  shape = 'none',
+  transition = 'swipe',
+  delayMs = -1,
+  orientation = 'center',
+  axis = 'row',
+  flip = false,
+  opacity = 1,
+  absolute = false
+}: DescriptionAndImageProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const currentImageAnimation = useRef<{
+    isAnimating: boolean,
+    rotateX: number
+  }>({
+    isAnimating: true,
+    rotateX: 0
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      currentImageAnimation.current.isAnimating = false;
+    }, 50);
+  }, []);
+
+  useEffect(() => {
+    if (!flip || currentImageAnimation.current.isAnimating) return;
+
+    currentImageAnimation.current.isAnimating = true;
+
+    const duration = .8;
+    const ease = 'power2';
+
+    if (isHovered) {
+      gsap.to(imageRef.current, {rotateY: '+=360', duration, ease: `${ease}.out`});
+    }
+
+    setTimeout(() => {
+      currentImageAnimation.current.isAnimating = false;
+    }, duration * 1000);
+  }, [isHovered]);
+
   const renderText = () => {
     if (!text) return;
 
@@ -81,7 +129,10 @@ export default function DescriptionAndImage({text, images, buttons, shape = 'non
       <div className={`description-and-image-image flex flex-col items-center ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
         <img
           src={image.path}
-          style={{opacity, clipPath}}/>
+          style={{opacity, clipPath}}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          ref={imageRef}/>
         {image.caption && (
           <div className='description-and-image-caption'>
             {image.caption}

@@ -15,6 +15,8 @@
   --color-5-b: rgba(211, 122, 116, .8);
   --color-6: #18122a;
   --primary: #ee948e;
+  --gradient-primary: linear-gradient(#f8e8d3 0%, #ecbabb, #ee948e);
+  --gradient-primary-hover: linear-gradient(#f8e8d3, #ee948e);
   --info: #86b3e5;
   --success: #82e87e;
   --warn: #eb9c5b;
@@ -24,8 +26,8 @@
   --grey-opacity: rgba(42, 43, 47, .6);
   --inner-y: 10px;
   --inner-x: 25px;
-  --outer-y: 15px;
-  --outer-x: 30px;
+  --outer-y: 30px;
+  --outer-x: 45px;
   --border-radius: 7px;
   --border-radius-actions: 5px;
   --font-size-1: 10px;
@@ -50,4 +52,8 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Open Sans,Arial,sans-serif;
+}
+
+.flex-gap {
+  gap: var(--inner-y) var(--inner-x);
 }

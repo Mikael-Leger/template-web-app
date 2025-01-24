@@ -1,16 +1,57 @@
 .card {
-  width: 60vw;
-  margin: var(--outer-y) var(--outer-x);
-  background-color: var(--white);
+  width: 60%;
   color: var(--color-6);
   border-radius: var(--border-radius);
 
   &-medium {
-    width: 80vw;
+    width: 80%;
   }
 
   &-big {
     width: 100%;
     border-radius: 0;
+  }
+
+  &-default {
+    background-color: var(--white);
+  }
+
+  &-gradient {
+    background: var(--gradient-primary);
+    transition: var(--animation-1);
+
+    &:hover {
+      background: var(--gradient-primary-hover);
+    }
+  }
+
+  &-padding {
+    &-inner {
+      padding: var(--inner-y) var(--inner-x);
+    }
+
+    &-outer {
+      padding: var(--outer-y) var(--outer-x);
+    }
+  }
+
+  &-margin {
+    &-inner {
+      margin: var(--inner-y) var(--inner-x);
+    }
+
+    &-outer {
+      margin: var(--outer-y) var(--outer-x);
+    }
+  }
+
+  &-border {
+    &-primary {
+      border-color: var(--color-1);
+
+      &:hover {
+        border-color: var(--color-2);
+      }
+    }
   }
 }

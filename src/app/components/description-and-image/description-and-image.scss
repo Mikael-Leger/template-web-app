@@ -41,6 +41,10 @@
 
   &-image {
     gap: var(--inner-y);
+
+    img {
+      pointer-events: auto;
+    }
   }
 
   &-buttons {

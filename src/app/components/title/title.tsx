@@ -7,12 +7,13 @@ interface TitleProps {
   orientation?: 'start' | 'center' | 'end';
   size?: 'small' | 'medium' |'big';
   underline?: boolean;
+  margin?: 'none' | 'inner' | 'outer';
 }
 
-export default function Title({text, underline, orientation = 'center', size = 'small'}: TitleProps) {
+export default function Title({text, underline, orientation = 'center', size = 'small', margin = 'inner'}: TitleProps) {
 
   return (
-    <div className={`title title-${size} flex flex-col`} style={{alignSelf: orientation}}>
+    <div className={`title title-${size} title-margin-${margin} flex flex-col`} style={{alignSelf: orientation}}>
       {text}
       {underline && (
         <div className='title-underline'/>
