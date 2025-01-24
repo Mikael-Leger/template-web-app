@@ -1,5 +1,6 @@
 .card {
   width: 60vw;
+  margin: var(--outer-y) var(--outer-x);
   background-color: var(--white);
   color: var(--color-6);
   border-radius: var(--border-radius);
@@ -10,5 +11,6 @@
 
   &-big {
     width: 100%;
+    border-radius: 0;
   }
 }

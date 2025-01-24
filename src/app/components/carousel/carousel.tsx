@@ -24,6 +24,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   });
 
   const imageSwitched = useRef<boolean>(false);
+  const actionsDisabledCpt = useRef<number>(0);
 
   useEffect(() => {
     imageRefs.current = imageRefs.current.slice(0, imagePaths.length);
@@ -93,12 +94,15 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   
     const animationMethod = imageIndexes.lastAction === 'none' ? gsap.set : gsap.to;
   
+    const duration = transition === 'swipe' ? .3 : .7;
+
     imagePaths.forEach((_, index) => {
       animationMethod(imageRefs.current[index], {
         clipPath: getClipPath(index),
+        webkitMask: transition === 'circle' ? getMask(index) : undefined,
         mask: transition === 'circle' ? getMask(index) : undefined,
         opacity: 1,
-        duration: transition === 'swipe' ? .3 : .7,
+        duration: duration,
         ease: 'power2.inOut'
       });
     });
@@ -112,6 +116,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
       current: newIndex,
       lastAction: 'left'
     });
+    disableActions();
   };
 
   const handleRightClick = () => {
@@ -122,6 +127,27 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
       current: newIndex,
       lastAction: 'right'
     });
+    disableActions();
+  };
+
+  const disableActions = () => {
+    actionsDisabledCpt.current++;
+
+    const duration = transition === 'swipe' ? .3 : .7;
+
+    gsap.set(['.carousel-actions-left', '.carousel-actions-right'], {
+      pointerEvents: 'none'
+    });
+
+    setTimeout(() => {
+      actionsDisabledCpt.current--;
+
+      if (actionsDisabledCpt.current > 0) return;
+
+      gsap.set(['.carousel-actions-left', '.carousel-actions-right'], {
+        pointerEvents: 'auto'
+      });
+    }, duration * 1000);
   };
 
   return (

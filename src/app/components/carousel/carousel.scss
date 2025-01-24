@@ -7,23 +7,23 @@
 
   &-actions {
     &-left {
-      left: var(--outer-2);
+      left: var(--outer-x);
     }
 
     &-right {
-      right: var(--outer-2);
+      right: var(--outer-x);
     }
 
     &-left,
     &-right {
-      padding: var(--inner-1);
+      padding: var(--inner-y);
       border-radius: var(--border-radius);
       background-color: var(--grey-opacity);
       cursor: pointer;
       z-index: 100;
 
       &:hover {
-        filter: brightness(90%);
+        filter: brightness(140%);
       }
     }
   }

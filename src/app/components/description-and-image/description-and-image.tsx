@@ -1,26 +1,26 @@
 import React from 'react';
 
 import Carousel from '../carousel/carousel';
+import Button from '../button/button';
+import { DescriptionAndImageButton } from '@/app/interfaces/button.interface';
 
 import './description-and-image.scss';
 
 interface DescriptionAndImageProps {
   text?: string;
-  orientation?: 'start' | 'center' | 'end' | 'top' | 'bottom';
+  orientation?: 'start' | 'center' | 'end';
+  axis?: 'row' | 'col';
   imagePaths?: string[];
   opacity?: number;
   absolute?: boolean;
   transition?: 'swipe' | 'circle';
   delayMs?: number;
-  button?: {
-    title: string;
-    position: 'start' | 'center' | 'end';
-    onClick: (_payload?: any) => any};
+  buttons?: DescriptionAndImageButton[];
 }
 
 type TextAlign = 'start' |'center' |'end';
 
-export default function DescriptionAndImage({text, imagePaths, button, transition = 'swipe', delayMs = -1, orientation = 'center', opacity = 1, absolute = false}: DescriptionAndImageProps) {
+export default function DescriptionAndImage({text, imagePaths, buttons, transition = 'swipe', delayMs = -1, orientation = 'center', axis = 'row', opacity = 1, absolute = false}: DescriptionAndImageProps) {
   const renderText = () => {
     if (!text) return;
 
@@ -32,26 +32,32 @@ export default function DescriptionAndImage({text, imagePaths, button, transitio
   };
 
   const renderButton = () => {
-    if (!button) return;
+    if (!buttons) return;
 
     return (
       <div
-        className={'description-and-image-button flex'}
-        style={{justifyContent: button.position}}
-        onClick={button.onClick}>
-        <button>
-          {button.title}
-        </button>
+        className='description-and-image-buttons flex flex-row flex-wrap items-end'
+        style={{justifyContent: buttons[0].position}}>
+        {buttons.map(button => (
+          <div
+            className={'description-and-image-buttons-button flex'}
+            key={button.title}>
+            <Button {...button}/>
+          </div>
+
+        ))}
       </div>
     );
   };
 
   const renderPanel = () => {
-    if (!text && !button) return;
+    if (!text && !buttons) return;
+    
+    const isRow = axis === 'row';
 
     return (
       <div
-        className={`description-and-image-panel flex flex-col ${absolute && 'self-center absolute shadowed w-1/2'}`}
+        className={`description-and-image-panel flex flex-col ${isRow && 'panel-row'} ${absolute && 'self-center absolute shadowed w-1/2'}`}
         style={{textAlign: orientation as TextAlign}}
         key='panel'>
         {renderText()}
@@ -64,15 +70,15 @@ export default function DescriptionAndImage({text, imagePaths, button, transitio
     if (!imagePaths) return;
 
     if (imagePaths.length === 1) return (
-      <img
-        className={`${absolute ? 'w-full' : 'w-1/2'}`}
-        src={imagePaths[0]}
-        style={{opacity}}
-        key='img'/>
+      <div className={`description-and-image-image ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
+        <img
+          src={imagePaths[0]}
+          style={{opacity}}/>
+      </div>
     );
 
     return (
-      <div className={`${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
+      <div className={`description-and-image-image ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
         <Carousel
           imagePaths={imagePaths}
           transition={transition}
@@ -90,13 +96,11 @@ export default function DescriptionAndImage({text, imagePaths, button, transitio
       bottom: [renderImage(), renderPanel()],
     };
   
-    const isRow = ['start', 'center', 'end'].includes(orientation);
+    const isRow = axis === 'row';
     const flexDirection = isRow ? 'flex-row' : 'flex-col';
 
-    const isTopOrBot = orientation === 'top' || orientation === 'bottom';
-  
     return (
-      <div className={`description-and-image-container flex ${flexDirection} ${isTopOrBot && 'items-center'} ${absolute && 'items-center justify-center'}`}>
+      <div className={`description-and-image-container flex ${flexDirection} ${!isRow && 'items-center'} ${absolute && 'items-center justify-center'}`}>
         {orientationMap[orientation] || null}
       </div>
     );

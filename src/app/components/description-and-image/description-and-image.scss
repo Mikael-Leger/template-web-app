@@ -1,16 +1,45 @@
 .description-and-image {
+  padding: var(--outer-y) 0;
+
   &-container {
-    gap: var(--inner-2);
+    gap: var(--inner-x);
+
+    &.flex-row:not(.justify-center) {
+      > :first-child {
+        padding: var(--inner-y) 0 var(--inner-y) var(--inner-x);
+      }
+  
+      > :last-child {
+        padding: var(--inner-y) var(--inner-x) var(--inner-y) 0;
+      }
+    }
+
+    &.flex-col {
+      padding: var(--inner-y) var(--inner-x);
+    }
   }
 
   &-panel {
-    padding: var(--inner-2);
+    max-width: 100%;
     border-radius: var(--border-radius);
+    gap: var(--inner-x);
     
     &.shadowed {
       color: var(--white);
       background-color: var(--color-5-b);
       z-index: 200;
     }
+
+    &.panel-row {
+      max-width: 50%;
+    }
+
+    &.absolute {
+      padding: var(--inner-y) var(--inner-x);
+    }
+  }
+
+  &-buttons {
+    gap: var(--inner-x);
   }
 }
