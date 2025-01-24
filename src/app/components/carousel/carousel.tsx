@@ -5,14 +5,17 @@ import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import './carousel.scss';
 
 interface CarouselProps {
-  imagePaths: string[];
+  images: {
+    path: string;
+    caption?: string;
+  }[];
   transition: 'swipe' | 'circle';
   delayMs: number;
 }
 
 const IMAGE_HEIGHT = 717;
 
-export default function Carousel({imagePaths, transition, delayMs}: CarouselProps) {
+export default function Carousel({images, transition, delayMs}: CarouselProps) {
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
   const [imageIndexes, setImageIndex] = useState<{
@@ -27,7 +30,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   const actionsDisabledCpt = useRef<number>(0);
 
   useEffect(() => {
-    imageRefs.current = imageRefs.current.slice(0, imagePaths.length);
+    imageRefs.current = imageRefs.current.slice(0, images.length);
 
     if (delayMs === -1) return;
 
@@ -40,7 +43,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
       
       setImageIndex(prevstate => {
         const prevIndex = prevstate.current;
-        const newIndex = (prevIndex === imagePaths.length -1) ? 0 : prevIndex + 1;
+        const newIndex = (prevIndex === images.length -1) ? 0 : prevIndex + 1;
         
         return {
           current: newIndex,
@@ -52,8 +55,8 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   }, []);
 
   useEffect(() => {
-    const prevImageIndex = (imageIndexes.current === 0) ? imagePaths.length - 1 : imageIndexes.current - 1;
-    const nextImageIndex = (imageIndexes.current === imagePaths.length - 1) ? 0 : imageIndexes.current + 1;
+    const prevImageIndex = (imageIndexes.current === 0) ? images.length - 1 : imageIndexes.current - 1;
+    const nextImageIndex = (imageIndexes.current === images.length - 1) ? 0 : imageIndexes.current + 1;
   
     const getClipPath = (index: number) => {
       if (transition === 'swipe') {
@@ -96,7 +99,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   
     const duration = transition === 'swipe' ? .3 : .7;
 
-    imagePaths.forEach((_, index) => {
+    images.forEach((image, index) => {
       animationMethod(imageRefs.current[index], {
         clipPath: getClipPath(index),
         webkitMask: transition === 'circle' ? getMask(index) : undefined,
@@ -106,12 +109,12 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
         ease: 'power2.inOut'
       });
     });
-  }, [imageIndexes, imagePaths]);
+  }, [imageIndexes, images]);
 
   const handleLeftClick = () => {
     imageSwitched.current = true;
     const prevIndex = imageIndexes.current;
-    const newIndex = (prevIndex === 0) ? imagePaths.length -1 : prevIndex - 1;
+    const newIndex = (prevIndex === 0) ? images.length -1 : prevIndex - 1;
     setImageIndex({
       current: newIndex,
       lastAction: 'left'
@@ -122,7 +125,7 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
   const handleRightClick = () => {
     imageSwitched.current = true;
     const prevIndex = imageIndexes.current;
-    const newIndex = (prevIndex === imagePaths.length -1) ? 0 : prevIndex + 1;
+    const newIndex = (prevIndex === images.length -1) ? 0 : prevIndex + 1;
     setImageIndex({
       current: newIndex,
       lastAction: 'right'
@@ -152,15 +155,15 @@ export default function Carousel({imagePaths, transition, delayMs}: CarouselProp
 
   return (
     <div className='carousel' style={{height: `${IMAGE_HEIGHT}px`}}>
-      {imagePaths.map((imagePath, index) => {
+      {images.map((image, index) => {
         return (
           <img
             className={'carousel-image w-full h-full absolute top-0 left-0'}
             ref={(el: HTMLImageElement | null) => {
               imageRefs.current[index] = el;
             }}
-            src={imagePath}
-            key={imagePath}/>
+            src={image.path}
+            key={index}/>
         );})}
       <div className='carousel-actions h-full relative'>
         <div

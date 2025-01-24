@@ -24,7 +24,20 @@ export default function HomePage() {
           underline/>
         <DescriptionAndImage
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-          imagePaths={['/images/sample_1.png', '/images/sample_2.png', '/images/sample_3.png', '/images/sample_4.png']}
+          images={[
+            {
+              path: '/images/sample_1.png'
+            },
+            {
+              path: '/images/sample_2.png'
+            },
+            {
+              path: '/images/sample_3.png'
+            },
+            {
+              path: '/images/sample_4.png'
+            }
+          ]}
           opacity={.7}
           absolute
           delayMs={12000}
@@ -52,7 +65,20 @@ export default function HomePage() {
           size='big'
           underline/>
         <DescriptionAndImage
-          imagePaths={['/images/sample_1.png', '/images/sample_2.png', '/images/sample_3.png', '/images/sample_4.png']}
+          images={[
+            {
+              path: '/images/sample_1.png'
+            },
+            {
+              path: '/images/sample_2.png'
+            },
+            {
+              path: '/images/sample_3.png'
+            },
+            {
+              path: '/images/sample_4.png'
+            }
+          ]}
           opacity={.7}
           absolute
           transition='circle'
@@ -64,7 +90,7 @@ export default function HomePage() {
           orientation='center'
           size='medium'/>
         <DescriptionAndImage
-          imagePaths={['/images/sample_1.png']}
+          images={[{path: '/images/sample_1.png'}]}
           opacity={.7}
           absolute/>
           
@@ -75,7 +101,11 @@ export default function HomePage() {
         <DescriptionAndImage
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
           orientation='start'
-          imagePaths={['/images/sample_1.png']}
+          shape='circle'
+          images={[{
+            path: '/images/sample_1.png',
+            caption: 'Lorem ipsum'
+          }]}
           buttons={[
             {
               title: 'Success',
@@ -165,7 +195,7 @@ export default function HomePage() {
         <DescriptionAndImage
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
           orientation='end'
-          imagePaths={['/images/sample_1.png']}
+          images={[{path: '/images/sample_1.png'}]}
           buttons={[
             {
               title: 'Success',
@@ -199,7 +229,7 @@ export default function HomePage() {
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
           orientation='center'
           axis='col'
-          imagePaths={['/images/sample_1.png']}
+          images={[{path: '/images/sample_1.png'}]}
           buttons={[
             {
               title: 'Success',
@@ -227,7 +257,7 @@ export default function HomePage() {
           text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
           orientation='center'
           axis='col'
-          imagePaths={['/images/sample_1.png']}
+          images={[{path: '/images/sample_1.png'}]}
           buttons={[
             {
               title: 'Success',

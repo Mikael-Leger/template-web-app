@@ -17,23 +17,21 @@
   }
   
   &-medium {
-    font-size: var(--font-size-3);
-
     .button-front {
-      padding: var(--inner-y) var(--inner-x);
+      padding: calc(var(--inner-y) / 1.25) calc(var(--inner-x) / 1.25) ;
     }
   }
 
   &-big {
-  font-size: var(--font-size-4);
+    font-size: var(--font-size-3);
 
     .button-front {
-      padding: var(--inner-y) var(--inner-x);
+      padding: calc(var(--inner-y) / 1.75) calc(var(--inner-x) / 1.75) ;
     }
   }
 
   &.background {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-actions);
     outline: 1px solid var(--black);
   }
 

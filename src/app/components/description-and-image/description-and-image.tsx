@@ -10,9 +10,13 @@ interface DescriptionAndImageProps {
   text?: string;
   orientation?: 'start' | 'center' | 'end';
   axis?: 'row' | 'col';
-  imagePaths?: string[];
+  images?: {
+    path: string;
+    caption?: string;
+  }[];
   opacity?: number;
   absolute?: boolean;
+  shape?: 'none' | 'circle';
   transition?: 'swipe' | 'circle';
   delayMs?: number;
   buttons?: DescriptionAndImageButton[];
@@ -20,7 +24,7 @@ interface DescriptionAndImageProps {
 
 type TextAlign = 'start' |'center' |'end';
 
-export default function DescriptionAndImage({text, imagePaths, buttons, transition = 'swipe', delayMs = -1, orientation = 'center', axis = 'row', opacity = 1, absolute = false}: DescriptionAndImageProps) {
+export default function DescriptionAndImage({text, images, buttons, shape = 'none', transition = 'swipe', delayMs = -1, orientation = 'center', axis = 'row', opacity = 1, absolute = false}: DescriptionAndImageProps) {
   const renderText = () => {
     if (!text) return;
 
@@ -67,20 +71,29 @@ export default function DescriptionAndImage({text, imagePaths, buttons, transiti
   };
 
   const renderImage = () => {
-    if (!imagePaths) return;
+    if (!images) return;
 
-    if (imagePaths.length === 1) return (
-      <div className={`description-and-image-image ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
+    const image = images[0];
+
+    const clipPath = shape === 'circle' ? 'circle(33%)' : undefined;
+
+    if (images.length === 1) return (
+      <div className={`description-and-image-image flex flex-col items-center ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
         <img
-          src={imagePaths[0]}
-          style={{opacity}}/>
+          src={image.path}
+          style={{opacity, clipPath}}/>
+        {image.caption && (
+          <div className='description-and-image-caption'>
+            {image.caption}
+          </div>
+        )}
       </div>
     );
 
     return (
       <div className={`description-and-image-image ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
         <Carousel
-          imagePaths={imagePaths}
+          images={images}
           transition={transition}
           delayMs={delayMs}/>
       </div>
