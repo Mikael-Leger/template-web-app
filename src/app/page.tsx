@@ -8,6 +8,7 @@ import Card from './components/card/card';
 import Title from './components/title/title';
 import DescriptionAndImage from './components/description-and-image/description-and-image';
 import InteractiveShowcase from './components/interactive-showcase/interactive-showcase';
+import Layout from './components/layout/layout';
 
 import './home.scss';
 
@@ -113,7 +114,7 @@ export default function HomePage() {
           orientation='start'
           images={[{
             path: '/images/sample_1.png',
-            caption: 'Loem ipsum'
+            caption: 'Lorem ipsum'
           }]}
           buttons={[
             {
@@ -295,7 +296,8 @@ export default function HomePage() {
 
       <Card
         className={'flex-row flex-wrap justify-center flex-gap'}
-        size={'medium'}>
+        size={'medium'}
+        id='showcases'>
           
         <Title
           text='Text and image with interactive showcases'
@@ -503,6 +505,105 @@ export default function HomePage() {
               }
             ]}/>
         </Card>
+      </Card>
+
+      <Card size='big'>
+        <Layout
+          items={[
+            {
+              space: 2,
+              node: (
+                <Layout
+                  orientation='col'
+                  items={[
+                    {
+                      node: (
+                        <Title
+                          text='Title left 1'
+                          size='medium'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <DescriptionAndImage
+                          text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                          orientation='start'
+                          images={[{
+                            path: '/images/sample_1.png',
+                            caption: 'Lorem ipsum'
+                          }]}/>
+                      )
+                    },
+                    {
+                      node: (
+                        <Title
+                          text='Title left 2'
+                          size='medium'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <DescriptionAndImage
+                          text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                          orientation='end'
+                          images={[{
+                            path: '/images/sample_1.png',
+                            caption: 'Lorem ipsum'
+                          }]}/>
+                      )
+                    }
+                  ]}/>
+              )
+            },
+            {
+              space: 1,
+              node: (
+                <Layout
+                  orientation='col'
+                  items={[
+                    {
+                      node: (
+                        <Title
+                          text='Title right 1'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <DescriptionAndImage
+                          axis='col'
+                          text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <Title
+                          text='Title right 2'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <DescriptionAndImage
+                          axis='col'
+                          text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <Title
+                          text='Title right 3'/>
+                      )
+                    },
+                    {
+                      node: (
+                        <DescriptionAndImage
+                          axis='col'
+                          text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'/>
+                      )
+                    },
+                  ]}/>
+              )
+            },
+          ]}/>
       </Card>
     </div>
   );

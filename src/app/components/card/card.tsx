@@ -13,12 +13,14 @@ interface CardProps {
   margin?: 'none' | 'inner' | 'outer';
   className?: string;
   borderColor?: 'primary' | 'black';
+  id?: string;
 }
 
-export default function Card({children, width, height, className, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
+export default function Card({children, width, height, className, id, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
 
   return (
     <div
+      id={id}
       className={`flex ${className} card card-${size} card-${background} card-padding-${padding} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'}`}
       style={{alignSelf: orientation, width, height}}>
       {children}
