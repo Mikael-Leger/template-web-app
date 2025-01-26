@@ -1,14 +1,15 @@
 .footer {
-  height: 62px;
+  min-height: 62px;
   background-color: var(--color-1);
   border-top: 2px solid var(--color-5);
   color: var(--color-5);
+  padding: var(--outer-y) var(--outer-x);
 
   &-content {
-    gap: var(--inner-x);
+    gap: var(--inner-y) var(--inner-x);
 
     &-container {
-      gap: var(--inner-x);
+      gap: var(--inner-y) var(--inner-x);
 
       &-title {
         font-size: var(--font-size-2);

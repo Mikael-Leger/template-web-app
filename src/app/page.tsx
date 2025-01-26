@@ -7,7 +7,7 @@ import { BsArrowRight, BsArrowLeft } from 'react-icons/bs';
 import Card from './components/card/card';
 import Title from './components/title/title';
 import DescriptionAndImage from './components/description-and-image/description-and-image';
-import InteractiveShowcase from './components/interactive-showcase/interactive-showcase';
+import { InteractiveShowcases } from './components/interactive-showcase/interactive-showcase';
 import Layout from './components/layout/layout';
 
 import './home.scss';
@@ -52,6 +52,7 @@ export default function HomePage() {
           opacity={.7}
           absolute
           delayMs={12000}
+          noBottomPadding
           buttons={[
             {
               title: 'White',
@@ -312,199 +313,182 @@ export default function HomePage() {
             path: '/images/sample_1.png',
           }]}
           flip/>
-        <Card
-          className='border-black border border-solid'
-          background='gradient'
-          borderColor='primary'
-          padding={'inner'}
-          margin={'none'}
-          width={250}
-          height={250}>
-          <InteractiveShowcase
-            title='Nos produits'
-            onClick={() => handleItemClick('/products')}
-            images={[
+        <InteractiveShowcases
+          showcases={
+            [
               {
-                path: '/images/products/sample_1.png',
-                style: {
-                  width: 120,
-                  top: 20,
-                  right: 10,
-                  transform: 'rotate(20deg)',
-                  scale: 1
-                },
-                animations: [
+                title: 'Nos produits',
+                onClick: () => handleItemClick('/products'),
+                images: [
                   {
-                    to: {
-                      y: -20,
-                      x: 10,
-                      scale: .9,
-                      rotate: 10
-                    }
+                    path: '/images/products/sample_1.png',
+                    style: {
+                      width: 120,
+                      top: 20,
+                      right: 10,
+                      transform: 'rotate(20deg)',
+                      scale: 1
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -20,
+                          x: 10,
+                          scale: .9,
+                          rotate: 10
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    path: '/images/products/sample_2.png',
+                    style: {
+                      width: 70,
+                      bottom: 10,
+                      right: 10,
+                      transform: 'translateX(0%)',
+                      rotate: 0
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -10,
+                          x: 10,
+                          rotate: 20
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    path: '/images/products/sample_3.png',
+                    style: {
+                      width: 100,
+                      bottom: 0,
+                      left: 0,
+                      transform: 'translateX(-5%)',
+                      scale: 1
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -10,
+                          x: 5,
+                          scale: 1.1
+                        }
+                      }
+                    ]
                   }
                 ]
               },
               {
-                path: '/images/products/sample_2.png',
-                style: {
-                  width: 70,
-                  bottom: 10,
-                  right: 10,
-                  transform: 'translateX(0%)',
-                  rotate: 0
-                },
-                animations: [
+                title: 'Contactez-nous',
+                onClick: () => handleItemClick('/contact'),
+                images:
+                [
                   {
-                    to: {
-                      y: -10,
-                      x: 10,
-                      rotate: 20
-                    }
+                    path: '/images/contact/sample_1.png',
+                    style: {
+                      width: 80,
+                      top: 30,
+                      left: 10,
+                      transform: 'rotate(-10deg)'
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -20,
+                          x: -10,
+                          transform: 'rotate(-20deg)'
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    path: '/images/contact/sample_2.png',
+                    style: {
+                      width: 60,
+                      top: 40,
+                      right: 10,
+                      transform: 'rotate(10deg)'
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -20,
+                          x: 10,
+                          transform: 'rotate(20deg)'
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    path: '/images/contact/sample_3.png',
+                    style: {
+                      width: 120,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      bottom: 0,
+                      scale: 1
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -10,
+                          scale: 1.2
+                        }
+                      }
+                    ]
                   }
                 ]
               },
               {
-                path: '/images/products/sample_3.png',
-                style: {
-                  width: 100,
-                  bottom: 0,
-                  left: 0,
-                  transform: 'translateX(-5%)',
-                  scale: 1
-                },
-                animations: [
+                title: 'Commandez',
+                onClick: () => handleItemClick('/order'),
+                images:
+                [
                   {
-                    to: {
-                      y: -10,
-                      x: 5,
-                      scale: 1.1
-                    }
+                    path: '/images/order/sample_1.png',
+                    style: {
+                      width: 180,
+                      bottom: 0,
+                      left: '50%',
+                      transform: 'translateX(-50%)'
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -10,
+                          x: -5,
+                          transform: 'rotate(-5deg) translateX(-50%)'
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    path: '/images/order/sample_2.png',
+                    style: {
+                      width: 40,
+                      bottom: 70,
+                      scale: 1,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                    },
+                    animations: [
+                      {
+                        to: {
+                          y: -10,
+                          x: -5,
+                          scale: 1.2,
+                          transform: 'rotate(-5deg) translateX(-50%)'
+                        }
+                      }
+                    ]
                   }
                 ]
               }
-            ]}/>
-        </Card>
-        <Card
-          className='border-black border border-solid'
-          background='gradient'
-          borderColor='primary'
-          padding={'inner'}
-          margin={'none'}
-          width={250}
-          height={250}>
-          <InteractiveShowcase
-            title='Contactez-nous'
-            onClick={() => handleItemClick('/contact')}
-            images={[
-              {
-                path: '/images/contact/sample_1.png',
-                style: {
-                  width: 80,
-                  top: 30,
-                  left: 10,
-                  transform: 'rotate(-10deg)'
-                },
-                animations: [
-                  {
-                    to: {
-                      y: -20,
-                      x: -10,
-                      transform: 'rotate(-20deg)'
-                    }
-                  }
-                ]
-              },
-              {
-                path: '/images/contact/sample_2.png',
-                style: {
-                  width: 60,
-                  top: 40,
-                  right: 10,
-                  transform: 'rotate(10deg)'
-                },
-                animations: [
-                  {
-                    to: {
-                      y: -20,
-                      x: 10,
-                      transform: 'rotate(20deg)'
-                    }
-                  }
-                ]
-              },
-              {
-                path: '/images/contact/sample_3.png',
-                style: {
-                  width: 120,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  bottom: 0,
-                  scale: 1
-                },
-                animations: [
-                  {
-                    to: {
-                      y: -10,
-                      scale: 1.2
-                    }
-                  }
-                ]
-              }
-            ]}/>
-        </Card>
-        <Card
-          className='border-black border border-solid'
-          background='gradient'
-          borderColor='primary'
-          padding={'inner'}
-          margin={'none'}
-          width={250}
-          height={250}>
-            
-          <InteractiveShowcase
-            title='Commandez'
-            onClick={() => handleItemClick('/order')}
-            images={[
-              {
-                path: '/images/order/sample_1.png',
-                style: {
-                  width: 180,
-                  bottom: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)'
-                },
-                animations: [
-                  {
-                    to: {
-                      y: -10,
-                      x: -5,
-                      transform: 'rotate(-5deg) translateX(-50%)'
-                    }
-                  }
-                ]
-              },
-              {
-                path: '/images/order/sample_2.png',
-                style: {
-                  width: 40,
-                  bottom: 70,
-                  scale: 1,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                },
-                animations: [
-                  {
-                    to: {
-                      y: -10,
-                      x: -5,
-                      scale: 1.2,
-                      transform: 'rotate(-5deg) translateX(-50%)'
-                    }
-                  }
-                ]
-              }
-            ]}/>
-        </Card>
+            ]
+          }
+        />
       </Card>
 
       <Card size='big'>

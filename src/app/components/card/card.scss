@@ -33,6 +33,12 @@
     &-outer {
       padding: var(--outer-y) var(--outer-x);
     }
+
+    &-mobile {
+      &:not(.card-big) {
+        padding: var(--area-mobile-y) var(--area-mobile-x);
+      }
+    }
   }
 
   &-margin {
@@ -42,6 +48,10 @@
 
     &-outer {
       margin: var(--outer-y) var(--outer-x);
+    }
+
+    &-mobile {
+      margin: var(--area-mobile-y) var(--area-mobile-x);
     }
   }
 

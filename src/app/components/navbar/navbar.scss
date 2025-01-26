@@ -6,7 +6,7 @@
   color: var(--color-5);
 
   &-content {
-    gap: var(--outer-x);
+    gap: var(--inner-y) var(--inner-x);
 
     &-title {
       font-size: var(--font-size-3);
@@ -28,7 +28,7 @@
     text-transform: uppercase;
     cursor: pointer;
 
-    gap: var(--inner-y);
+    gap: var(--inner-y) var(--inner-x);
     right: var(--outer-y);
 
     &-flag {

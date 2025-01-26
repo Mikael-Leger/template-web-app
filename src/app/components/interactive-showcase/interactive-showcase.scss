@@ -1,3 +1,8 @@
 .interactive-showcase {
   cursor: pointer;
 }
+
+.interactive-showcases {
+  padding: var(--inner-y) var(--inner-x);
+  gap: var(--inner-y) var(--inner-x);
+}

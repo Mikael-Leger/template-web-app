@@ -1,12 +1,5 @@
 [
   {
-    "title": "© Copyright 2025"
-  },
-  {
-    "title": "Mentions légales",
-    "url": "legal-mentions"
-  },
-  {
     "title": "Facebook",
     "url": "https://facebook.com",
     "media": true
@@ -15,5 +8,12 @@
     "title": "Instagram",
     "url": "https://instagram.com",
     "media": true
+  },
+  {
+    "title": "© Copyright 2025"
+  },
+  {
+    "title": "Mentions légales",
+    "url": "legal-mentions"
   }
 ]

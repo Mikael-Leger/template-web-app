@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import React from 'react';
 
+import { IsMobileProvider } from './contexts/mobile-context';
+import { LanguageProvider } from './contexts/language-context';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 
@@ -32,9 +34,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar/>
-        {children}
-        <Footer/>
+        <IsMobileProvider>
+          <LanguageProvider>
+            <Navbar/>
+            {children}
+            <Footer/>
+          </LanguageProvider>
+        </IsMobileProvider>
       </body>
     </html>
   );

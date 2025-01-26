@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 import Title from '../title/title';
+import Card from '../card/card';
+import { useIsMobile } from '@/app/contexts/mobile-context';
 
 import './interactive-showcase.scss';
 
@@ -70,6 +72,34 @@ export default function InteractiveShowcase({title, onClick, images}: Interactiv
       <div className='interactive-showcase-text flex flex-col'>
         <Title text={title} size='medium' margin='none'/>
       </div>
+    </div>
+  );
+}
+
+interface InteractiveShowcasesProps {
+  showcases: InteractiveShowcaseProps[];
+}
+
+export function InteractiveShowcases({showcases}: InteractiveShowcasesProps) {
+  const {isMobile} = useIsMobile();
+
+  return (
+    <div className={`interactive-showcases flex ${isMobile ? 'flex-col' : 'flex-row'}`}>
+      {
+        showcases.map(showcase => (
+          <Card
+            className='border-black border border-solid'
+            background='gradient'
+            borderColor='primary'
+            padding={'inner'}
+            margin={'none'}
+            width={250}
+            height={250}
+            key={showcase.title}>
+            <InteractiveShowcase {...showcase}/>
+          </Card>
+        ))
+      }
     </div>
   );
 }

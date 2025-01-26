@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import Carousel from '../carousel/carousel';
 import Button from '../button/button';
 import { DescriptionAndImageButton } from '@/app/interfaces/button.interface';
+import { useIsMobile } from '@/app/contexts/mobile-context';
 
 import './description-and-image.scss';
 
@@ -22,6 +23,7 @@ interface DescriptionAndImageProps {
   transition?: 'swipe' | 'circle';
   delayMs?: number;
   buttons?: DescriptionAndImageButton[];
+  noBottomPadding?: boolean;
 }
 
 type TextAlign = 'start' |'center' |'end';
@@ -37,8 +39,11 @@ export default function DescriptionAndImage({
   axis = 'row',
   flip = false,
   opacity = 1,
-  absolute = false
+  absolute = false,
+  noBottomPadding = false
 }: DescriptionAndImageProps) {
+  const {isMobile} = useIsMobile();
+
   const [isHovered, setIsHovered] = useState(false);
 
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -102,6 +107,13 @@ export default function DescriptionAndImage({
     );
   };
 
+  const getPanelWidth = () => {
+    if (absolute && isMobile) return '80%';
+    if (isMobile) return '100%';
+
+    return '50%';
+  };
+
   const renderPanel = () => {
     if (!text && !buttons) return;
     
@@ -109,8 +121,11 @@ export default function DescriptionAndImage({
 
     return (
       <div
-        className={`description-and-image-panel flex flex-col ${isRow && 'panel-row'} ${absolute && 'self-center absolute shadowed w-1/2'}`}
-        style={{textAlign: orientation as TextAlign}}
+        className={`description-and-image-panel flex flex-col ${isRow && 'flex-row'} ${absolute && 'self-center absolute shadowed'}`}
+        style={{
+          textAlign: orientation as TextAlign,
+          width: getPanelWidth()
+        }}
         key='panel'>
         {renderText()}
         {renderButton()}
@@ -126,7 +141,7 @@ export default function DescriptionAndImage({
     const clipPath = shape === 'circle' ? 'circle(33%)' : undefined;
 
     if (images.length === 1) return (
-      <div className={`description-and-image-image flex flex-col items-center ${absolute ? 'w-full' : 'w-1/2'}`} key='img'>
+      <div className={`description-and-image-image flex flex-col items-center ${absolute || isMobile ? 'w-full' : 'w-1/2'}`} key='img'>
         <img
           src={image.path}
           style={{opacity, clipPath}}
@@ -151,7 +166,7 @@ export default function DescriptionAndImage({
     );
   };
 
-  const renderContent = (orientation: string) => {
+  const renderContent = () => {
     const orientationMap: Record<string, React.ReactNode[]> = {
       start: [renderPanel(), renderImage()],
       center: [renderPanel(), renderImage()],
@@ -161,7 +176,7 @@ export default function DescriptionAndImage({
     };
   
     const isRow = axis === 'row';
-    const flexDirection = isRow ? 'flex-row' : 'flex-col';
+    const flexDirection = isRow && (!isMobile || orientation === 'center') ? 'flex-row' : 'flex-col';
 
     return (
       <div className={`description-and-image-container flex ${flexDirection} ${!isRow && 'items-center'} ${absolute && 'items-center justify-center'}`}>
@@ -171,8 +186,13 @@ export default function DescriptionAndImage({
   };
 
   return (
-    <div className={'description-and-image flex flex-col w-full'} style={{alignSelf: orientation}}>
-      {renderContent(orientation)}
+    <div
+      className={'description-and-image flex flex-col w-full'}
+      style={{
+        alignSelf: orientation,
+        paddingBottom: noBottomPadding ? '0' : undefined
+      }}>
+      {renderContent()}
     </div>
   );
 }

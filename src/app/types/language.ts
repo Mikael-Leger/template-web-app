@@ -1,0 +1,1 @@
+export type TextByLanguage = { [key: string]: string };

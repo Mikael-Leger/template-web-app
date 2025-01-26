@@ -1,0 +1,345 @@
+[
+    {
+        "component": "portfolio",
+        "texts": [
+            {
+                "baguette": "Projets",
+                "en": "Projects"
+            },
+            {
+                "baguette": "Découvrez mon travail et mes expériences",
+                "en": "Discover my work and expertise"
+            },
+            {
+                "baguette": "CV",
+                "en": "Resume"
+            },
+            {
+                "baguette": "Si vous préférez en version PDF",
+                "en": "If you prefer it in PDF"
+            },
+            {
+                "baguette": "Contact",
+                "en": "Contact"
+            },
+            {
+                "baguette": "Envoyez-moi un mail venant de l'espace",
+                "en": "Reach out by sending a space-mail"
+            },
+            {
+                "baguette": "Regardez mon profil sur LinkedIn",
+                "en": "View my profile on LinkedIn"
+            },
+            {
+                "baguette": "Bienvenue sur mon portfolio !",
+                "en": "Welcome to my portfolio!"
+            },
+            {
+                "baguette": "Faites défiler pour en savoir plus",
+                "en": "Scroll down to learn more"
+            },
+            {
+                "baguette": "Revenir en haut",
+                "en": "Back to top"
+            },
+            {
+                "baguette": "Développeur français",
+                "en": "French developer"
+            },
+            {
+                "baguette": "Vit en Belgique",
+                "en": "Based in Belgium"
+            },
+            {
+                "baguette": "Continuez de défiler pour m'aider à grimper !",
+                "en": "Keep scrolling to help me climb!"
+            },
+            {
+                "baguette": "Titulaire d'un Master en Informatique",
+                "en": "Holding a Master's degree in Software"
+            },
+            {
+                "baguette": "Passionné par le développement web",
+                "en": "Passionate about web development"
+            },
+            {
+                "baguette": "Animé par un esprit créatif",
+                "en": "Enthusiastic about creativity"
+            },
+            {
+                "baguette": "Ambitieux et vise toujours la lune !",
+                "en": "Ambitious and always aiming for the moon!"
+            },
+            {
+                "baguette": "Désireux d'assimiler de nouvelles connaissances",
+                "en": "Eager to acquire new knowledge"
+            },
+            {
+                "baguette": "Apprend efficacement et rapidement",
+                "en": "Fast-learner"
+            },
+            {
+                "baguette": "Doté d'un grand esprit d'équipe",
+                "en": "Team-oriented"
+            },
+            {
+                "baguette": "Parcours, réalisations et contact",
+                "en": "Journey, Achievements, and Contact"
+            }
+        ]
+    },
+    {
+        "component": "desktop",
+        "texts": [
+            {
+                "baguette": "Projets",
+                "en": "Projects"
+            },
+            {
+                "baguette": "Compétences",
+                "en": "Skills"
+            },
+            {
+                "baguette": "CV",
+                "en": "Resume"
+            },
+            {
+                "baguette": "Qui suis-je ?",
+                "en": "Who am I?"
+            },
+            {
+                "baguette": "Me contacter",
+                "en": "Contact me"
+            },
+            {
+                "baguette": "Licences",
+                "en": "Licenses"
+            }
+        ]
+    },
+    {
+        "component": "mail",
+        "texts": [
+            {
+                "baguette": "Nouveau message",
+                "en": "New message"
+            },
+            {
+                "baguette": "À",
+                "en": "To"
+            },
+            {
+                "baguette": "john.doe@example.com",
+                "en": "john.doe@example.com"
+            },
+            {
+                "baguette": "Objet",
+                "en": "Subject"
+            },
+            {
+                "baguette": "Envoyer",
+                "en": "Send"
+            },
+            {
+                "baguette": "Mail envoyé avec succès",
+                "en": "E-mail sent with success"
+            },
+            {
+                "baguette": "Je vous répondrais rapidement",
+                "en": "I will answer you quicly"
+            },
+            {
+                "baguette": "Erreur en envoyant le mail",
+                "en": "Error sending e-mail"
+            },
+            {
+                "baguette": "Essayez de me contacter sur",
+                "en": "Try to contact me on"
+            },
+            {
+                "baguette": "En écrire un autre",
+                "en": "Write another one"
+            },
+            {
+                "baguette": "Essayer encore",
+                "en": "Try again"
+            },
+            {
+                "baguette": "Fermer cette fenêtre",
+                "en": "Close window"
+            },
+            {
+                "baguette": "Veuillez entrer un objet",
+                "en": "Please enter an object"
+            },
+            {
+                "baguette": "L'objet ne peut dépasser 50 charactères",
+                "en": "Object cannot exceed 50 characters"
+            },
+            {
+                "baguette": "Veuillez entrer une adresse mail",
+                "en": "Please enter an email"
+            },
+            {
+                "baguette": "Veuillez entrer une adresse mail valide",
+                "en": "Please enter a valid email"
+            },
+            {
+                "baguette": "Veuillez entrer un message",
+                "en": "Please write a message"
+            },
+            {
+                "baguette": "Le message ne peut dépasser 1000 charactères",
+                "en": "Message cannot exceed 1000 characters"
+            },
+            {
+                "baguette": "Écrivez votre message ici...",
+                "en": "Write your message here..."
+            }
+        ]
+    },
+    {
+        "component": "notepad",
+        "texts": [
+            {
+                "baguette": "icônes créées par",
+                "en": "icons created by"
+            },
+            {
+                "baguette": "fournie par",
+                "en": "provided by"
+            },
+            {
+                "baguette": "Tous droits réservés, sauf pour les attributions mentionnées ci-dessus.",
+                "en": "All rights reserved except for the attributions mentioned above."
+            }
+        ]
+    },
+    {
+        "component": "projects",
+        "texts": [
+            {
+                "baguette": "Personnels",
+                "en": "Personal"
+            },
+            {
+                "baguette": "Professionnels",
+                "en": "Professional"
+            },
+            {
+                "baguette": "Scolaires",
+                "en": "Academic"
+            }
+        ]
+    },
+    {
+        "component": "page",
+        "texts": [
+            {
+                "baguette": "Projets",
+                "en": "Projects"
+            },
+            {
+                "baguette": "Compétences",
+                "en": "Skills"
+            }
+        ]
+    },
+    {
+        "component": "skills",
+        "texts": [
+            {
+                "baguette": "Rechercher une compétence",
+                "en": "Search any skill"
+            }
+        ]
+    },
+    {
+        "component": "task-bar",
+        "texts": [
+            {
+                "baguette": "Redémarrer",
+                "en": "Restart"
+            }
+        ]
+    },
+    {
+        "component": "tooltip",
+        "texts": [
+            {
+                "baguette": "Personnel",
+                "en": "Personal"
+            },
+            {
+                "baguette": "Professionnel",
+                "en": "Professional"
+            },
+            {
+                "baguette": "Scolaire",
+                "en": "Academic"
+            },
+            {
+                "baguette": "projet",
+                "en": "project"
+            },
+            {
+                "baguette": "projets",
+                "en": "projects"
+            },
+            {
+                "baguette": "année",
+                "en": "year"
+            },
+            {
+                "baguette": "années",
+                "en": "years"
+            },
+            {
+                "baguette": "mois",
+                "en": "month"
+            },
+            {
+                "baguette": "mois",
+                "en": "months"
+            },
+            {
+                "baguette": "Plusieurs",
+                "en": "Multiple"
+            }
+        ]
+    },
+    {
+        "component": "window",
+        "texts": [
+            {
+                "baguette": "CV",
+                "en": "Resume"
+            },
+            {
+                "baguette": "Oups... Il semblerait qu'il y ait eu une erreur avec mon CV.",
+                "en": "Oops... It seems there was a mistake with my resume."
+            },
+            {
+                "baguette": "Téléchargez mon CV ici",
+                "en": "Download my Resume here"
+            },
+            {
+                "baguette": "Qui suis-je ?",
+                "en": "Who am I?"
+            },
+            {
+                "baguette": "Licences",
+                "en": "Licenses"
+            }
+        ]
+    },
+    {
+        "component": "easter",
+        "texts": [
+            {
+                "baguette": "Si vous me contactez en précisant \"LICORNE\", je ramène des croissants pour le premier entretien avec vous !",
+                "en": "If you contact me mentioning \"UNICORN\", I will gladly bring chocolate croissants for the first interview with you!"
+            }
+        ]
+    }
+]

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { useIsMobile } from '@/app/contexts/mobile-context';
+import { CardContext, useIsInCard } from '@/app/contexts/card-context';
+
 import './card.scss';
 
 interface CardProps {
@@ -17,13 +20,40 @@ interface CardProps {
 }
 
 export default function Card({children, width, height, className, id, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
+  const {isMobile} = useIsMobile();
+  const isInCard = useIsInCard();
+
+  const getSize = () => {
+    return (isInCard || !isMobile) ? `card-${size}` : 'card-big';
+  };
+
+  const getResponsiveDimension = (dimension: number | undefined) => {
+    // if (isMobile && isInCard) return '100%';
+
+    return dimension;
+  };
+
+  const getDimensionStyles = () => {
+    const widthStyle = getResponsiveDimension(width);
+    const heightStyle = isMobile ? undefined : getResponsiveDimension(height);
+
+    return {
+      width: widthStyle,
+      height: heightStyle
+    };
+  };
 
   return (
-    <div
-      id={id}
-      className={`flex ${className} card card-${size} card-${background} card-padding-${padding} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'}`}
-      style={{alignSelf: orientation, width, height}}>
-      {children}
-    </div>
+    <CardContext.Provider value={true}>
+      <div
+        id={id}
+        className={`flex ${className} card ${getSize()} card-${background} card-padding-${isMobile ? 'mobile' : padding} ${isInCard && 'aspect-[1/1]'} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'}`}
+        style={{
+          ...getDimensionStyles(),
+          alignSelf: orientation
+        }}>
+        {children}
+      </div>
+    </CardContext.Provider>
   );
 }

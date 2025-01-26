@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 
+import { useIsMobile } from '@/app/contexts/mobile-context';
+
 import './carousel.scss';
 
 interface CarouselProps {
@@ -16,6 +18,8 @@ interface CarouselProps {
 const IMAGE_HEIGHT = 717;
 
 export default function Carousel({images, transition, delayMs}: CarouselProps) {
+  const {isMobile} = useIsMobile();
+
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
   const [imageIndexes, setImageIndex] = useState<{
@@ -154,7 +158,7 @@ export default function Carousel({images, transition, delayMs}: CarouselProps) {
   };
 
   return (
-    <div className='carousel' style={{height: `${IMAGE_HEIGHT}px`}}>
+    <div className='carousel w-full' style={{height: `${IMAGE_HEIGHT}px`}}>
       {images.map((image, index) => {
         return (
           <img
@@ -165,18 +169,20 @@ export default function Carousel({images, transition, delayMs}: CarouselProps) {
             src={image.path}
             key={index}/>
         );})}
-      <div className='carousel-actions h-full relative'>
-        <div
-          className='carousel-actions-left absolute top-1/2 transform -translate-y-1/2'
-          onClick={handleLeftClick}>
-          <BsChevronLeft size={48} color='white'/>
+      {!isMobile && (
+        <div className='carousel-actions h-full relative'>
+          <div
+            className='carousel-actions-left absolute top-1/2 transform -translate-y-1/2'
+            onClick={handleLeftClick}>
+            <BsChevronLeft size={48} color='white'/>
+          </div>
+          <div
+            className='carousel-actions-right absolute top-1/2 transform -translate-y-1/2'
+            onClick={handleRightClick}>
+            <BsChevronRight size={48} color='white'/>
+          </div>
         </div>
-        <div
-          className='carousel-actions-right absolute top-1/2 transform -translate-y-1/2'
-          onClick={handleRightClick}>
-          <BsChevronRight size={48} color='white'/>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

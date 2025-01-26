@@ -1,5 +1,13 @@
 .carousel {
   position: relative;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    object-fit: cover;
+  }
 
   img:not(:first-child) {
     opacity: 0;
