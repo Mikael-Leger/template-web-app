@@ -3,4 +3,6 @@ export interface NavbarItem {
   url: string;
   main?: boolean;
   image?: string;
+  icon?: string;
+  separator?: boolean;
 }

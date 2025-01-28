@@ -1,11 +1,14 @@
 [
   {
     "title": "Accueil",
-    "url": "/"
+    "url": "/",
+    "icon": "BsHouseDoor",
+    "separator": true
   },
   {
     "title": "Produits",
-    "url": "/products"
+    "url": "/products",
+    "icon": "BsSearch"
   },
   {
     "title": "La Pâte Dorée",
@@ -14,11 +17,14 @@
     "image": "/logo/logo-3.webp"
   },
   {
-    "title": "Contact",
-    "url": "/contact"
+    "title": "Commander",
+    "url": "/orders",
+    "icon": "BsBasket",
+    "separator": true
   },
   {
-    "title": "Commander",
-    "url": "/orders"
+    "title": "Contact",
+    "url": "/contact",
+    "icon": "BsTelephone"
   }
 ]

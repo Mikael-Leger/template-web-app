@@ -9,6 +9,8 @@ import navbarItemsJson from '@/app/data/navbar-items.json';
 import languageItemsJson from '@/app/data/languages.json'; 
 import { LanguageItem } from '@/app/interfaces/language.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
+import DynamicIcon from '../dynamic-icon/dynamic-icon';
+import Separator from '../separator/separator';
 
 import './navbar.scss';
 
@@ -18,6 +20,7 @@ export default function Navbar() {
   const {isMobile} = useIsMobile();
   
   const [language, setLanguage] = useState<string>('fr');
+  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);
   
   const navbarItems: NavbarItem[] = navbarItemsJson;
 
@@ -25,20 +28,31 @@ export default function Navbar() {
 
   const handleItemClick = (url: string) => {
     router.push(url);
+    setIsSidebarVisible(false);
   };
 
   const handleFlagClick = (itemValue: string) => {
     setLanguage(itemValue);
   };
 
-  const renderNavbarItem = (item: NavbarItem) => {
+  const getNavbarItemHeight = (sidebar: boolean) => {
+    if (sidebar) return undefined;
+
+    return isMobile ? 'h-[70%]' : 'h-full';
+  };
+
+  const renderNavbarItem = (item: NavbarItem, sidebar: boolean = false) => {
     return (
-      <div
-        className={`navbar-content-title ${isMobile ? 'h-[70%]' : 'h-full'} flex items-center ${item.main && 'main'} ${item.url === pathname && 'active'}`}
-        onClick={() => handleItemClick(item.url)}
-        key={item.title}>
-        {item.image ? <img className='h-full' src={item.image} alt={item.title}/> : item.title}
-      </div>
+      <React.Fragment key={item.title}>
+        <div
+          className={`navbar${sidebar ? '-sidebar' : ''}-content-title ${getNavbarItemHeight(sidebar)} flex items-center ${item.main && 'main'} ${item.url === pathname && 'active'}`}
+          onClick={() => handleItemClick(item.url)}
+          key={item.title}>
+          {sidebar && item.icon && <DynamicIcon iconName={item.icon}/>}
+          {item.image ? <img className='h-full' src={item.image} alt={item.title}/> : item.title}
+        </div>
+        {sidebar && item.separator && <Separator/>}
+      </React.Fragment>
     );
   };
 
@@ -48,7 +62,9 @@ export default function Navbar() {
     return isMobile
       ? (
         <>
-          <BsList size={48}/>
+          <div className='navbar-burger' onClick={() => setIsSidebarVisible(true)}>
+            <BsList size={48}/>
+          </div>
           {mainItem && renderNavbarItem(mainItem)}
         </>
       )
@@ -66,20 +82,60 @@ export default function Navbar() {
     );
   };
 
-  const renderFlagItems = () => {
-    const currentItem = languageItems.find(languageItem => languageItem.value === language) ?? languageItems[0];
+  const renderFlagItems = (sidebar = false) => {
+    if (!isMobile || sidebar) return languageItems.map(item => renderFlagItem(item));
+  };
 
-    return isMobile
-      ? renderFlagItem(currentItem)
-      : languageItems.map(item => renderFlagItem(item));
+  const renderSidebarContent = () => {
+    const mainItem = navbarItems.find(navbarItem => navbarItem.main);
+
+    return (
+      <div
+        className='navbar-sidebar-content flex flex-col fixed top-0 left-0'
+        style={{
+          left: isSidebarVisible ? undefined : '-70%'
+        }}>
+        {mainItem && renderNavbarItem(mainItem, true)}
+        <Separator height={2} width={80}/>
+        <div className='navbar-sidebar-content-items flex flex-col'>
+          {navbarItems
+            .filter(item => !item.main)
+            .map(item => renderNavbarItem(item, true))}
+        </div>
+        <div className='navbar-sidebar-content-bottom absolute bottom-0 flex flex-row justify-center w-full'>
+          {renderFlagItems(true)}
+        </div>
+      </div>
+    );
+  };
+
+  const renderSidebar = () => {
+    if (!isMobile) return;
+
+    return (
+      <div className='navbar-sidebar'>
+        <div
+          className='navbar-sidebar-shadow fixed top-0 left-0 h-full w-full'
+          style={{
+            width: isSidebarVisible ? undefined : '0',
+            opacity: isSidebarVisible ? undefined : '0'
+          }}
+          onClick={() => setIsSidebarVisible(false)}/>
+        {renderSidebarContent()}
+      </div>
+    );
+  };
+
+  const getJustifyStyle = () => {
+    return (isMobile) ? 'justify-start' : 'justify-center';
   };
 
   return (
     <div className='navbar'>
-      <div className='navbar-content h-full w-full flex flex-row justify-center items-center'>
+      <div className={`navbar-content h-full w-full flex flex-row ${getJustifyStyle()} items-center`}>
         {renderNavbarItems()}
-        {renderFlagItems()}
       </div>
+      {renderSidebar()}
     </div>
   );
 }
