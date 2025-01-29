@@ -1,0 +1,15 @@
+.catalog {
+  padding: var(--inner-y) var(--inner-x);
+
+  &-filters {
+    > *:not(.separator) {
+      gap: var(--inner-y) var(--inner-x);
+      padding: var(--inner-y) var(--inner-x);
+    }
+  }
+
+  &-products {
+    gap: var(--inner-y) var(--inner-x);
+    padding: var(--inner-y) 0;
+  }
+}

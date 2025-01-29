@@ -5,9 +5,11 @@ import './dynamic-icon.scss';
 
 interface DynamicIconProps {
   iconName: string;
+  color?: 'red' | 'none';
+  size?: number | undefined;
 }
 
-const DynamicIcon = ({ iconName }: DynamicIconProps) => {
+const DynamicIcon = ({ iconName, color = 'none', size = undefined }: DynamicIconProps) => {
   const [Icon, setIcon] = useState<IconType | null>(null);
 
   useEffect(() => {
@@ -27,7 +29,9 @@ const DynamicIcon = ({ iconName }: DynamicIconProps) => {
 
   if (!Icon) return null;
 
-  return <Icon/>;
+  return <Icon
+    className={`dynamic-icon-${color}`}
+    size={size}/>;
 };
 
 export default DynamicIcon;

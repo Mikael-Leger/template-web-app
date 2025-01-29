@@ -5,6 +5,7 @@ import React from 'react';
 import { IsMobileProvider } from './contexts/mobile-context';
 import { LanguageProvider } from './contexts/language-context';
 import Navbar from './components/navbar/navbar';
+import PageContent from './components/page-content/page-content';
 import Footer from './components/footer/footer';
 
 import './globals.scss';
@@ -37,7 +38,9 @@ export default function RootLayout({
         <IsMobileProvider>
           <LanguageProvider>
             <Navbar/>
-            {children}
+            <PageContent>
+              {children}
+            </PageContent>
             <Footer/>
           </LanguageProvider>
         </IsMobileProvider>

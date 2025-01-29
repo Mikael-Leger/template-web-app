@@ -1,15 +1,18 @@
 import React from 'react';
 
+import { Type } from '../types/type';
+
 export interface ButtonInterface {
-  title: string;
+  title?: string;
   icon?: {
-    orientation: 'start' | 'end';
-    node: React.ReactNode
+    orientation?: 'start' | 'end';
+    node: React.ReactNode;
   };
+  round?: boolean;
   size?: 'small' | 'medium' |'big';
   underline?: boolean;
   borderColor?: 'white' | 'black';
-  type?: 'primary' | 'white' | 'black' | 'info' | 'success' | 'warn' | 'error';
+  type?: Type;
   onClick: (_payload?: any) => any;
 }
 

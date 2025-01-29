@@ -4,10 +4,10 @@ import { ButtonInterface } from '@/app/interfaces/button.interface';
 
 import './button.scss';
 
-export default function Button({title, icon, onClick, borderColor = 'black', type = 'primary', size = 'small', underline = false}: ButtonInterface) {
+export default function Button({title, icon, onClick, round, borderColor = 'black', type = 'primary', size = 'small', underline = false}: ButtonInterface) {
   return (
     <button
-      className={`button button-${size} ${underline ? 'underline' : 'background'} button-${type}`}
+      className={`button button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type}`}
       role='button'
       style={{ outlineColor: borderColor }}
       onClick={onClick}
@@ -18,9 +18,11 @@ export default function Button({title, icon, onClick, borderColor = 'black', typ
             {icon.node}
           </div>
         )}
-        <div className='button-front-text'>
-          {title}
-        </div>
+        {title && (
+          <div className='button-front-text'>
+            {title}
+          </div>
+        )}
         {icon && icon.orientation !== 'start' && (
           <div className='button-front-icon flex flex-col justify-center'>
             {icon.node}

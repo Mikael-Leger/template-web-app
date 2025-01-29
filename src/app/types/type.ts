@@ -1,0 +1,1 @@
+export type Type = 'primary' | 'white' | 'black' | 'info' | 'success' | 'warn' | 'error' | 'none';

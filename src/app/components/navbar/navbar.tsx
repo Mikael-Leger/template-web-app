@@ -93,7 +93,7 @@ export default function Navbar() {
       <div
         className='navbar-sidebar-content flex flex-col fixed top-0 left-0'
         style={{
-          left: isSidebarVisible ? undefined : '-70%'
+          left: isSidebarVisible ? undefined : '-120%'
         }}>
         {mainItem && renderNavbarItem(mainItem, true)}
         <Separator height={2} width={80}/>

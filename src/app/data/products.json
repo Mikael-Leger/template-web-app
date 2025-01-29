@@ -1,0 +1,40 @@
+[
+  {
+    "title": "baguette",
+    "image": "sample_1.png",
+    "short_description": "Lorem ipsum",
+    "price": 0.99,
+    "tags": [
+      "bakery"
+    ]
+  },
+  {
+    "title": "croissant",
+    "image": "sample_2.png",
+    "short_description": "Lorem ipsum",
+    "price": 0.59,
+    "tags": [
+      "bakery"
+    ]
+  },
+  {
+    "title": "cookie",
+    "image": "sample_3.png",
+    "short_description": "Lorem ipsum",
+    "price": 1.29,
+    "tags": [
+      "new",
+      "pastry"
+    ]
+  },
+  {
+    "title": "donut",
+    "image": "sample_4.png",
+    "short_description": "Lorem ipsum",
+    "price": 1.49,
+    "tags": [
+      "new",
+      "pastry"
+    ]
+  }
+]

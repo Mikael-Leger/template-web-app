@@ -10,8 +10,6 @@ import DescriptionAndImage from './components/description-and-image/description-
 import { InteractiveShowcases } from './components/interactive-showcase/interactive-showcase';
 import Layout from './components/layout/layout';
 
-import './home.scss';
-
 export default function HomePage() {
   const router = useRouter();
 

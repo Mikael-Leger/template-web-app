@@ -4,6 +4,7 @@
   position: relative;
   font-weight: var(--font-weight-2);
   font-size: var(--font-size-2);
+  text-transform: capitalize;
 
   &-front {
     position: relative;
@@ -33,6 +34,14 @@
   &.background {
     border-radius: var(--border-radius-actions);
     outline: 1px solid var(--black);
+  }
+
+  &.round {
+    border-radius: 50%;
+
+    .button-front {
+      padding: var(--inner-y);
+    }
   }
 
   &-primary {
