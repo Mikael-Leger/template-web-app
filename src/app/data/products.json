@@ -36,5 +36,96 @@
       "new",
       "pastry"
     ]
+  },
+  {
+    "title": "pain brun au cacao",
+    "image": "sample_5.png",
+    "short_description": "Lorem ipsum",
+    "price": 1.89,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "gateau framboise et mure",
+    "image": "sample_6.png",
+    "short_description": "Lorem ipsum",
+    "price": 13.99,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "cupcake caramel",
+    "image": "sample_7.png",
+    "short_description": "Lorem ipsum",
+    "price": 3.29,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "churros",
+    "image": "sample_8.png",
+    "short_description": "Lorem ipsum",
+    "price": 2.49,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "macaron café",
+    "image": "sample_9.png",
+    "short_description": "Lorem ipsum",
+    "price": 4.69,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "tartelette aux pommes",
+    "image": "sample_10.png",
+    "short_description": "Lorem ipsum",
+    "price": 3.29,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "the cake is a lie",
+    "image": "sample_11.png",
+    "short_description": "Lorem ipsum",
+    "price": 3.14,
+    "tags": [
+      "pastry",
+      "new"
+    ]
+  },
+  {
+    "title": "sandwich jambon fromage",
+    "image": "sample_12.png",
+    "short_description": "Lorem ipsum",
+    "price": 3.29,
+    "tags": [
+      "bakery"
+    ]
+  },
+  {
+    "title": "tiramisu",
+    "image": "sample_13.png",
+    "short_description": "Lorem ipsum",
+    "price": 5.19,
+    "tags": [
+      "pastry"
+    ]
+  },
+  {
+    "title": "cake au chocolat",
+    "image": "sample_14.png",
+    "short_description": "Lorem ipsum",
+    "price": 7.39,
+    "tags": [
+      "pastry"
+    ]
   }
 ]

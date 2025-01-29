@@ -4,6 +4,7 @@ import { ProductItem } from '@/app/interfaces/product.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
+import { capitalizeFirstLetter } from '@/app/services/formatter';
 
 import './product.scss';
 
@@ -74,7 +75,7 @@ export default function Product({item}: ProductProps) {
       </div>
       <div className='product-details flex flex-col justify-center items-center'>
         <div className='product-details-title'>
-          {item.title}
+          {capitalizeFirstLetter(item.title)}
         </div>
         <div className='product-details-price'>
           {item.price}€

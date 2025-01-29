@@ -4,19 +4,14 @@ import gsap from 'gsap';
 import productsJson from '@/app/data/products.json';
 import { ProductItem } from '@/app/interfaces/product.interface';
 import Product from '../product/product';
-import { useIsMobile } from '@/app/contexts/mobile-context';
 import Button from '../button/button';
 import Separator from '../separator/separator';
 
 import './catalog.scss';
 
-interface CatalogProps {
-}
+export default function Catalog() {
 
-export default function Catalog({}: CatalogProps) {
-  const {isMobile} = useIsMobile();
-
-  const productItems: ProductItem[] = productsJson;
+  const productItems: ProductItem[] = productsJson.sort((a, b) => (a.tags.includes('new') ? -1 : b.tags.includes('new') ? 1 : 0));
   const [itemsFiltered, setItemsFiltered] = useState<ProductItem[]>([]);
 
   useEffect(() => {
@@ -70,6 +65,7 @@ export default function Catalog({}: CatalogProps) {
           <Product item={productItem} key={productItem.title}/>
         ))}
       </div>
+      <Separator height={2}/>
     </div>
   );
 }
