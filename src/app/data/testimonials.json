@@ -2,7 +2,7 @@
   {
   "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   "imagePath": "sample_1.png",
-  "author": "John Doe",
+  "author": "Santa Claus",
   "date": "18/12/2024"
   },
   {
@@ -16,12 +16,14 @@
   {
   "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   "imagePath": "sample_3.png",
-  "author": "Santa Claus",
+  "author": "Jane Dough",
   "date": "06/12/2024"
   },
   {
   "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   "imagePath": "sample_4.png",
+  "company": "Donutella",
+  "role": "Team Leader",
   "date": "03/12/2025"
   }
 ]
