@@ -4,6 +4,7 @@
   border-top: 2px solid var(--color-5);
   color: var(--color-5);
   padding: var(--outer-y) var(--outer-x);
+  box-shadow: -1px 4px 10px var(--black);
 
   &-content {
     gap: var(--inner-y) var(--inner-x);

@@ -12,7 +12,7 @@ interface CarouselProps {
     caption?: string;
   }[];
   transition: 'swipe' | 'circle';
-  delayMs: number;
+  delayMs?: number;
 }
 
 const IMAGE_HEIGHT = 717;
@@ -36,7 +36,7 @@ export default function Carousel({images, transition, delayMs}: CarouselProps) {
   useEffect(() => {
     imageRefs.current = imageRefs.current.slice(0, images.length);
 
-    if (delayMs === -1) return;
+    if (!delayMs) return;
 
     setInterval(() => {
       if (imageSwitched.current) {

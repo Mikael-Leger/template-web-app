@@ -1,0 +1,27 @@
+[
+  {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "imagePath": "sample_1.png",
+  "author": "John Doe",
+  "date": "18/12/2024"
+  },
+  {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "imagePath": "sample_2.png",
+  "author": "Jean Pâtissier",
+  "role": "CEO",
+  "company": "Muffin Factory",
+  "date": "01/09/2025"
+  },
+  {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "imagePath": "sample_3.png",
+  "author": "Santa Claus",
+  "date": "06/12/2024"
+  },
+  {
+  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "imagePath": "sample_4.png",
+  "date": "03/12/2025"
+  }
+]
