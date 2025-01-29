@@ -5,24 +5,51 @@ import { BsQuote } from 'react-icons/bs';
 import { formatDate, parseDate } from '@/app/services/date';
 import { TestimonialFormatted, TestimonialJson, TestimonialProps } from '@/app/interfaces/testimonial.interface';
 import testimonialsJson from '@/app/data/testimonials.json';
+import { useIsMobile } from '@/app/contexts/mobile-context';
 
 import './testimonial.scss';
 
 export default function Testimonial({text, imagePath, author, role, company, date, index}: TestimonialProps) {
+  const {breakpoint, isMobile} = useIsMobile();
+
+  const getWidth = () => {
+    switch (breakpoint) {
+    case 'xs':
+      return '90vw';
+    case 'sm':
+      return '80vw';
+    case 'md':
+      return '70vw';
+    case 'lg':
+      return '60vw';
+    case 'xl':
+      return '40vw';
+    }
+  };
 
   return (
-    <div className='testimonial absolute' id={`testimonial-${index}`}>
+    <div
+      className='testimonial absolute'
+      id={`testimonial-${index}`}
+      style={{
+        width: getWidth()
+      }}>
       <div className='testimonial-profile absolute top-0'>
         <img src={`/images/testimonials/${imagePath}`}/>
       </div>
-      <div className='testimonial-content flex flex-col'>
-        <div className='testimonial-content-text'>
+      <div className='testimonial-content flex flex-col justify-between'>
+        <div
+          className='testimonial-content-text'
+          style={{
+            fontSize: isMobile ? '12px' : undefined,
+            lineHeight: isMobile ? '24px' : undefined
+          }}>
           <div className='testimonial-content-text-quote'>
-            <BsQuote size={32}/>
+            <BsQuote size={32} className={isMobile ? 'top-[5px]' : ''}/>
           </div>
           {text}
           <div className='testimonial-content-text-quote'>
-            <BsQuote size={32}/>
+            <BsQuote size={32} className={isMobile ? 'top-[-5px]' : ''}/>
           </div>
         </div>
         <div className='testimonial-content-author flex flex-row items-baseline justify-center'>
@@ -58,6 +85,8 @@ interface TestimonialsProps {
 }
 
 export function Testimonials({delayMs}: TestimonialsProps) {
+  const {breakpoint} = useIsMobile();
+
   const [itemIndex, setItemIndex] = useState<{
     current: number,
     direction: 'left' | 'right'
@@ -106,7 +135,7 @@ export function Testimonials({delayMs}: TestimonialsProps) {
 
           return;
         }
-        handleNewIndex();
+        // handleNewIndex();
       }, delayMs);
 
       return () => clearInterval(interval);
@@ -118,20 +147,42 @@ export function Testimonials({delayMs}: TestimonialsProps) {
     animate();
   }, [itemIndex]);
 
+  const getOffset = () => {
+    switch (breakpoint) {
+    case 'xs':
+      return 300;
+    case 'sm':
+      return 500;
+    case 'md':
+      return 700;
+    case 'lg':
+      return 800;
+    case 'xl':
+      return 1100;
+    default:
+      return 300;
+    }
+  };
+
   const initializeItemsPosition = () => {
     testimonials.forEach((item, index) => {
       const element = `#testimonial-${index}`;
 
-      const baseOffset = 300;
+      const baseOffset = getOffset();
       const offsetValue = (index * baseOffset);
 
       const baseRotate = 50;
       const rotateValue = (index * baseRotate);
 
+      const neighbour = itemIndexRef.current.current === index - 1
+      || itemIndexRef.current.current === index
+      || itemIndexRef.current.current === index + 1;
+
       gsap.set(element, {
         x: `+=${offsetValue}`,
         rotateY: parseFloat(gsap.getProperty(element, 'rotateY') as string) + rotateValue,
         scale: itemIndexRef.current.current === index ? 1 : .85,
+        opacity: neighbour ? 1 : 0
       });
     });
   };
@@ -159,15 +210,21 @@ export function Testimonials({delayMs}: TestimonialsProps) {
     itemSwitched.current = true;
     const elements = Array.from(document.getElementsByClassName('testimonial'));
 
-    const offsetValue = 300;
+    const offsetValue = getOffset();
     const rotateValue = 50;
 
     elements.forEach((element, index) => {
+      const neighbour = itemIndexRef.current.current === index - 1
+      || itemIndexRef.current.current === index
+      || itemIndexRef.current.current === index + 1;
+
       gsap.to(element, {
         x: `${itemIndexRef.current.direction === 'right' ? '+' : '-'}=${offsetValue}`,
         rotateY: parseFloat(gsap.getProperty(element, 'rotateY') as string) - (itemIndexRef.current.direction === 'right' ? -rotateValue : rotateValue),
         scale: itemIndexRef.current.current === index ? 1 : .85,
-        ease: 'power3.inOut'
+        opacity: neighbour ? 1 : 0,
+        ease: 'power3.inOut',
+        duration: .8
       });
     });
   };

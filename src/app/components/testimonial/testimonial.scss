@@ -1,7 +1,14 @@
+$testimonial-height: 400px;
+$margin-top: 48px;
+$padding-top: 64px;
+
 .testimonial {
+  left: 50%;
+  transform: translateX(-50%);
   padding: var(--inner-y) var(--inner-x);
-  margin-top: 10px;
+  margin-top: var(--inner-y);
   font-family: 'Roboto', sans-serif;
+  user-select: none;
 
   &-profile {
     left: 50%;
@@ -15,11 +22,12 @@
 
   &-content {
     gap: var(--inner-y) var(--inner-x);
-    background-color: var(--color-1);
+    height: $testimonial-height;
     padding: var(--inner-y) var(--inner-x);
-    padding-top: 64px;
-    margin-top: 48px;
+    padding-top: $padding-top;
+    margin-top: $margin-top;
     border-radius: var(--border-radius);
+    background-color: var(--color-1);
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 
     &-text {
@@ -68,5 +76,6 @@
 
 .testimonials {
   perspective: 800px;
-  height: 450px;
+  height: calc($testimonial-height + $margin-top + var(--inner-y) * 3);
+  overflow: hidden;
 }
