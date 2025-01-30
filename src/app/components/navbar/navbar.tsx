@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { BsList } from 'react-icons/bs';
 
@@ -13,6 +13,8 @@ import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Separator from '../separator/separator';
 
 import './navbar.scss';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function Navbar() {
   const router = useRouter();
@@ -21,10 +23,41 @@ export default function Navbar() {
   
   const [language, setLanguage] = useState<string>('fr');
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);
+
+  const navbarRef = useRef<HTMLDivElement | null>(null);
   
   const navbarItems: NavbarItem[] = navbarItemsJson;
 
   const languageItems: LanguageItem[] = languageItemsJson;
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const navbarDefaultHeight = navbarRef.current?.offsetHeight ?? 0;
+      const heightRes = 300 + 30 - (navbarDefaultHeight);
+      
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: navbarRef.current,
+          start: `${heightRes} top`,
+          end: `${heightRes + (navbarDefaultHeight / 2)} top`,
+          scrub: true
+        },
+        
+      });
+
+      tl.to(navbarRef.current, {
+        height: `${(navbarDefaultHeight) / 2}`
+      }, 0);
+
+      tl.to('.navbar-content-title', {
+        fontSize: '-=6'
+      }, 0);
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   const handleItemClick = (url: string) => {
     router.push(url);
@@ -131,7 +164,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className='navbar'>
+    <div className='navbar w-full fixed top-0' ref={navbarRef}>
       <div className={`navbar-content h-full w-full flex flex-row ${getJustifyStyle()} items-center`}>
         {renderNavbarItems()}
       </div>
