@@ -1,0 +1,11 @@
+.parallax-cover {
+  &-container {
+    overflow: hidden;
+    clip-path: inset(100% 0% 0% 0%);
+
+    img {
+      object-fit: cover;
+      height: 100vh;
+    }
+  }
+}

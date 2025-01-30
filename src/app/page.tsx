@@ -9,6 +9,7 @@ import Title from './components/title/title';
 import DescriptionAndImage from './components/description-and-image/description-and-image';
 import { InteractiveShowcases } from './components/interactive-showcase/interactive-showcase';
 import Layout from './components/layout/layout';
+import ParallaxCover from './components/parallax-cover/parallax-cover';
 
 export default function HomePage() {
   const router = useRouter();
@@ -94,7 +95,7 @@ export default function HomePage() {
           transition='circle'
           delayMs={7000}/>
       </Card>
-      <Card size='small'>
+      <Card size='big'>
         <Title
           text='Image absolute center opacity'
           orientation='center'
@@ -196,7 +197,7 @@ export default function HomePage() {
           ]}/>
           
       </Card>
-      <Card size='small'>
+      <Card size='big'>
         <Title
           text='Text and image end'
           orientation='end'
@@ -257,7 +258,8 @@ export default function HomePage() {
           ]}/>
           
       </Card>
-      <Card size='small'>
+      <ParallaxCover imagePath='images/sample_5.png'/>
+      <Card size='big'>
         <Title
           text='Text bottom and image'
           orientation='center'
@@ -292,10 +294,10 @@ export default function HomePage() {
             },
           ]}/>
       </Card>
-
+      <ParallaxCover imagePath='images/sample_6.png' height={100}/>
       <Card
         className={'flex-row flex-wrap justify-center flex-gap'}
-        size={'medium'}
+        size={'big'}
         id='showcases'>
           
         <Title
@@ -488,7 +490,7 @@ export default function HomePage() {
           }
         />
       </Card>
-
+      <ParallaxCover imagePath='images/sample_7.png' height={450}/>
       <Card size='big'>
         <Layout
           items={[
