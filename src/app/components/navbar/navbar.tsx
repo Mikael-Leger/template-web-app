@@ -16,7 +16,11 @@ import './navbar.scss';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export default function Navbar() {
+interface NavbarProps {
+  marginTop: number;
+}
+
+export default function Navbar({marginTop}: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const {isMobile} = useIsMobile();
@@ -35,7 +39,7 @@ export default function Navbar() {
       gsap.registerPlugin(ScrollTrigger);
 
       const navbarDefaultHeight = navbarRef.current?.offsetHeight ?? 0;
-      const heightRes = 300 + 30 - (navbarDefaultHeight);
+      const heightRes = marginTop + 30 - (navbarDefaultHeight);
       
       const tl = gsap.timeline({
         scrollTrigger: {
