@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { BsList } from 'react-icons/bs';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { NavbarItem } from '@/app/interfaces/navbar.interface';
 import navbarItemsJson from '@/app/data/navbar-items.json'; 
@@ -11,16 +13,11 @@ import { LanguageItem } from '@/app/interfaces/language.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Separator from '../separator/separator';
+import { calculateMarginTop } from '@/app/services/page-content';
 
 import './navbar.scss';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-interface NavbarProps {
-  marginTop: number;
-}
-
-export default function Navbar({marginTop}: NavbarProps) {
+export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const {isMobile} = useIsMobile();
@@ -39,13 +36,15 @@ export default function Navbar({marginTop}: NavbarProps) {
       gsap.registerPlugin(ScrollTrigger);
 
       const navbarDefaultHeight = navbarRef.current?.offsetHeight ?? 0;
-      const heightRes = marginTop + 30 - (navbarDefaultHeight);
+      const marginTop = calculateMarginTop();
+      
+      const startCalculated = marginTop === 0 ? 0 : marginTop + 30 - (navbarDefaultHeight);
       
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: navbarRef.current,
-          start: `${heightRes} top`,
-          end: `${heightRes + (navbarDefaultHeight / 2)} top`,
+          start: `${startCalculated} top`,
+          end: `${startCalculated + (navbarDefaultHeight / 2)} top`,
           scrub: true
         },
         
@@ -61,7 +60,7 @@ export default function Navbar({marginTop}: NavbarProps) {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [pathname]);
 
   const handleItemClick = (url: string) => {
     router.push(url);
