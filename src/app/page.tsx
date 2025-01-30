@@ -10,6 +10,7 @@ import DescriptionAndImage from './components/description-and-image/description-
 import { InteractiveShowcases } from './components/interactive-showcase/interactive-showcase';
 import Layout from './components/layout/layout';
 import ParallaxCover from './components/parallax-cover/parallax-cover';
+import PageBackground from './components/page-background/page-background';
 
 export default function HomePage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function HomePage() {
   
   return (
     <div className='home w-full h-full flex'>
+      <PageBackground imagePath='images/sample_8.png'/>
       <Card
         size='big'
         padding={'none'}>
