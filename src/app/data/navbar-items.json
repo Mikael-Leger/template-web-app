@@ -18,7 +18,7 @@
   },
   {
     "title": "Commander",
-    "url": "/orders",
+    "url": "/order",
     "icon": "BsBasket",
     "separator": true
   },

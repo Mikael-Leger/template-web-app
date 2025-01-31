@@ -10,6 +10,7 @@ import './product.scss';
 
 interface ProductProps {
   item: ProductItem;
+  onBasketChange?: (_productName: string, _value: number) => void;
 }
 
 interface Action {
@@ -22,11 +23,11 @@ interface Action {
   left?: string;
   right?: string;
   zIndex?: number;
-  input?: 'textarea' | undefined;
+  input?: 'number' | undefined;
   maxChars?: number;
 }
 
-export default function Product({item}: ProductProps) {
+export default function Product({item, onBasketChange}: ProductProps) {
   const {isMobile} = useIsMobile();
 
   const [numberOfTimesInBasket, setNumberOfTimesInBasket] = useState<number>(0);
@@ -40,6 +41,9 @@ export default function Product({item}: ProductProps) {
   };
 
   const incrementBasket = () => {
+    if (onBasketChange && numberOfTimesInBasket < 999) {
+      onBasketChange(item.title, 1);
+    }
     setNumberOfTimesInBasket(prevState => {
       const res = prevState + 1;
 
@@ -48,7 +52,23 @@ export default function Product({item}: ProductProps) {
   };
 
   const decrementBasket = () => {
+    if (onBasketChange) {
+      onBasketChange(item.title, -1);
+    }
     setNumberOfTimesInBasket(prevState => prevState - 1);
+  };
+
+  const updateBasketFromUser = (value: string) => {
+    if (value === '') value = '1';
+
+    const newNumber = parseInt(value);
+    
+    if (newNumber === numberOfTimesInBasket) return;
+
+    if (onBasketChange) {
+      onBasketChange(item.title, newNumber - numberOfTimesInBasket);
+    }
+    setNumberOfTimesInBasket(newNumber);
   };
 
   const getActions = (): Action[] => {
@@ -68,10 +88,9 @@ export default function Product({item}: ProductProps) {
       {
         title: numberOfTimesInBasket,
         hide: numberOfTimesInBasket === 0,
-        input: 'textarea',
+        input: 'number',
         maxChars: 3,
-        onChange: (value: string) => {
-          setNumberOfTimesInBasket(parseInt(value));}
+        onChange: updateBasketFromUser
       },
       {
         iconName: 'BsPlusLg',

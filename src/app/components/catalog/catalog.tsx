@@ -6,13 +6,16 @@ import { ProductItem } from '@/app/interfaces/product.interface';
 import Product from '../product/product';
 import Button from '../button/button';
 import Separator from '../separator/separator';
+import { useBasket } from '@/app/contexts/basket-context';
 
 import './catalog.scss';
 
 export default function Catalog() {
+  const {updateItem} = useBasket();
+
+  const [itemsFiltered, setItemsFiltered] = useState<ProductItem[]>([]);
 
   const productItems: ProductItem[] = productsJson.sort((a, b) => (a.tags.includes('new') ? -1 : b.tags.includes('new') ? 1 : 0));
-  const [itemsFiltered, setItemsFiltered] = useState<ProductItem[]>([]);
 
   useEffect(() => {
     setItemsFiltered(productItems);
@@ -23,6 +26,10 @@ export default function Catalog() {
 
     refreshAnimation();
   }, [itemsFiltered]);
+
+  const onBasketChange = (productName: string, value: number) => {
+    updateItem(productName, value);
+  };
 
   const refreshAnimation = () => {
     gsap.fromTo('.product', {
@@ -62,7 +69,10 @@ export default function Catalog() {
       <Separator height={2}/>
       <div className='catalog-products flex flex-row flex-wrap justify-center'>
         {itemsFiltered.map(productItem => (
-          <Product item={productItem} key={productItem.title}/>
+          <Product
+            item={productItem}
+            key={productItem.title}
+            onBasketChange={onBasketChange}/>
         ))}
       </div>
       <Separator height={2}/>

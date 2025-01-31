@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-export default function OrdersPage() {
+export default function OrderPage() {
   return (
-    <div className='orders'>
+    <div className='order'>
 
     </div>
   );

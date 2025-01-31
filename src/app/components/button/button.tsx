@@ -25,7 +25,7 @@ export default function Button({
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
-      let targetValue = e.target.value;
+      let targetValue = e.target.value.replace(/\D/g, '');
       if (maxChars) {
         targetValue = targetValue.slice(0, maxChars);
       }
@@ -55,13 +55,17 @@ export default function Button({
     );
   };
 
-  if (input === 'textarea') {
+  if (input === 'number') {
     return (
       <input
         type='text'
+        inputMode='numeric'
+        pattern='[0-9]*'
         value={title}
+        min={0}
+        max={maxChars ? Number('9'.repeat(maxChars)) : undefined}
         onChange={onInputChange}
-        className={`button button-front button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} text-center`}
+        className={`button button-front button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} text-center appearance-none p-2`}
         role='button'
         style={{
           outlineColor: borderColor,

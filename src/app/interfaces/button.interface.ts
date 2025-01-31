@@ -13,7 +13,7 @@ export interface ButtonInterface {
   underline?: boolean;
   borderColor?: 'white' | 'black';
   type?: Type;
-  input?: 'textarea' | undefined;
+  input?: 'number' | undefined;
   maxChars?: number;
   onClick?: (_payload?: any) => any;
   onChange?: (_payload?: any) => any;
