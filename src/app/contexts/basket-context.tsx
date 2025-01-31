@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, ReactNode, useContext } from 'react';
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
 
 interface BasketItem {
   productName: string,
@@ -9,6 +9,7 @@ interface BasketItem {
 
 interface BasketContextType {
   items: BasketItem[];
+  getItem: (_itemName: string) => BasketItem | null;
   updateItem: (_itemName: string, _value: number) => void;
 }
 
@@ -29,6 +30,24 @@ interface BasketProviderProps {
 
 export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   const [items, setItems] = useState<BasketItem[]>([]);
+
+  useEffect(() => {
+    const productsLocalStr = localStorage.getItem('products');
+    if (productsLocalStr) {
+      const productsLocal = JSON.parse(productsLocalStr);
+      setItems(productsLocal);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(items));
+  }, [items]);
+
+  const getItem = (itemName: string) => {
+    const itemIndexFound = items.findIndex(item => item.productName === itemName);
+
+    return (itemIndexFound !== -1) ? items[itemIndexFound] : null;
+  };
 
   const updateItem = (itemName: string, value: number) => {
     const itemIndexFound = items.findIndex(item => item.productName === itemName);
@@ -62,7 +81,7 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   };
 
   return (
-    <BasketContext.Provider value={{ items, updateItem }}>
+    <BasketContext.Provider value={{ items, getItem, updateItem }}>
       {children}
     </BasketContext.Provider>
   );

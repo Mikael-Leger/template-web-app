@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ProductItem } from '@/app/interfaces/product.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
+import { useBasket } from '@/app/contexts/basket-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
 import { capitalizeFirstLetter } from '@/app/services/formatter';
@@ -29,8 +30,17 @@ interface Action {
 
 export default function Product({item, onBasketChange}: ProductProps) {
   const {isMobile} = useIsMobile();
+  const {getItem} = useBasket();
 
   const [numberOfTimesInBasket, setNumberOfTimesInBasket] = useState<number>(0);
+
+  useEffect(() => {
+    const itemInList = getItem(item.title);
+    if (itemInList) {
+      setNumberOfTimesInBasket(itemInList.number);
+    }
+    
+  }, []);
 
   const getImageHeight = () => {
     return isMobile ? 200 : 300;
