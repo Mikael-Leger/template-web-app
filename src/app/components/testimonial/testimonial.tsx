@@ -135,7 +135,7 @@ export function Testimonials({delayMs}: TestimonialsProps) {
 
           return;
         }
-        // handleNewIndex();
+        handleNewIndex();
       }, delayMs);
 
       return () => clearInterval(interval);

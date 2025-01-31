@@ -3,7 +3,7 @@ import React from 'react';
 import { Type } from '../types/type';
 
 export interface ButtonInterface {
-  title?: string;
+  title?: string | number;
   icon?: {
     orientation?: 'start' | 'end';
     node: React.ReactNode;
@@ -13,7 +13,10 @@ export interface ButtonInterface {
   underline?: boolean;
   borderColor?: 'white' | 'black';
   type?: Type;
-  onClick: (_payload?: any) => any;
+  input?: 'textarea' | undefined;
+  maxChars?: number;
+  onClick?: (_payload?: any) => any;
+  onChange?: (_payload?: any) => any;
 }
 
 export interface DescriptionAndImageButton extends ButtonInterface {
