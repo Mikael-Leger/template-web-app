@@ -11,7 +11,7 @@
     gap: var(--inner-x);
   }
   
-  &:hover {
+  &:hover:not(.disabled) {
     filter: brightness(120%);
     -webkit-filter: brightness(120%);
   }

@@ -8,8 +8,10 @@ import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import './sheet.scss';
 
 interface CellType {
-  value: (string | number);
+  title?: (string | number);
   editable?: boolean;
+  onClick?: (_payload: any) => void;
+  icon?: string;
 };
 
 interface SheetProps {
@@ -40,29 +42,40 @@ export default function Sheet({items, headers, footers, colWidth, width}: SheetP
           width: length !== 1 ? `${colWidth}%` : undefined
         }}
         key={index}>
-        {item.editable ? 
-          getActions(firstCell.value as string).map((action, index) => {
-            return (
-              <div
-                className={'product-image-actions-container-button'}
-                key={index}>
-                <Button
-                  icon={{
-                    node: action.iconName ? <DynamicIcon iconName={action.iconName} size={18}/> : undefined
-                  }}
-                  input={action.input}
-                  backgroundColor= 'secondary'
-                  maxChars={action.maxChars}
-                  title={action.title}
-                  round={action.round}
-                  underline
-                  disabled={action.hide}
-                  onClick={action.onClick}
-                  onChange={action.onChange}/>
-              </div>
-            );
-          })
-          : item.value}
+        {item.onClick && (
+          <Button
+            title={item.title ? item.title : undefined}
+            icon={item.icon ? {
+              node: <DynamicIcon iconName={item.icon}/>
+            } : undefined}
+            onClick={item.onClick}
+            underline/>
+        )}
+        {
+          item.editable
+            ? getActions(firstCell.title as string).map((action, index) => {
+              return (
+                <div
+                  className={'product-image-actions-container-button'}
+                  key={index}>
+                  <Button
+                    icon={{
+                      node: action.iconName ? <DynamicIcon iconName={action.iconName} size={18}/> : undefined
+                    }}
+                    input={action.input}
+                    backgroundColor= 'secondary'
+                    maxChars={action.maxChars}
+                    title={action.title}
+                    round={action.round}
+                    underline
+                    disabled={action.hide}
+                    onClick={action.onClick}
+                    onChange={action.onChange}/>
+                </div>
+              );
+            })
+            : item.title
+        }
       </div>
     );
   };
@@ -81,17 +94,17 @@ export default function Sheet({items, headers, footers, colWidth, width}: SheetP
     return (
       array.map((item, rowIndex) =>
         renderRow(item, rowIndex)
-      )      
+      )
     );
   };
 
   return (
     <div className='sheet flex flex-col' style={{width: `${width}vw`}}>
-      {renderRow(headers.map(header => ({value: header})))}
+      {renderRow(headers.map(header => ({title: header})))}
       <Separator/>
       {renderArray(items)}
       <Separator/>
-      {renderRow(footers.map(footer => ({value: footer})))}
+      {renderRow(footers.map(footer => ({title: footer})))}
     </div>
   );
 }

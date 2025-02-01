@@ -16,7 +16,7 @@ import Layout from '../components/layout/layout';
 export default function OrderPage() {
   const router = useRouter();
 
-  const {items, getItem, clearItems} = useBasket();
+  const {items, getItem, clearItems, deleteItem} = useBasket();
 
   const getProductFromName = (productName: string) => {
     const productFound = productsJson.find(product => product.title === productName);
@@ -34,12 +34,13 @@ export default function OrderPage() {
     if (!item || !product) return [];
 
     const orderItem = [];
-    orderItem.push({value: capitalizeFirstLetter(product.title)});
-    orderItem.push({value: item.number, editable: true});
+    orderItem.push({title: capitalizeFirstLetter(product.title)});
+    orderItem.push({title: item.number, editable: true});
     if (product.price) {
-      orderItem.push({value: `${product.price.toFixed(2)}€`});
-      orderItem.push({value: `${(product.price * item.number).toFixed(2)}€`});
+      orderItem.push({title: `${product.price.toFixed(2)}€`});
+      orderItem.push({title: `${(product.price * item.number).toFixed(2)}€`});
     }
+    orderItem.push({icon: 'BsTrash3', onClick:(() => deleteItem(productName))});
 
     return orderItem;
   };
@@ -78,7 +79,7 @@ export default function OrderPage() {
               node:
               <Sheet
                 items={getAllProducts()}
-                headers={['Nom', 'Nombre', 'Prix', 'Prix total']}
+                headers={['Nom', 'Nombre', 'Prix', 'Prix total', 'Actions']}
                 footers={[`Prix total de la commande : ${getTotalPrice()}€`]}
                 colWidth={15}
                 width={50}/>

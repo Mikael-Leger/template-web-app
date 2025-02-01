@@ -25,6 +25,7 @@ interface BasketContextType {
   items: BasketItem[];
   getItem: (_itemName: string) => BasketItem | null;
   updateItem: (_itemName: string, _value: number | string) => void;
+  deleteItem: (_itemName: string) => void;
   clearItems: () => void;
   getActions: (_itemName: string, _displayBuy?: boolean) => Action[];
   getNumberOfItemsInBasket: () => number;
@@ -84,13 +85,10 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
     const itemIndexFound = items.findIndex(item => item.productName === itemName);
     if (itemIndexFound !== -1) {
       if (items[itemIndexFound].number >= 999 && value > 0) return;
-      if (items[itemIndexFound].number + value < 0) {
-        setItems(prevItems => {
-          const updatedItems = [...prevItems];
-          updatedItems.splice(itemIndexFound, 1);
 
-          return updatedItems;
-        });
+      if (items[itemIndexFound].number + value < 0) {
+        deleteItem(itemName);
+
       } else {
         setItems(prevItems => {
           const updatedItems = [...prevItems];
@@ -99,6 +97,7 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
           return updatedItems;
         });
       }
+
     } else {
       setItems(prevItems => {
         const updatedItems = [...prevItems];
@@ -110,6 +109,18 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
         return updatedItems;
       });
     }
+  };
+
+  const deleteItem = (itemName: string) => {
+    const itemIndexFound = items.findIndex(item => item.productName === itemName);
+    if (itemIndexFound === -1) return;
+
+    setItems(prevItems => {
+      const updatedItems = [...prevItems];
+      updatedItems.splice(itemIndexFound, 1);
+
+      return updatedItems;
+    });
   };
 
   const getActions = (itemName: string, displayBuy: boolean = false): Action[] => {
@@ -155,7 +166,7 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   };
 
   return (
-    <BasketContext.Provider value={{ items, getItem, updateItem, clearItems, getActions, getNumberOfItemsInBasket }}>
+    <BasketContext.Provider value={{ items, getItem, updateItem, deleteItem, clearItems, getActions, getNumberOfItemsInBasket }}>
       {children}
     </BasketContext.Provider>
   );
