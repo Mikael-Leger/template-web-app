@@ -323,7 +323,7 @@ export default function HomePage() {
                 onClick: () => handleItemClick('/products'),
                 images: [
                   {
-                    path: '/images/products/sample_1.png',
+                    path: '/images/showcases/products/sample_1.png',
                     style: {
                       width: 120,
                       top: 20,
@@ -343,7 +343,7 @@ export default function HomePage() {
                     ]
                   },
                   {
-                    path: '/images/products/sample_2.png',
+                    path: '/images/showcases/products/sample_2.png',
                     style: {
                       width: 70,
                       bottom: 10,
@@ -362,7 +362,7 @@ export default function HomePage() {
                     ]
                   },
                   {
-                    path: '/images/products/sample_3.png',
+                    path: '/images/showcases/products/sample_3.png',
                     style: {
                       width: 100,
                       bottom: 0,
@@ -388,7 +388,7 @@ export default function HomePage() {
                 images:
                 [
                   {
-                    path: '/images/contact/sample_1.png',
+                    path: '/images/showcases/contact/sample_1.png',
                     style: {
                       width: 80,
                       top: 30,
@@ -406,7 +406,7 @@ export default function HomePage() {
                     ]
                   },
                   {
-                    path: '/images/contact/sample_2.png',
+                    path: '/images/showcases/contact/sample_2.png',
                     style: {
                       width: 60,
                       top: 40,
@@ -424,7 +424,7 @@ export default function HomePage() {
                     ]
                   },
                   {
-                    path: '/images/contact/sample_3.png',
+                    path: '/images/showcases/contact/sample_3.png',
                     style: {
                       width: 120,
                       left: '50%',
@@ -449,7 +449,7 @@ export default function HomePage() {
                 images:
                 [
                   {
-                    path: '/images/order/sample_1.png',
+                    path: '/images/showcases/order/sample_1.png',
                     style: {
                       width: 180,
                       bottom: 0,
@@ -467,7 +467,7 @@ export default function HomePage() {
                     ]
                   },
                   {
-                    path: '/images/order/sample_2.png',
+                    path: '/images/showcases/order/sample_2.png',
                     style: {
                       width: 40,
                       bottom: 70,

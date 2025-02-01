@@ -61,6 +61,14 @@ body {
   gap: var(--inner-y) var(--inner-x);
 }
 
+.padding-inner {
+  padding: var(--inner-y) var(--inner-x);
+}
+
+.padding-outer {
+  padding: var(--outer-y) var(--outer-x);
+}
+
 @layer base {
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

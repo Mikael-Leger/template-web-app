@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import type { IconType } from 'react-icons';
+import { IconType } from 'react-icons';
+
+import { useIcons } from '@/app/contexts/icons-context';
 
 import './dynamic-icon.scss';
 
@@ -10,24 +12,26 @@ interface DynamicIconProps {
 }
 
 const DynamicIcon = ({ iconName, color = 'none', size = undefined }: DynamicIconProps) => {
+  const {icons} = useIcons();
+
   const [Icon, setIcon] = useState<IconType | null>(null);
 
   useEffect(() => {
-    const loadIcon = async () => {
-      try {
-        const iconModule = await import('react-icons/bs');
-        
-        setIcon(() => iconModule[iconName  as keyof typeof iconModule]);
+    const loadIcon = () => {
+      const Icon = icons[iconName as keyof typeof icons] as IconType | undefined;
+      if (!Icon) {
+        console.error(`Icon ${iconName} not found`);
 
-      } catch (error) {
-        console.error(`Icon ${iconName} not found`, error);
+        return;
       }
+        
+      setIcon(() => Icon);
     };
 
     loadIcon();
   }, [iconName]);
 
-  if (!Icon) return null;
+  if (!Icon) return <span className='icon-placeholder'></span>;
 
   return <Icon
     className={`dynamic-icon-${color}`}

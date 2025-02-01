@@ -4,7 +4,6 @@
   position: relative;
   font-weight: var(--font-weight-2);
   font-size: var(--font-size-2);
-  text-transform: capitalize;
 
   &-front {
     position: relative;
@@ -41,6 +40,16 @@
 
     .button-front {
       padding: var(--inner-y);
+    }
+  }
+
+  &.input {
+    &-primary {
+      background-color: var(--primary);
+    }
+
+    &-secondary {
+      background-color: var(--secondary);
     }
   }
 
@@ -121,5 +130,9 @@
     &.background {
       background-color: var(--error);
     }
+  }
+
+  &.disabled {
+    color: var(--grey);
   }
 }

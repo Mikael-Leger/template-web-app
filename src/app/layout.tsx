@@ -5,6 +5,7 @@ import React from 'react';
 import { IsMobileProvider } from './contexts/mobile-context';
 import { LanguageProvider } from './contexts/language-context';
 import { BasketProvider } from './contexts/basket-context';
+import { IconsProvider } from './contexts/icons-context';
 import Navbar from './components/navbar/navbar';
 import PageContent from './components/page-content/page-content';
 import Basket from './components/basket/basket';
@@ -39,14 +40,16 @@ export default function RootLayout({
       >
         <IsMobileProvider>
           <LanguageProvider>
-            <BasketProvider>
-              <Navbar/>
-              <PageContent>
-                {children}
-              </PageContent>
-              <Basket/>
-              <Footer/>
-            </BasketProvider>
+            <IconsProvider>
+              <BasketProvider>
+                <Navbar/>
+                <PageContent>
+                  {children}
+                </PageContent>
+                <Basket/>
+                <Footer/>
+              </BasketProvider>
+            </IconsProvider>
           </LanguageProvider>
         </IsMobileProvider>
       </body>

@@ -9,16 +9,14 @@ import { useBasket } from '@/app/contexts/basket-context';
 import './basket.scss';
 
 export default function Basket() {
-  const {items} = useBasket();
+  const {getNumberOfItemsInBasket} = useBasket();
 
   const router = useRouter();
   const pathname = usePathname();
 
-  if (items.length <= 0 || pathname === '/order') return;
+  const numberOfItems = getNumberOfItemsInBasket();
 
-  const numberOfItems = () => {
-    return items.reduce((acc, item) => acc + item.number, 0);
-  };
+  if (numberOfItems <= 0 || pathname === '/order') return;
 
   const handleClick = () => {
     const url = '/order';
@@ -29,7 +27,7 @@ export default function Basket() {
     <div className='basket fixed'>
       <div className='basket-content flex flex-row flex-gap items-center justify-center' onClick={handleClick}>
         <div className='basket-content-icon text-center flex flex-col items-center justify-center'>
-          {numberOfItems()}
+          {numberOfItems}
           <DynamicIcon iconName='BsBasket' size={24}/>
         </div>
         <div className='basket-content-title'>

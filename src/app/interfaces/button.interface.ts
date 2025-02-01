@@ -12,9 +12,11 @@ export interface ButtonInterface {
   size?: 'small' | 'medium' |'big';
   underline?: boolean;
   borderColor?: 'white' | 'black';
+  backgroundColor?: 'primary' | 'secondary' | 'white';
   type?: Type;
   input?: 'number' | undefined;
   maxChars?: number;
+  disabled?: boolean;
   onClick?: (_payload?: any) => any;
   onChange?: (_payload?: any) => any;
 }

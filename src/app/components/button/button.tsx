@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ButtonInterface } from '@/app/interfaces/button.interface';
+import { capitalizeFirstLetter } from '@/app/services/formatter';
 
 import './button.scss';
 
@@ -11,16 +12,18 @@ export default function Button({
   onChange,
   round,
   borderColor = 'black',
+  backgroundColor = 'white',
   type = 'primary',
   size = 'small',
   underline = false,
   input = undefined,
   maxChars = undefined,
+  disabled = false,
 }: ButtonInterface) {
   const onButtonClick = () => {
-    if (onClick) {
-      onClick();
-    }
+    if (!onClick || disabled) return;
+    
+    onClick();
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +46,7 @@ export default function Button({
         )}
         {title && (
           <div className='button-front-text'>
-            {title}
+            {capitalizeFirstLetter(title.toString())}
           </div>
         )}
         {icon && icon.orientation !== 'start' && (
@@ -61,11 +64,11 @@ export default function Button({
         type='text'
         inputMode='numeric'
         pattern='[0-9]*'
-        value={title}
+        value={capitalizeFirstLetter(title?.toString() ?? '')}
         min={0}
         max={maxChars ? Number('9'.repeat(maxChars)) : undefined}
         onChange={onInputChange}
-        className={`button button-front button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} text-center appearance-none p-2`}
+        className={`button button-front button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} input-${backgroundColor} text-center appearance-none p-2`}
         role='button'
         style={{
           outlineColor: borderColor,
@@ -77,10 +80,11 @@ export default function Button({
 
   return (
     <button
-      className={`button button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type}`}
+      className={`button button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'}`}
       role='button'
       style={{ outlineColor: borderColor }}
       onClick={onButtonClick}
+      disabled={disabled}
     >
       {buttonContent()}
     </button>

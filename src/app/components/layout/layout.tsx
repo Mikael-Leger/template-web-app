@@ -2,17 +2,16 @@ import React from 'react';
 
 import { useIsMobile } from '@/app/contexts/mobile-context';
 
-import './layout.scss';
-
 interface LayoutProps {
   orientation?: 'row' | 'col';
   items: {
     space?: number,
     node: React.ReactNode;
   }[];
+  className?: string;
 }
 
-export default function Layout({items, orientation = 'row'}: LayoutProps) {
+export default function Layout({items, className, orientation = 'row'}: LayoutProps) {
   const {isMobile} = useIsMobile();
 
   const getFlexOrientation = () => {
@@ -22,7 +21,7 @@ export default function Layout({items, orientation = 'row'}: LayoutProps) {
   };
 
   return (
-    <div className={`layout flex ${getFlexOrientation()}`}>
+    <div className={`layout flex ${getFlexOrientation()} ${className}`}>
       {items.map((item, index) => (
         <div className='flex flex-col' style={{flex: item.space}} key={index}>{item.node}</div>
       ))}

@@ -8,10 +8,10 @@ import LanguageText from '@/app/interfaces/language-text.interface';
 export type LanguageType = 'en' | 'baguette';
 
 interface LanguageContextType {
-    language: LanguageType;
-    setLanguage: (_value: LanguageType) => void;
-    getTextByComponent: (_component: string, _index: number) => string;
-    getText: (_index: number) => string;
+  language: LanguageType;
+  setLanguage: (_value: LanguageType) => void;
+  getTextByComponent: (_component: string, _index: number) => string;
+  getText: (_index: number) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
