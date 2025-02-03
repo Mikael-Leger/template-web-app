@@ -1,4 +1,8 @@
 .dynamic-icon {
+  &-primary {
+    color: var(--primary);
+  }
+
   &-red {
     color: var(--error);
   }

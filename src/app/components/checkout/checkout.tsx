@@ -22,7 +22,11 @@ export default function Checkout() {
   const [promotion, setPromotion] = useState<number | null>(0);
 
   const checkPromoCode = (code: string) => {
-    const newPromotion = (code === 'UNICORN') ? .3 : null;
+    let newPromotion = null;
+    if (code === 'LAPATEDOREE10') newPromotion = .1;
+    if (code === 'LAPATEDOREE30') newPromotion = .3;
+    if (code === 'UNICORN') newPromotion = .9999;
+
     setPromotion(newPromotion);
   };
 

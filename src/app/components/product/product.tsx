@@ -62,7 +62,7 @@ export default function Product({item}: ProductProps) {
                     icon={{
                       node: action.iconName ? <DynamicIcon iconName={action.iconName}/> : undefined
                     }}
-                    size='small'
+                    size={action.size}
                     input={action.input}
                     maxChars={action.maxChars}
                     title={action.title}

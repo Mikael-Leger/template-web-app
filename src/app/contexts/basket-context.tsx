@@ -8,14 +8,15 @@ interface Action {
   title?: string | number;
   iconName?: string;
   round?: boolean;
-  onClick?: (_payload: any) => any;
-  onChange?: (_payload: any) => any;
   hide?: boolean;
   left?: string;
   right?: string;
   zIndex?: number;
   input?: 'number' | undefined;
   maxChars?: number;
+  size?: 'small' | 'medium' | 'big';
+  onClick?: (_payload: any) => any;
+  onChange?: (_payload: any) => any;
 }
 
 interface BasketItem {
@@ -244,6 +245,8 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
         hide: itemInBasket === null || (!displayBuy && itemInBasket?.number === 0),
         left: '20px',
         onClick: () => updateItem(itemNameFormatted, -1),
+        size: 'small',
+        round: true
       },
       {
         title: itemInBasket?.number,
@@ -261,6 +264,8 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
         hide: itemInBasket === null || itemInBasket?.number === 999,
         right: '20px',
         onClick: () => updateItem(itemNameFormatted, 1),
+        size: 'small',
+        round: true
       }
     ];
 

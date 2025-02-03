@@ -7,7 +7,7 @@ import './dynamic-icon.scss';
 
 interface DynamicIconProps {
   iconName: string;
-  color?: 'red' | 'none';
+  color?: 'primary' | 'red' | 'none';
   size?: number | undefined;
 }
 
