@@ -8,7 +8,11 @@ import InputText from '../input-text/input-text';
 
 import './checkout.scss';
 
-export default function Checkout() {
+interface CheckoutProps {
+  submit: () => void;
+}
+
+export default function Checkout({submit}: CheckoutProps) {
   const {
     getNumberOfItemsInBasket,
     getSubTotalPrice,
@@ -107,6 +111,7 @@ export default function Checkout() {
           </div>
           <div className='checkout-content-promo-code'>
             <InputText
+              border
               placeholder={'Saisir un code promo'}
               submit={checkPromoCode}
               color={promotion === null ? 'error' : undefined}/>
@@ -126,7 +131,7 @@ export default function Checkout() {
         </div>
       </div>
       <div className='checkout-actions'>
-        <Button title={'Continuer'} fullWidth/>
+        <Button title={'Continuer'} fullWidth onClick={submit}/>
       </div>
     </div>
   );

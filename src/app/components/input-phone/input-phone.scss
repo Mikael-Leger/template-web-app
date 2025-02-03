@@ -1,0 +1,48 @@
+.input-phone {
+  border: 1px solid var(--color-5);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-2);
+
+  > input {
+    background: transparent;
+    padding: var(--inner-y) var(--inner-x);
+    padding-left: 128px;
+    border-radius: var(--border-radius);
+
+    &:focus {
+      outline: 2px solid var(--color-5);
+    }
+  }
+
+  &-error {
+    color: var(--error);
+  }
+
+  &-codes {
+    top: 49%;
+    left: 6px;
+    transform: translateY(-50%);
+
+    &-flag {
+      width: 26px;
+      height: 20px;
+      border-radius: var(--border-radius-actions);
+      overflow: hidden;
+
+      img {
+        object-fit: cover;
+      }
+    }
+
+    &-list {
+      bottom: 100%;
+      height: 150px;
+      background-color: var(--white);
+      padding: var(--inner-y) var(--inner-x);
+      border: 1px solid var(--color-5);
+      border-radius: var(--border-radius);
+      overflow-y: scroll;
+      user-select: none;
+    }
+  }
+}

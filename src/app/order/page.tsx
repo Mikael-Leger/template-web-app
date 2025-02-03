@@ -6,10 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import Card from '../components/card/card';
 import PageBackground from '../components/page-background/page-background';
-import Layout from '../components/layout/layout';
-import ProductsList from '../components/products-list/products-list';
-import Checkout from '../components/checkout/checkout';
-import Title from '../components/title/title';
+import OrderProcess from '../components/order-process/order-process';
 
 export default function OrderPage() {
   const router = useRouter();
@@ -32,21 +29,7 @@ export default function OrderPage() {
     <div className='order flex flex-col'>
       <PageBackground imagePath='images/order/sample_1.png'/>
       <Card size='big'>
-        <Title text='Votre Panier' size='big' orientation='start' underline/>
-        <Layout
-          className={'justify-between flex-gap-outer'}
-          orientation='row'
-          items={[
-            {
-              node:
-              <ProductsList/>,
-              className: 'flex-1'
-            },
-            {
-              node:
-              <Checkout/>
-            }
-          ]}/>
+        <OrderProcess/>
       </Card>
     </div>
   );

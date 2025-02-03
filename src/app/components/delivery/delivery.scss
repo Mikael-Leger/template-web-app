@@ -1,0 +1,9 @@
+.delivery {
+  &-container {
+    &-content {
+      &-text {
+        padding: var(--inner-y) var(--inner-x);
+      }
+    }
+  }
+}

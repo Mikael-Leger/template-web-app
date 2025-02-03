@@ -11,6 +11,7 @@ export default function Separator({height = 1, width = 100}: SeparatorProps) {
 
   return (
     <div className='separator' style={{
+      minHeight: height,
       height: height,
       width: `${width}%`
     }}>
