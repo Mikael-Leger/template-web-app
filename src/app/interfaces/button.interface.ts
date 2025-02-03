@@ -13,7 +13,10 @@ export interface ButtonInterface {
   underline?: boolean;
   borderColor?: 'white' | 'black';
   backgroundColor?: 'primary' | 'secondary' | 'white';
+  fullHeight?: boolean;
+  fullWidth?: boolean;
   type?: Type;
+  padding?: boolean;
   input?: 'number' | undefined;
   maxChars?: number;
   disabled?: boolean;

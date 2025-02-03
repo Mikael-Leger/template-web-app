@@ -7,6 +7,7 @@ interface LayoutProps {
   items: {
     space?: number,
     node: React.ReactNode;
+    className?: string;
   }[];
   className?: string;
 }
@@ -23,7 +24,7 @@ export default function Layout({items, className, orientation = 'row'}: LayoutPr
   return (
     <div className={`layout flex ${getFlexOrientation()} ${className}`}>
       {items.map((item, index) => (
-        <div className='flex flex-col' style={{flex: item.space}} key={index}>{item.node}</div>
+        <div className={`flex flex-col ${item.className}`} style={{flex: item.space}} key={index}>{item.node}</div>
       ))}
     </div>
   );

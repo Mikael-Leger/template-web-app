@@ -1,0 +1,14 @@
+.input-text {
+  border: 1px solid var(--grey);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-2);
+
+  input {
+    background: transparent;
+    padding: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
+  }
+
+  &-error {
+    color: var(--error);
+  }
+}

@@ -12,4 +12,15 @@ const parseDate = (dateStr: string): Date => {
   return new Date(year, month - 1, day);
 };
 
-export { formatDate, parseDate };
+const getNextBusinessDay = (date: Date = new Date()): Date => {
+  const next = new Date(date);
+  next.setDate(next.getDate() + 1);
+
+  while (next.getDay() === 0 || next.getDay() === 6) {
+    next.setDate(next.getDate() + 1);
+  }
+
+  return next;
+};
+
+export { formatDate, parseDate, getNextBusinessDay };

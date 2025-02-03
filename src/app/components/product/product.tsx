@@ -8,6 +8,7 @@ import Button from '../button/button';
 import { capitalizeFirstLetter } from '@/app/services/formatter';
 
 import './product.scss';
+import Price from '../price/price';
 
 interface ProductProps {
   item: ProductItem;
@@ -61,6 +62,7 @@ export default function Product({item}: ProductProps) {
                     icon={{
                       node: action.iconName ? <DynamicIcon iconName={action.iconName}/> : undefined
                     }}
+                    size='small'
                     input={action.input}
                     maxChars={action.maxChars}
                     title={action.title}
@@ -78,7 +80,9 @@ export default function Product({item}: ProductProps) {
           {capitalizeFirstLetter(item.title)}
         </div>
         <div className='product-details-price'>
-          {item.price}€
+          {item.price && (
+            <Price price={item.price} priceByDosage={item.priceByDosage}/>
+          )}
         </div>
         <div className='product-details-description'>
           {item.short_description}

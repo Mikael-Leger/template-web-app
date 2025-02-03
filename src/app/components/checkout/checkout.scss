@@ -1,0 +1,35 @@
+.checkout {
+  gap: var(--outer-y) var(--outer-x);
+  
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--inner-y) var(--inner-x);
+    padding: var(--inner-y) 0;
+    font-weight: var(--font-weight-2);
+  }
+
+  &-content {
+    gap: var(--inner-y) var(--inner-x);
+
+    &-details {
+      &-address, &-date {
+        color: var(--grey);
+        font-size: var(--font-size-2);
+      }
+    }
+
+    &-promo {
+      &-code {
+        &-details {
+          width: 300px;
+          padding: var(--inner-y) 0;
+
+          &-error {
+            color: var(--error);
+          }
+        }
+      }
+    }
+  }
+}

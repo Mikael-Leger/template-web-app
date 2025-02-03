@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import { ProductItem } from '../interfaces/product.interface';
+import productItems from '@/app/data/products.json';
 
 interface Action {
   title?: string | number;
@@ -29,6 +31,13 @@ interface BasketContextType {
   clearItems: () => void;
   getActions: (_itemName: string, _displayBuy?: boolean) => Action[];
   getNumberOfItemsInBasket: () => number;
+  getItemsInBasket: () => {product: ProductItem, number: number}[];
+  getSubTotalPrice: (_promotion?: number) => string;
+  getTotalPrice: (_promotion?: number) => string;
+  getServiceCostPrice: () => string;
+  getDeliveryCostPrice: (_number?: number) => string;
+  getReductionsPrice: (_promotion?: number) => string;
+  getPromotionsPrice: (_promotion?: number) => string;
 }
 
 const BasketContext = createContext<BasketContextType | undefined>(undefined);
@@ -45,6 +54,13 @@ export const useBasket = (): BasketContextType => {
 interface BasketProviderProps {
     children: ReactNode;
 }
+
+const COST_SERVICE = 2.05;
+const COST_DELIVERY: Record<string, number> = {
+  5: 1.45,
+  10: 2.10,
+  20: 3.55
+};
 
 export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   const [items, setItems] = useState<BasketItem[]>([]);
@@ -73,6 +89,101 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
 
   const getNumberOfItemsInBasket = () => {
     return items.reduce((acc, item) => acc + item.number, 0);
+  };
+
+  const getItemsInBasket = () => {
+    const namesList = items.map(item => item.productName);
+
+    return productItems.filter(product => namesList.includes(product.title))
+      .map(product => {
+        const basketItem = items.find(item => item.productName === product.title);
+
+        return {
+          product: product,
+          number: basketItem ? basketItem.number : 0
+        };
+      })
+      .sort((a, b) => a.product.title.localeCompare(b.product.title));
+  };
+
+  const getSubTotal = (promotion: number = 0) => {
+    const subtotal = getItemsInBasket().reduce((acc, item) => {
+      const {price} = item.product;
+      const currentPrice = (typeof price === 'number') ? price : price.new;
+
+      return acc + currentPrice * item.number;
+    }, 0);
+
+    return promotion === 0 ? subtotal : subtotal - subtotal * promotion;
+  };
+
+  const getSubTotalPrice = (promotion: number = 0) => {
+    return `${getSubTotal(promotion).toFixed(2)}€`;
+  };
+
+  const getReductions = () => {
+    return getItemsInBasket().reduce((acc, item) => {
+      const {price} = item.product;
+      if (typeof price === 'number') return acc + 0;
+
+      const reduction = price.old - price.new;
+
+      return acc + reduction * item.number;
+    }, 0);
+  };
+
+  const getReductionsPrice = () => {
+    return `${getReductions().toFixed(2)}€`;
+  };
+
+  const getPromotions = (promotion: number = 0) => {
+    const subTotal = getSubTotal();
+
+    return subTotal * promotion;
+  };
+
+  const getPromotionsPrice = (promotion: number = 0) => {
+    return `${getPromotions(promotion).toFixed(2)}€`;
+  };
+
+  const getTotal = (promotion: number = 0) => {
+    return getSubTotal(promotion) + getServiceCost() + (getDeliveryCost() ?? 0);
+  };
+
+  const getTotalPrice = (promotion: number = 0) => {
+    return `${getTotal(promotion).toFixed(2)}€`;
+  };
+
+  const getServiceCost = () => {
+    return COST_SERVICE;
+  };
+
+  const getServiceCostPrice = () => {
+    return `${getServiceCost()}€`;
+  };
+
+  const adjustDistance = (distance: number): number | null => {
+    if (distance === 0) {
+      return null;
+    } else if (distance < 5) {
+      return 5;
+    } else if (distance >= 5 && distance <= 10) {
+      return 10;
+    } else {
+      return 20;
+    }
+  };
+
+  const getDeliveryCost = (distance: number = 0) => {
+    const adjustedDistance = adjustDistance(distance);
+
+    return adjustedDistance ? COST_DELIVERY[adjustedDistance] : null;
+  };
+
+  const getDeliveryCostPrice = (distance: number = 0) => {
+    const deliveryCost = getDeliveryCost(distance);
+
+    return deliveryCost ? `${deliveryCost}€` : '--';
   };
 
   const updateItem = (itemName: string, value: number | string) => {
@@ -166,7 +277,22 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   };
 
   return (
-    <BasketContext.Provider value={{ items, getItem, updateItem, deleteItem, clearItems, getActions, getNumberOfItemsInBasket }}>
+    <BasketContext.Provider value={{
+      items,
+      getItem,
+      updateItem,
+      deleteItem,
+      clearItems,
+      getActions,
+      getNumberOfItemsInBasket,
+      getItemsInBasket,
+      getSubTotalPrice,
+      getTotalPrice,
+      getServiceCostPrice,
+      getDeliveryCostPrice,
+      getReductionsPrice,
+      getPromotionsPrice
+    }}>
       {children}
     </BasketContext.Provider>
   );

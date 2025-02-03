@@ -3,7 +3,12 @@
     "title": "baguette",
     "image": "sample_1.png",
     "short_description": "Lorem ipsum",
-    "price": 0.99,
+    "price": {
+      "new": 0.99,
+      "old": 1.19
+    },
+    "priceByDosage": "0.25€ / Kg",
+    "quantity": "La pièce",
     "tags": [
       "bakery"
     ]
@@ -96,6 +101,7 @@
     "image": "sample_11.png",
     "short_description": "Lorem ipsum",
     "price": 3.14,
+    "priceByDosage": "3.14€ / Kg",
     "tags": [
       "pastry",
       "new"

@@ -14,8 +14,11 @@ export default function Button({
   borderColor = 'black',
   backgroundColor = 'white',
   type = 'primary',
-  size = 'small',
+  size = 'medium',
+  fullHeight = false,
+  fullWidth = false,
   underline = false,
+  padding = true,
   input = undefined,
   maxChars = undefined,
   disabled = false,
@@ -68,7 +71,7 @@ export default function Button({
         min={0}
         max={maxChars ? Number('9'.repeat(maxChars)) : undefined}
         onChange={onInputChange}
-        className={`button button-front button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} input-${backgroundColor} text-center appearance-none p-2`}
+        className={`button button-front button-${size} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} input-${backgroundColor} text-center appearance-none p-2`}
         role='button'
         style={{
           outlineColor: borderColor,
@@ -80,7 +83,7 @@ export default function Button({
 
   return (
     <button
-      className={`button button-${size} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'}`}
+      className={`button button-${size} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${padding && 'button-padding'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'}`}
       role='button'
       style={{ outlineColor: borderColor }}
       onClick={onButtonClick}
