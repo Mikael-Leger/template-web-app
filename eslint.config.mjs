@@ -7,7 +7,7 @@ import pluginImport from 'eslint-plugin-import';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { globals: globals.browser, parser: '@typescript-eslint/parser' } },
+  { languageOptions: { globals: {...globals.browser, ...globals.node}, parser: '@typescript-eslint/parser' } },
   ...tseslint.configs.recommended,
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,

@@ -5,6 +5,7 @@ import Layout from '../layout/layout';
 import ProductsList from '../products-list/products-list';
 import Delivery from '../delivery/delivery';
 import Checkout from '../checkout/checkout';
+import Payment from '../payment/payment';
 
 import './order-process.scss';
 
@@ -46,6 +47,23 @@ export default function OrderProcess() {
         ]}/>
     );
   };
+
+  const renderPayment = () => {
+    return (
+      <Layout
+        className={'justify-between flex-gap-outer'}
+        orientation='row'
+        items={[
+          {
+            node: <Payment/>,
+            className: 'flex-1'
+          },
+          {
+            node: <Checkout submit={goToNextProcess}/>
+          }
+        ]}/>
+    );
+  };
   
   const processuses = [
     {
@@ -57,6 +75,11 @@ export default function OrderProcess() {
       step: 1,
       title: 'Livraison',
       node: renderDelivery()
+    },
+    {
+      step: 2,
+      title: 'Paiement',
+      node: renderPayment()
     }
   ];
 

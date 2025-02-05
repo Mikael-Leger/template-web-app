@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-import DynamicIcon from '../dynamic-icon/dynamic-icon';
-import { formatDate, getNextBusinessDay } from '@/app/services/date';
 import { useBasket } from '@/app/contexts/basket-context';
 import Button from '../button/button';
 import InputText from '../input-text/input-text';
+import CheckoutMainDetails from '../checkout-main-details/checkout-main-details';
 
 import './checkout.scss';
 
@@ -37,22 +36,7 @@ export default function Checkout({submit}: CheckoutProps) {
   return (
     <div className='checkout flex flex-col'>
       <div className='checkout-content flex flex-col'>
-        <div className='checkout-content-details'>
-          <div className='checkout-content-details-title flex flex-row items-center'>
-            <div className='checkout-icon mr-2'>
-              <DynamicIcon iconName='BsTruck' color='primary' size={24}/>
-            </div>
-            <div className='checkout-title'>
-              {'La Pâte dorée - Livraison'}
-            </div>
-          </div>
-          <div className='checkout-content-details-address'>
-            {'0113 Lorem, Ipsum'}
-          </div>
-          <div className='checkout-content-details-date'>
-            {formatDate(getNextBusinessDay())}
-          </div>
-        </div>
+        <CheckoutMainDetails/>
         <div className='checkout-content-subtotal'>
           <div className='checkout-title'>
             <div className='checkout-title-1'>

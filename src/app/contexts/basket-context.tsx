@@ -27,18 +27,19 @@ interface BasketItem {
 interface BasketContextType {
   items: BasketItem[];
   getItem: (_itemName: string) => BasketItem | null;
-  updateItem: (_itemName: string, _value: number | string) => void;
-  deleteItem: (_itemName: string) => void;
-  clearItems: () => void;
   getActions: (_itemName: string, _displayBuy?: boolean) => Action[];
   getNumberOfItemsInBasket: () => number;
   getItemsInBasket: () => {product: ProductItem, number: number}[];
   getSubTotalPrice: (_promotion?: number) => string;
   getTotalPrice: (_promotion?: number) => string;
   getServiceCostPrice: () => string;
-  getDeliveryCostPrice: (_number?: number) => string;
+  getDeliveryCostPrice: () => string;
   getReductionsPrice: (_promotion?: number) => string;
   getPromotionsPrice: (_promotion?: number) => string;
+  updateItem: (_itemName: string, _value: number | string) => void;
+  updateDistance: (_value: number) => void;
+  deleteItem: (_itemName: string) => void;
+  clearItems: () => void;
 }
 
 const BasketContext = createContext<BasketContextType | undefined>(undefined);
@@ -65,6 +66,7 @@ const COST_DELIVERY: Record<string, number> = {
 
 export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   const [items, setItems] = useState<BasketItem[]>([]);
+  const [distance, setDistance] = useState<number>(0);
 
   useEffect(() => {
     const productsLocalStr = localStorage.getItem('products');
@@ -163,28 +165,35 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
     return `${getServiceCost()}€`;
   };
 
-  const adjustDistance = (distance: number): number | null => {
+  const adjustDistance = (): number | null => {
+    console.log('adjust distance ');
+    console.log(distance);
+    
     if (distance === 0) {
       return null;
-    } else if (distance < 5) {
+    } else if (distance < 5000) {
       return 5;
-    } else if (distance >= 5 && distance <= 10) {
+    } else if (distance >= 5000 && distance <= 10000) {
       return 10;
     } else {
       return 20;
     }
   };
 
-  const getDeliveryCost = (distance: number = 0) => {
-    const adjustedDistance = adjustDistance(distance);
+  const getDeliveryCost = () => {
+    const adjustedDistance = adjustDistance();
 
     return adjustedDistance ? COST_DELIVERY[adjustedDistance] : null;
   };
 
-  const getDeliveryCostPrice = (distance: number = 0) => {
-    const deliveryCost = getDeliveryCost(distance);
+  const getDeliveryCostPrice = () => {
+    const deliveryCost = getDeliveryCost();
 
     return deliveryCost ? `${deliveryCost}€` : '--';
+  };
+
+  const updateDistance = (value: number) => {
+    setDistance(value);
   };
 
   const updateItem = (itemName: string, value: number | string) => {
@@ -285,9 +294,6 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
     <BasketContext.Provider value={{
       items,
       getItem,
-      updateItem,
-      deleteItem,
-      clearItems,
       getActions,
       getNumberOfItemsInBasket,
       getItemsInBasket,
@@ -296,7 +302,11 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
       getServiceCostPrice,
       getDeliveryCostPrice,
       getReductionsPrice,
-      getPromotionsPrice
+      getPromotionsPrice,
+      updateItem,
+      updateDistance,
+      deleteItem,
+      clearItems,
     }}>
       {children}
     </BasketContext.Provider>

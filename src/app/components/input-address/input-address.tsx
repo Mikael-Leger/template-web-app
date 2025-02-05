@@ -5,7 +5,8 @@ import Button from '../button/button';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import { FullAddress } from '@/app/interfaces/address.interface';
 import Checkbox from '../checkbox/checkbox';
-import { autocompleteAddress } from '@/app/services/address';
+import { autocompleteAddress, getDistanceBetweenAddresses } from '@/app/services/address';
+import { useBasket } from '@/app/contexts/basket-context';
 
 import './input-address.scss';
 
@@ -15,7 +16,10 @@ interface InputAddressProps {
 }
 
 export default function InputAddress({onSubmit, defaultAddress}: InputAddressProps) {
+  const {updateDistance} = useBasket();
+
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDefaultAddress, setIsDefaultAddress] = useState<boolean>(false);
   const [address, setAddress] = useState<string>('');
   const [zipCode, setZipCode] = useState<string>('');
@@ -23,8 +27,6 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
   const [isAddressAutocompleteVisible, setAddressIsAutocompleteVisible] = useState<boolean>(false);
 
   const refAddress = useRef<HTMLDivElement | null>(null);
-  const refZipCode = useRef<HTMLDivElement | null>(null);
-  const refCity = useRef<HTMLDivElement | null>(null);
   const refFullAddressValid = useRef<boolean>(false);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
  
   const renderAddress = () => {
     return (
-      <div className='input-address-content'>
+      <div className='input-address-content flex flex-row items-center justify-between'>
         <div className='input-address-content-address'>
           {address} - ({zipCode}) {city}
         </div>
@@ -62,13 +64,14 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
           placeholder={formField.placeholder}
           value={formField.value}
           onChange={(value: string) => {
-            if (formField.ref && formField.onClick) {
-              autocompleteAddress(formField.value, formField.ref.current, formField.onClick);
+            if (formField.name === 'address' && formField.onClick) {
+              autocompleteAddress(formField.value, refAddress.current, formField.onClick);
             } 
             if (formField.onChange) {
               formField.onChange(value);
             }
           }}
+          onBlur={() => formField.name === 'address' && setAddressIsAutocompleteVisible(false)}
           border
           required={formField.required}
           disabled={formField.disabled}/>
@@ -76,34 +79,55 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
           className='input-address-content-field-list absolute flex flex-col gap-1'
           style={{
             opacity: formField.hide ? 0 : 1,
-            zIndex: formField.hide ? -1 : 0
+            zIndex: formField.hide ? -1 : 1
           }}
-          ref={formField.ref}/>
+          ref={formField.name === 'address' ? refAddress : undefined}/>
       </div>
     );
   };
 
-  const submitAddress = () => {
+  const submitAddress = async () => {
     if (!isFullAddressValid()) return;
 
     setIsEditing(false);
 
     if (!onSubmit) return;
 
+    setIsLoading(true);
+
     const fullAddress: FullAddress = {
+      number: '1',
       address,
       zipCode,
       city
     };
     onSubmit(fullAddress);
+    const companyFullAddress: FullAddress = {
+      number: '16',
+      address: 'Rue Brederode',
+      zipCode: '1000',
+      city: 'Brussels'
+    };
+    const data = await getDistanceBetweenAddresses(fullAddress, companyFullAddress);
+    updateDistance(data.distance);
+    setIsLoading(false);
+  };
+
+  const renderLoading = () => {
+    return (
+      <div className='input-address-content-loading w-full h-full absolute'>
+        {/* <Loading/> */}
+      </div>
+    );
   };
 
   const renderEdit = () => {
     return (
-      <form className='input-address-content flex flex-col flex-gap' action={submitAddress}>
+      <form className='input-address-content flex flex-col flex-gap relative' action={submitAddress}>
         {!isDefaultAddress && formFields.map(formField => renderFormField(formField))}
         {renderCheckbox()}
         <Button title={'valider'} buttonType={'submit'}/>
+        {isLoading && renderLoading()}
       </form>
     );
   };
@@ -132,7 +156,6 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
       placeholder: 'Ex: Rue du la Pâte Dorée, 12',
       value: address,
       required: true,
-      ref: refAddress,
       hide: !isAddressAutocompleteVisible,
       onChange: (value: string) => {
         if (refFullAddressValid.current) {
@@ -159,7 +182,6 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
       placeholder: 'Ex: 1040',
       value: zipCode,
       required: true,
-      ref: refZipCode,
       hide: true,
       onChange: (value: string) => {
         setZipCode(value);
@@ -171,7 +193,6 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
       placeholder: 'Ex: Bruxelles',
       value: city,
       required: true,
-      ref: refCity,
       hide: true,
       onChange: (value: string) => {
         setCity(value);

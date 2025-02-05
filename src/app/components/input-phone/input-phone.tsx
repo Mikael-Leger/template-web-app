@@ -99,7 +99,8 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
         type='tel'
         placeholder={'1 23 45 67 89'}
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}/>
+        onChange={(e) => setInputValue(e.target.value)}
+        onBlur={() => setIsCodesListVisible(false)}/>
     </div>
   );
 }

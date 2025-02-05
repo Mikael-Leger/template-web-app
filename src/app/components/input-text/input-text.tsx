@@ -19,11 +19,12 @@ export interface InputTextProps {
   hide?: boolean;
   ref?: RefObject<HTMLDivElement | null>;
   submit?: (_payload: any) => void;
+  onBlur?: () => void;
   onChange?: (_value: string) => void;
   onClick?: (_value: FullAddress) => void;
 }
 
-export default function InputText({name, title, placeholder, value, required, disabled, color = 'black', border = false, submit, onChange}: InputTextProps) {
+export default function InputText({name, title, placeholder, value, required, disabled, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
   const [inputValue, setInputValue] = useState<string>(value ?? '');
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function InputText({name, title, placeholder, value, required, di
           value={value ? value : inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           required={required}
+          onBlur={() => onBlur && onBlur()}
           disabled={disabled}/>
         {disabled && (
           <div className='input-text-content-disabled absolute'>
