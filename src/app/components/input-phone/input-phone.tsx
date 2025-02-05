@@ -33,8 +33,8 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
     }
   }, []);
 
-  const openCodes = () => {
-    setIsCodesListVisible(true);
+  const switchCodesListVisibility = () => {
+    setIsCodesListVisible(prevState => !prevState);
   };
 
   const formatPhoneCode = (country: Country) => {
@@ -64,7 +64,7 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
 
   return (
     <div className={`input-phone flex flex-row justify-between input-phone-${color} relative`}>
-      <div className='input-phone-codes flex flex-row gap-2 justify-center items-center absolute cursor-pointer' onClick={openCodes}>
+      <div className='input-phone-codes flex flex-row gap-2 justify-center items-center absolute cursor-pointer' onClick={switchCodesListVisibility}>
         <div className='input-phone-codes-flag'>
           <img src={`icons/flags/${currentCode.value.toLowerCase()}.svg`}/>
         </div>
@@ -72,7 +72,7 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
           {currentCode.code}
         </div>
         <div className='input-phone-codes-actiopn'>
-          <DynamicIcon iconName='BsChevronDown'/>
+          <DynamicIcon iconName={isCodesListVisible ? 'BsChevronUp' : 'BsChevronDown'}/>
         </div>
       </div>
       {isCodesListVisible && (
@@ -80,7 +80,7 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
           <div className='input-phone-codes-list-search flex flex-row gap-2 items-center'>
             <DynamicIcon iconName='BsSearch'/>
             <div className='input-phone-codes-list-search-text'>
-              <InputText placeholder='Rechercher' onChange={refreshPhoneCodes}/>
+              <InputText name='search' placeholder='Rechercher' onChange={refreshPhoneCodes}/>
             </div>
           </div>
           <Separator/>

@@ -11,6 +11,7 @@ export default function Button({
   onClick,
   onChange,
   round,
+  buttonType,
   borderColor = 'black',
   backgroundColor = 'white',
   type = 'primary',
@@ -88,6 +89,7 @@ export default function Button({
       style={{ outlineColor: borderColor }}
       onClick={onButtonClick}
       disabled={disabled}
+      type={buttonType}
     >
       {buttonContent()}
     </button>

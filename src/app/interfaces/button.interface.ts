@@ -20,6 +20,7 @@ export interface ButtonInterface {
   input?: 'number' | undefined;
   maxChars?: number;
   disabled?: boolean;
+  buttonType?: 'submit';
   onClick?: (_payload?: any) => any;
   onChange?: (_payload?: any) => any;
 }

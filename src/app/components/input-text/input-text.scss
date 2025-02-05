@@ -1,31 +1,44 @@
 .input-text {
   font-size: var(--font-size-2);
 
-  input {
-    background: transparent;
-    padding: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
+  &-content {
+    input {
+      background: transparent;
+      padding: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
+  
+      &:focus, &:focus-visible {
+        outline: none;
+      }
 
-    &:focus, &:focus-visible {
-      outline: none;
-    }
-  }
-
-  &-border {
-    border: 1px solid var(--grey);
-    border-radius: var(--border-radius);
-  }
-
-  &-padding {
-    &-small {
-
+      &:disabled {
+        background-color: var(--disabled);
+        user-select: none;
+      }
     }
 
-    &-medium {
-
+    &-disabled {
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
     }
-  }
-
-  &-error {
-    color: var(--error);
+  
+    &-border {
+      border: 1px solid var(--grey);
+      border-radius: var(--border-radius);
+    }
+  
+    &-padding {
+      &-small {
+  
+      }
+  
+      &-medium {
+  
+      }
+    }
+  
+    &-error {
+      color: var(--error);
+    }
   }
 }

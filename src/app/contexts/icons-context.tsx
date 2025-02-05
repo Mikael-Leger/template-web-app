@@ -19,7 +19,10 @@ import {
   BsTelephone,
   BsTrash3,
   BsTruck,
-  BsChevronDown
+  BsChevronDown,
+  BsChevronUp,
+  BsPencil,
+  BsDashCircle 
 } from 'react-icons/bs';
 
 interface IconsContextType {
@@ -62,7 +65,10 @@ export const IconsProvider: React.FC<IconsProviderProps> = ({ children }) => {
       BsTelephone,
       BsTrash3,
       BsTruck,
-      BsChevronDown
+      BsChevronDown,
+      BsChevronUp,
+      BsPencil,
+      BsDashCircle 
     };
   };
 

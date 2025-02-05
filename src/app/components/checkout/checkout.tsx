@@ -111,6 +111,7 @@ export default function Checkout({submit}: CheckoutProps) {
           </div>
           <div className='checkout-content-promo-code'>
             <InputText
+              name='promo'
               border
               placeholder={'Saisir un code promo'}
               submit={checkPromoCode}

@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Title from '../title/title';
 import InputPhone from '../input-phone/input-phone';
+import InputAddress from '../input-address/input-address';
+import { FullAddress } from '@/app/interfaces/address.interface';
 
 import './delivery.scss';
 
 export default function Delivery() {
+  const [address, setAddress] = useState<FullAddress>({
+    address: '',
+    zipCode: '',
+    city: ''
+  });
+
   return (
     <div className='delivery'>
       <div className='delivery-title'>
@@ -15,13 +23,13 @@ export default function Delivery() {
         <div className='delivery-container-content'>
           <Title text='Adresse de livraison' orientation='start'/>
           <div className='delivery-container-content-text'>
-            ICI
+            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddress(fullAddress)}/>
           </div>
         </div>
         <div className='delivery-container-content'>
           <Title text='Adresse de facturation' orientation='start'/>
           <div className='delivery-container-content-text'>
-            ICI
+            <InputAddress defaultAddress={address}/>
           </div>
         </div>
         <div className='delivery-container-content'>

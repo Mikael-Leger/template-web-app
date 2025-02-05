@@ -20,13 +20,11 @@ export default function OrderProcess() {
         orientation='row'
         items={[
           {
-            node:
-            <ProductsList/>,
+            node: <ProductsList/>,
             className: 'flex-1'
           },
           {
-            node:
-            <Checkout submit={goToNextProcess}/>
+            node: <Checkout submit={goToNextProcess}/>
           }
         ]}/>
     );
@@ -39,13 +37,11 @@ export default function OrderProcess() {
         orientation='row'
         items={[
           {
-            node:
-            <Delivery/>,
+            node: <Delivery/>,
             className: 'flex-1'
           },
           {
-            node:
-            <Checkout submit={goToNextProcess}/>
+            node: <Checkout submit={goToNextProcess}/>
           }
         ]}/>
     );
