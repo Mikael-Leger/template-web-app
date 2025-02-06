@@ -166,9 +166,6 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
   };
 
   const adjustDistance = (): number | null => {
-    console.log('adjust distance ');
-    console.log(distance);
-    
     if (distance === 0) {
       return null;
     } else if (distance < 5000) {

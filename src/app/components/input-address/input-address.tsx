@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 import InputText, { InputTextProps } from '../input-text/input-text';
 import Button from '../button/button';
@@ -7,15 +8,17 @@ import { FullAddress } from '@/app/interfaces/address.interface';
 import Checkbox from '../checkbox/checkbox';
 import { autocompleteAddress, getDistanceBetweenAddresses } from '@/app/services/address';
 import { useBasket } from '@/app/contexts/basket-context';
+import Loading from '../loading/loading';
 
 import './input-address.scss';
 
 interface InputAddressProps {
-  onSubmit?: (_fullAddress: FullAddress) => void;
   defaultAddress?: FullAddress;
+  calculateDeliveryCost?: boolean;
+  onSubmit: (_fullAddress: FullAddress) => void;
 }
 
-export default function InputAddress({onSubmit, defaultAddress}: InputAddressProps) {
+export default function InputAddress({defaultAddress, calculateDeliveryCost, onSubmit}: InputAddressProps) {
   const {updateDistance} = useBasket();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -71,7 +74,7 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
               formField.onChange(value);
             }
           }}
-          onBlur={() => formField.name === 'address' && setAddressIsAutocompleteVisible(false)}
+          onBlur={() => setTimeout(() => formField.name === 'address' && setAddressIsAutocompleteVisible(false), 150)}
           border
           required={formField.required}
           disabled={formField.disabled}/>
@@ -88,12 +91,16 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
 
   const submitAddress = async () => {
     if (!isFullAddressValid()) return;
+    
+    if (!calculateDeliveryCost) {
+      setIsEditing(false);
 
-    setIsEditing(false);
+      return;
+    }
 
-    if (!onSubmit) return;
-
-    setIsLoading(true);
+    flushSync(() => {
+      setIsLoading(true);
+    });
 
     const fullAddress: FullAddress = {
       number: '1',
@@ -110,13 +117,17 @@ export default function InputAddress({onSubmit, defaultAddress}: InputAddressPro
     };
     const data = await getDistanceBetweenAddresses(fullAddress, companyFullAddress);
     updateDistance(data.distance);
-    setIsLoading(false);
+
+    flushSync(() => {
+      setIsLoading(false);
+      setIsEditing(false);
+    });
   };
 
   const renderLoading = () => {
     return (
       <div className='input-address-content-loading w-full h-full absolute'>
-        {/* <Loading/> */}
+        <Loading/>
       </div>
     );
   };

@@ -1,0 +1,19 @@
+.loading {
+  &-loader {
+    position: relative;
+    height: 50px;
+    width: 50px;
+  
+    &-bar {
+      height: 75%;
+      width: 75%;
+
+      &-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--color-5);
+      }
+    }
+  }
+}

@@ -13,6 +13,11 @@ export default function Delivery() {
     zipCode: '',
     city: ''
   });
+  const [addressPayment, setAddressPayment] = useState<FullAddress>({
+    address: '',
+    zipCode: '',
+    city: ''
+  });
 
   return (
     <div className='delivery'>
@@ -23,13 +28,13 @@ export default function Delivery() {
         <div className='delivery-container-content'>
           <Title text='Adresse de livraison' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddress(fullAddress)}/>
+            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddress(fullAddress)} calculateDeliveryCost/>
           </div>
         </div>
         <div className='delivery-container-content'>
           <Title text='Adresse de facturation' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputAddress defaultAddress={address}/>
+            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddressPayment(fullAddress)} defaultAddress={address}/>
           </div>
         </div>
         <div className='delivery-container-content'>
