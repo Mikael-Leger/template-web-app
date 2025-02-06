@@ -2,7 +2,6 @@
   background-color: var(--white);
   border: 2px solid var(--color-5);
   border-radius: var(--border-radius);
-  font-family: 'Roboto', sans-serif;
 
   &-row {
     &:nth-child(odd):not(:first-child):not(:last-child),

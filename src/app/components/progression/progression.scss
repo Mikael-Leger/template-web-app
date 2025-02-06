@@ -1,0 +1,23 @@
+.progression {
+  &-steps {
+    &-step {
+      &.step-done {
+        color: var(--color-5);
+      }
+    }
+  }
+
+  &-bars {
+    &-shadow {
+      height: 4px;
+      background-color: var(--color-2);
+      z-index: -1;
+    }
+
+    &-current {
+      height: 4px;
+      background-color: var(--color-5);
+      transition: var(--animation-1);
+    }
+  }
+}

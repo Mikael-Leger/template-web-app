@@ -22,7 +22,8 @@ import {
   BsChevronDown,
   BsChevronUp,
   BsPencil,
-  BsDashCircle 
+  BsDashCircle,
+  BsCheck2Circle
 } from 'react-icons/bs';
 
 interface IconsContextType {
@@ -68,7 +69,8 @@ export const IconsProvider: React.FC<IconsProviderProps> = ({ children }) => {
       BsChevronDown,
       BsChevronUp,
       BsPencil,
-      BsDashCircle 
+      BsDashCircle,
+      BsCheck2Circle 
     };
   };
 

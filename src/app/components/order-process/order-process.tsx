@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Title from '../title/title';
 import Layout from '../layout/layout';
@@ -6,12 +6,16 @@ import ProductsList from '../products-list/products-list';
 import Delivery from '../delivery/delivery';
 import Checkout from '../checkout/checkout';
 import Payment from '../payment/payment';
+import Progression from '../progression/progression';
+import { Step } from '@/app/interfaces/step.interface';
 
 import './order-process.scss';
 
 export default function OrderProcess() {
+  const [currentProcessus, setCurrentProcessus] = useState<Step>();
+  
   const goToNextProcess = () => {
-    setCurrentProcessus(prevState => processuses[prevState.step + 1]);
+    setCurrentProcessus(prevState => processuses[(prevState?.number ?? 0) + 1]);
   };
 
   const renderBasket = () => {
@@ -65,28 +69,38 @@ export default function OrderProcess() {
     );
   };
   
-  const processuses = [
+  const processuses: Step[] = [
     {
-      step: 0,
+      number: 0,
       title: 'Votre panier',
       node: renderBasket()
     },
     {
-      step: 1,
+      number: 1,
       title: 'Livraison',
       node: renderDelivery()
     },
     {
-      step: 2,
+      number: 2,
       title: 'Paiement',
       node: renderPayment()
+    },
+    {
+      number: 3,
+      title: 'Succès',
+      node: 'Succès !'
     }
   ];
 
-  const [currentProcessus, setCurrentProcessus] = useState(processuses[0]);
+  useEffect(() => {
+    setCurrentProcessus(processuses[0]);
+  }, []);
+
+  if (!currentProcessus) return;
 
   return (
     <div className='order-process'>
+      <Progression steps={processuses} currentStep={currentProcessus.number}/>
       <Title text={currentProcessus.title} size='big' orientation='start' underline/>
       {currentProcessus.node}
     </div>
