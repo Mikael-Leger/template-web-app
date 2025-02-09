@@ -38,6 +38,22 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
     }
   }, []);
 
+  useEffect(() => {
+    if (defaultAddress) {
+      if (isDefaultAddress) {
+        onSubmit(defaultAddress);
+
+      } else {
+        onSubmit({
+          address: '',
+          zipCode: '',
+          city: ''
+        });
+        
+      }
+    }
+  }, [isDefaultAddress]);
+
   const isFullAddressValid = () => {
     return !(address === '' || zipCode === '' || city === '');
   };
@@ -137,7 +153,7 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       <form className='input-address-content flex flex-col flex-gap relative' action={submitAddress}>
         {!isDefaultAddress && formFields.map(formField => renderFormField(formField))}
         {renderCheckbox()}
-        <Button title={'valider'} buttonType={'submit'}/>
+        {!isDefaultAddress && (<Button title={'valider'} buttonType={'submit'}/>)}
         {isLoading && renderLoading()}
       </form>
     );

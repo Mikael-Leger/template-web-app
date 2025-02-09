@@ -4,14 +4,16 @@ import { useBasket } from '@/app/contexts/basket-context';
 import Button from '../button/button';
 import InputText from '../input-text/input-text';
 import CheckoutMainDetails from '../checkout-main-details/checkout-main-details';
+import Tooltip from '../tooltip/tooltip';
 
 import './checkout.scss';
 
 interface CheckoutProps {
+  error?: string;
   submit: () => void;
 }
 
-export default function Checkout({submit}: CheckoutProps) {
+export default function Checkout({error, submit}: CheckoutProps) {
   const {
     getNumberOfItemsInBasket,
     getSubTotalPrice,
@@ -116,7 +118,13 @@ export default function Checkout({submit}: CheckoutProps) {
         </div>
       </div>
       <div className='checkout-actions'>
-        <Button title={'Continuer'} fullWidth onClick={submit}/>
+        {error ? (
+          <Tooltip text={error}>
+            <Button title={'Continuer'} fullWidth onClick={submit} disabled/>
+          </Tooltip>
+        ) : (
+          <Button title={'Continuer'} fullWidth onClick={submit}/>
+        )}
       </div>
     </div>
   );

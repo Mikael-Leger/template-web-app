@@ -11,6 +11,14 @@ interface ProgressionProps {
 }
 
 export default function Progression({steps, currentStep}: ProgressionProps) {
+  const calculateWidth = () => {
+    const base = 100 / (steps.length - 1) / 2;
+    const stepGap = 100 / (steps.length - 1);
+    const res = base + (stepGap * currentStep);
+
+    return `calc(${Math.min(res, 100)}%)`;
+  };
+
   return (
     <div className='progression flex flex-col gap-2 w-full'>
       <div className='progression-steps flex flex-row justify-center'>
@@ -32,7 +40,7 @@ export default function Progression({steps, currentStep}: ProgressionProps) {
       </div>
       <div className='progression-bars relative'>
         <div className='progression-bars-shadow absolute w-full'/>
-        <div className='progression-bars-current' style={{width: `calc(${100 / steps.length}% * ${currentStep + 1})`}}/>
+        <div className='progression-bars-current' style={{width: calculateWidth()}}/>
       </div>
     </div>
   );

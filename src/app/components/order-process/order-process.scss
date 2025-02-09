@@ -1,2 +1,11 @@
 .order-process {
+  &-progression {
+    >:nth-child(2) {
+      flex: 3;
+    }
+
+    >:not(:nth-child(2)) {
+      flex: 1;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useBasket } from '@/app/contexts/basket-context';
 import { capitalizeFirstLetter } from '@/app/services/formatter';
@@ -6,11 +6,22 @@ import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
 import Price from '../price/price';
 import Separator from '../separator/separator';
+import { StepErrors } from '@/app/interfaces/step.interface';
 
 import './products-list.scss';
 
-export default function ProductsList() {
-  const {getItemsInBasket, getActions, deleteItem} = useBasket();
+interface ProductsListProps extends StepErrors {}
+
+export default function ProductsList({hasErrors}: ProductsListProps) {
+  const {getNumberOfItemsInBasket, getItemsInBasket, getActions, deleteItem} = useBasket();
+
+  useEffect(() => {
+    if (getNumberOfItemsInBasket() === 0) {
+      hasErrors('Votre panier est vide');
+    } else {
+      hasErrors('');
+    }
+  }, [getNumberOfItemsInBasket()]);
 
   return (
     <div className='products-list flex flex-col flex-1'>

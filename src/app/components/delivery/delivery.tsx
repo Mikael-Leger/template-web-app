@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Title from '../title/title';
 import InputPhone from '../input-phone/input-phone';
 import InputAddress from '../input-address/input-address';
 import { FullAddress } from '@/app/interfaces/address.interface';
+import { StepErrors } from '@/app/interfaces/step.interface';
 
 import './delivery.scss';
 
-export default function Delivery() {
+interface DeliveryProps extends StepErrors {}
+
+export default function Delivery({hasErrors}: DeliveryProps) {
   const [address, setAddress] = useState<FullAddress>({
     address: '',
     zipCode: '',
@@ -18,6 +21,27 @@ export default function Delivery() {
     zipCode: '',
     city: ''
   });
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+
+  const isFullAddressValid = (fullAddress: FullAddress) => {
+    return (fullAddress.address !== '' && fullAddress.zipCode !== '' && fullAddress.city !== '');
+  };
+
+  useEffect(() => {
+    if (!isFullAddressValid(address)) {
+      hasErrors('L\'adresse de livraison n\'est pas valide');
+
+    } else if (!isFullAddressValid(addressPayment)) {
+      hasErrors('L\'adresse de facturation n\'est pas valide');
+
+    } else if (phoneNumber === '') {
+      hasErrors('Le numéro de téléphone n\'est pas valide');
+
+    } else {
+      hasErrors('');
+
+    }
+  }, [address, addressPayment, phoneNumber]);
 
   return (
     <div className='delivery'>
@@ -40,7 +64,7 @@ export default function Delivery() {
         <div className='delivery-container-content'>
           <Title text='Numéro de téléphone' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputPhone/>
+            <InputPhone onChange={setPhoneNumber}/>
           </div>
         </div>
       </div>

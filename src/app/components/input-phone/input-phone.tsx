@@ -14,12 +14,13 @@ interface PhoneCode {
 }
 
 interface InputPhoneProps {
+  onChange?: (_value: string) => void;
   color?: 'error' | 'black';
 }
 
 type Country = typeof callingCountries.all[0];
 
-export default function InputPhone({color = 'black'}: InputPhoneProps) {
+export default function InputPhone({color = 'black', onChange}: InputPhoneProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentCode, setCurrentCode] = useState<PhoneCode | null>(null);
   const [isCodesListVisible, setIsCodesListVisible] = useState<boolean>(false);
@@ -32,6 +33,12 @@ export default function InputPhone({color = 'black'}: InputPhoneProps) {
       setCurrentCode(formatPhoneCode(found));
     }
   }, []);
+
+  useEffect(() => {
+    if (onChange) {
+      onChange(inputValue);
+    }
+  }, [inputValue]);
 
   const switchCodesListVisibility = () => {
     setIsCodesListVisible(prevState => !prevState);
