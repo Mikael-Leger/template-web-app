@@ -37,11 +37,89 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       setIsEditing(true);
     }
   }, []);
+  
+  useEffect(() => {
+    if (defaultAddress) {
+      const addressLocal = localStorage.getItem('payment-address');
+      const zipCodeLocal = localStorage.getItem('payment-zipCode');
+      const cityLocal = localStorage.getItem('payment-city');
+      const defaultAddressLocal = localStorage.getItem('payment-default');
+
+      setAddress(addressLocal ?? '');
+      setZipCode(zipCodeLocal ?? '');
+      setCity(cityLocal ?? '');
+
+      if (addressLocal && zipCodeLocal && cityLocal) {
+        setIsEditing(false);
+
+        const fullAddress: FullAddress = {
+          address: addressLocal,
+          zipCode: zipCodeLocal,
+          city: cityLocal
+        };
+        submitAddress(fullAddress);
+
+      }
+      setIsDefaultAddress(defaultAddressLocal !== null);
+
+    } else {
+      const addressLocal = localStorage.getItem('delivery-address');
+      const zipCodeLocal = localStorage.getItem('delivery-zipCode');
+      const cityLocal = localStorage.getItem('delivery-city');
+
+      setAddress(addressLocal ?? '');
+      setZipCode(zipCodeLocal ?? '');
+      setCity(cityLocal ?? '');
+
+      if (addressLocal && zipCodeLocal && cityLocal) {
+        setIsEditing(false);
+
+        const fullAddress: FullAddress = {
+          address: addressLocal,
+          zipCode: zipCodeLocal,
+          city: cityLocal
+        };
+        submitAddress(fullAddress);
+
+      }
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (defaultAddress) {
+      localStorage.setItem('payment-address', address);
+
+    } else {
+      localStorage.setItem('delivery-address', address);
+
+    }
+  }, [address]);
+  
+  useEffect(() => {
+    if (defaultAddress) {
+      localStorage.setItem('payment-zipCode', zipCode);
+
+    } else {
+      localStorage.setItem('delivery-zipCode', zipCode);
+
+    }
+  }, [zipCode]);
+  
+  useEffect(() => {
+    if (defaultAddress) {
+      localStorage.setItem('payment-city', city);
+
+    } else {
+      localStorage.setItem('delivery-city', city);
+
+    }
+  }, [city]);
 
   useEffect(() => {
     if (defaultAddress) {
       if (isDefaultAddress) {
         onSubmit(defaultAddress);
+        localStorage.setItem('payment-default', 'true');
 
       } else {
         onSubmit({
@@ -49,12 +127,17 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
           zipCode: '',
           city: ''
         });
+        localStorage.removeItem('payment-default');
         
       }
     }
   }, [isDefaultAddress]);
 
-  const isFullAddressValid = () => {
+  const isFullAddressValid = (fullAddressLocal?: FullAddress) => {
+    if (fullAddressLocal) {
+      return !(fullAddressLocal.address === '' || fullAddressLocal.zipCode === '' || fullAddressLocal.city === '');
+    }
+
     return !(address === '' || zipCode === '' || city === '');
   };
  
@@ -105,8 +188,8 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
     );
   };
 
-  const submitAddress = async () => {
-    if (!isFullAddressValid()) return;
+  const submitAddress = async (fullAddressLocal?: FullAddress) => {
+    if (!isFullAddressValid(fullAddressLocal)) return;
     
     if (!calculateDeliveryCost) {
       setIsEditing(false);
@@ -114,11 +197,13 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       return;
     }
 
-    flushSync(() => {
-      setIsLoading(true);
-    });
+    if (!fullAddressLocal) {
+      flushSync(() => {
+        setIsLoading(true);
+      });
+    }
 
-    const fullAddress: FullAddress = {
+    const fullAddress: FullAddress = fullAddressLocal ? fullAddressLocal : {
       number: '1',
       address,
       zipCode,
@@ -134,10 +219,12 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
     const data = await getDistanceBetweenAddresses(fullAddress, companyFullAddress);
     updateDistance(data.distance);
 
-    flushSync(() => {
-      setIsLoading(false);
-      setIsEditing(false);
-    });
+    if (!fullAddressLocal) {
+      flushSync(() => {
+        setIsLoading(false);
+        setIsEditing(false);
+      });
+    }
   };
 
   const renderLoading = () => {
@@ -150,7 +237,7 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
 
   const renderEdit = () => {
     return (
-      <form className='input-address-content flex flex-col flex-gap relative' action={submitAddress}>
+      <form className='input-address-content flex flex-col flex-gap relative' action={() => submitAddress()}>
         {!isDefaultAddress && formFields.map(formField => renderFormField(formField))}
         {renderCheckbox()}
         {!isDefaultAddress && (<Button title={'valider'} buttonType={'submit'}/>)}

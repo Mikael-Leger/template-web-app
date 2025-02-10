@@ -28,8 +28,12 @@ export default function Progression({steps, currentStep, onClick}: ProgressionPr
           
           return (
             <div
-              className={`progression-steps-step ${step.number < currentStep && 'step-done cursor-pointer'} flex-1 flex justify-center items-center gap-2`}
-              onClick={() => onClick(step.number)}
+              className={`progression-steps-step ${step.number < currentStep && 'step-done'} ${(step.number < currentStep && currentStep !== steps.length - 1) && 'cursor-pointer'} flex-1 flex justify-center items-center gap-2`}
+              onClick={() => {
+                if (currentStep === steps.length - 1) return;
+                
+                onClick(step.number);
+              }}
               key={step.number}>
               {step.number < currentStep && (
                 <div className='progression-steps-step-icon'>

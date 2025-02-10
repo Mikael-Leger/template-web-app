@@ -82,6 +82,7 @@ export const BasketProvider: React.FC<BasketProviderProps> = ({ children }) => {
 
   const clearItems = () => {
     setItems([]);
+    localStorage.removeItem('products');
   };
 
   const getItem = (itemName: string) => {

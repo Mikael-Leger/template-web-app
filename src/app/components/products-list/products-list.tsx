@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useBasket } from '@/app/contexts/basket-context';
 import { capitalizeFirstLetter } from '@/app/services/formatter';
@@ -7,13 +7,22 @@ import Button from '../button/button';
 import Price from '../price/price';
 import Separator from '../separator/separator';
 import { StepErrors } from '@/app/interfaces/step.interface';
+import { ProductItem } from '@/app/interfaces/product.interface';
+import { useRouter } from 'next/navigation';
 
 import './products-list.scss';
 
 interface ProductsListProps extends StepErrors {}
 
 export default function ProductsList({hasErrors}: ProductsListProps) {
+  const router = useRouter();
   const {getNumberOfItemsInBasket, getItemsInBasket, getActions, deleteItem} = useBasket();
+
+  const [itemsInBasket, setItemsInBasket] = useState<{product: ProductItem, number: number}[]>([]);
+
+  useEffect(() => {
+    setItemsInBasket(getItemsInBasket());
+  }, []);
 
   useEffect(() => {
     if (getNumberOfItemsInBasket() === 0) {
@@ -25,8 +34,14 @@ export default function ProductsList({hasErrors}: ProductsListProps) {
 
   return (
     <div className='products-list flex flex-col flex-1'>
+      {itemsInBasket.length === 0 && (
+        <div className='products-list-none padding-inner'>
+          {'Il n\'y a pas de produits dans votre liste.'}
+          <Button title={'Ajouter des produits'} underline onClick={() => router.push('/products')}/>
+        </div>
+      )}
       {
-        getItemsInBasket().map((item, itemIndex) => (
+        itemsInBasket.map((item, itemIndex) => (
           <React.Fragment key={item.product.title}>
             {itemIndex !== 0 && (
               <Separator/>

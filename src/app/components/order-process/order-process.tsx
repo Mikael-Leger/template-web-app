@@ -11,13 +11,16 @@ import Progression from '../progression/progression';
 import { Step } from '@/app/interfaces/step.interface';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
+import { useBasket } from '@/app/contexts/basket-context';
 
 import './order-process.scss';
 
 export default function OrderProcess() {
   const router = useRouter();
 
-  const [currentProcessus, setCurrentProcessus] = useState<Step>();
+  const {clearItems} = useBasket();
+
+  const [currentProcessus, setCurrentProcessus] = useState<Step | null>(null);
 
   const goToPrevProcess = () => {
     setCurrentProcessus(prevState => processuses[(prevState?.number ?? 1) - 1]);
@@ -43,53 +46,23 @@ export default function OrderProcess() {
   };
 
   const renderBasket = () => {
-    return (
-      <Layout
-        className={'justify-between flex-gap-outer'}
-        orientation='row'
-        items={[
-          {
-            node: <ProductsList hasErrors={(value: string) => processHasErrors(0, value)}/>,
-            className: 'flex-1'
-          },
-          {
-            node: <Checkout submit={goToNextProcess} error={currentProcessus?.error}/>
-          }
-        ]}/>
-    );
+    return <ProductsList hasErrors={(value: string) => processHasErrors(0, value)}/>;
   };
 
   const renderDelivery = () => {
-    return (
-      <Layout
-        className={'justify-between flex-gap-outer'}
-        orientation='row'
-        items={[
-          {
-            node: <Delivery hasErrors={(value: string) => processHasErrors(1, value)}/>,
-            className: 'flex-1'
-          },
-          {
-            node: <Checkout submit={goToNextProcess} error={currentProcessus?.error}/>
-          }
-        ]}/>
-    );
+    return <Delivery hasErrors={(value: string) => processHasErrors(1, value)}/>;
   };
 
   const renderPayment = () => {
+    return <Payment hasErrors={(value: string) => processHasErrors(2, value)}/>;
+  };
+
+  const renderSuccess = () => {
     return (
-      <Layout
-        className={'justify-between flex-gap-outer'}
-        orientation='row'
-        items={[
-          {
-            node: <Payment/>,
-            className: 'flex-1'
-          },
-          {
-            node: <Checkout submit={goToNextProcess} error={currentProcessus?.error}/>
-          }
-        ]}/>
+      <div className='succes-container padding-inner flex flex-row items-center justify-center'>
+        <div className='succes-container-text'>La commande a bien été effectuée.</div>
+        <Button title={'Revenir à la page d\'accueil'} underline onClick={() => router.push('/')}/>
+      </div>
     );
   };
   
@@ -111,13 +84,19 @@ export default function OrderProcess() {
     },
     {
       number: 3,
-      title: 'Succès',
-      node: () => 'Succès !'
+      title: 'Commande effectuée',
+      node: () => renderSuccess()
     }
   ];
 
   useEffect(() => {
-    setCurrentProcessus(processuses[2]);
+    setCurrentProcessus(processuses[0]);
+  }, []);
+
+  useEffect(() => {
+    if (currentProcessus?.number === processuses.length - 1) {
+      clearItems();
+    }
   }, []);
 
   const onStepProgressClick = (stepNumber: number) => {
@@ -129,7 +108,7 @@ export default function OrderProcess() {
   if (!currentProcessus) return;
 
   return (
-    <div className='order-process'>
+    <div className='order-process flex flex-col flex-gap'>
       <div className='order-process-progression flex flex-row'>
         <div className='order-process-progression-back'>
           {currentProcessus.number > 0 && currentProcessus.number < processuses.length - 1 && (
@@ -158,8 +137,25 @@ export default function OrderProcess() {
           </div>
         </div>
       </div>
-      <Title text={currentProcessus.title} size='big' orientation='start' underline/>
-      {processuses.find(step => step.number === currentProcessus?.number)?.node()}
+      <div className='order-process-current flex flex-col'>
+        <Title text={currentProcessus.title} size='big' orientation={currentProcessus.number === processuses.length - 1 ? 'center' : 'start'} underline/>
+        {currentProcessus.number !== processuses.length - 1 ? (
+          <Layout
+            className={'justify-between flex-gap-outer'}
+            orientation='row'
+            items={[
+              {
+                node: processuses.find(step => step.number === currentProcessus?.number)?.node(),
+                className: 'flex-1'
+              },
+              {
+                node: <Checkout submit={goToNextProcess} error={currentProcessus?.error}/>
+              }
+            ]}/>
+        ) : (
+          processuses.find(step => step.number === currentProcessus?.number)?.node()
+        )}
+      </div>
     </div>
   );
 }

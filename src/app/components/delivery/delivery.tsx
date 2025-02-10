@@ -28,6 +28,15 @@ export default function Delivery({hasErrors}: DeliveryProps) {
   };
 
   useEffect(() => {
+    const phoneLocal = localStorage.getItem('phone');
+    setPhoneNumber(phoneLocal ?? '');
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('phone', phoneNumber);
+  }, [phoneNumber]);
+
+  useEffect(() => {
     if (!isFullAddressValid(address)) {
       hasErrors('L\'adresse de livraison n\'est pas valide');
 
@@ -64,7 +73,7 @@ export default function Delivery({hasErrors}: DeliveryProps) {
         <div className='delivery-container-content'>
           <Title text='Numéro de téléphone' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputPhone onChange={setPhoneNumber}/>
+            <InputPhone defaultValue={phoneNumber} onChange={setPhoneNumber}/>
           </div>
         </div>
       </div>

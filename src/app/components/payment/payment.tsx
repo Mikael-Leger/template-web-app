@@ -1,12 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { RadioboxesContainer, RadioboxProps } from '../radiobox/radiobox';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
+import { StepErrors } from '@/app/interfaces/step.interface';
 
 import './payment.scss';
 
-export default function Payment() {
-  const methods: RadioboxProps[] = [
+interface PaymentMethod {
+  value: string,
+  onSubmit: () => void
+}
+
+interface PaymentProps extends StepErrors {}
+
+export default function Payment({hasErrors}: PaymentProps) {
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+
+  useEffect(() => {
+    if (paymentMethod === null) {
+      hasErrors('Type de paiement invalide');
+    } else {
+      hasErrors('');
+    }
+  }, [paymentMethod]);
+
+  const methods: PaymentMethod[] = [
+    {
+      value: 'cb',
+      onSubmit: () => {}
+    },
+    {
+      value: 'bc',
+      onSubmit: () => {}
+    },
+    {
+      value: 'pp',
+      onSubmit: () => {}
+    }
+  ];
+
+  const choices: RadioboxProps[] = [
     {
       title: 'Carte Bancaire',
       icons: [
@@ -15,6 +48,9 @@ export default function Payment() {
         },
         {
           path:  '/icons/payment/visa.svg',
+          style: {
+            height: 16
+          }
         }
       ]
     },
@@ -23,6 +59,9 @@ export default function Payment() {
       icons: [
         {
           path: '/icons/payment/bancontact.svg',
+          style: {
+            height: 32
+          }
         }
       ]
     },
@@ -32,7 +71,7 @@ export default function Payment() {
         {
           path: '/icons/payment/paypal.svg',
           style: {
-            width: 64
+            height: 24
           }
         }
       ]
@@ -41,7 +80,7 @@ export default function Payment() {
 
   return (
     <div className='payment flex flex-col flex-gap justify-center'>
-      <RadioboxesContainer items={methods}/>
+      <RadioboxesContainer items={choices} onSubmit={(index: number) => setPaymentMethod(methods[index])}/>
       <div className='payment-secure flex flex-row items-center self-center gap-2'>
         <DynamicIcon iconName='BsLock'/>
         <div className='payment-secure-text'>

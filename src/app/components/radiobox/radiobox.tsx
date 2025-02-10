@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './radiobox.scss';
 
@@ -18,7 +18,7 @@ export default function Radiobox({title, icons, checked, onClick}: RadioboxProps
         <input type='radio' checked={checked} onChange={() => {}}/>
         {title}
       </div>
-      <div className='radiobox-icons flex flex-row flex-gap'>
+      <div className='radiobox-icons flex flex-row flex-gap items-center'>
         {icons?.map(icon => (
           <img
             className='logo-icon'
@@ -33,10 +33,17 @@ export default function Radiobox({title, icons, checked, onClick}: RadioboxProps
 
 interface RadioboxesContainerProps {
   items: RadioboxProps[];
+  onSubmit: (_index: number) => void;
 }
 
-export function RadioboxesContainer({items}: RadioboxesContainerProps) {
-  const [indexChecked, setIndexChecked] = useState<number | null>();
+export function RadioboxesContainer({items, onSubmit}: RadioboxesContainerProps) {
+  const [indexChecked, setIndexChecked] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (indexChecked === null) return;
+    
+    onSubmit(indexChecked);
+  }, [indexChecked]);
 
   return (
     <div className='radioboxes-container flex flex-col flex-gap padding-inner'>

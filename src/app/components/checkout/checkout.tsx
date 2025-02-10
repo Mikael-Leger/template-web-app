@@ -35,6 +35,8 @@ export default function Checkout({error, submit}: CheckoutProps) {
     setPromotion(newPromotion);
   };
 
+  const reductionsPrice = getReductionsPrice(promotion ?? undefined);
+
   return (
     <div className='checkout flex flex-col'>
       <div className='checkout-content flex flex-col'>
@@ -49,14 +51,16 @@ export default function Checkout({error, submit}: CheckoutProps) {
             </div>
           </div>
           <div className='checkout-content-subtotal-costs flex flex-col'>
-            <div className='checkout-content-subtotal-costs-cost flex flex-row justify-between'>
-              <div className='checkout-content-subtotal-costs-cost-title'>
-                {'Réductions'}
+            {reductionsPrice !== '0.00€' && (
+              <div className='checkout-content-subtotal-costs-cost flex flex-row justify-between'>
+                <div className='checkout-content-subtotal-costs-cost-title'>
+                  {'Réductions'}
+                </div>
+                <div className='checkout-content-subtotal-costs-cost-money'>
+                  {'- ' + reductionsPrice}
+                </div>
               </div>
-              <div className='checkout-content-subtotal-costs-cost-money'>
-                {'- ' + getReductionsPrice(promotion ?? undefined)}
-              </div>
-            </div>
+            )}
             {promotion !== null && promotion !== 0 && (
               <div className='checkout-content-subtotal-costs-cost flex flex-row justify-between'>
                 <div className='checkout-content-subtotal-costs-cost-title'>
