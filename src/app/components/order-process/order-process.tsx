@@ -117,8 +117,14 @@ export default function OrderProcess() {
   ];
 
   useEffect(() => {
-    setCurrentProcessus(processuses[0]);
+    setCurrentProcessus(processuses[2]);
   }, []);
+
+  const onStepProgressClick = (stepNumber: number) => {
+    if (currentProcessus && stepNumber < currentProcessus.number) {
+      setCurrentProcessus(processuses[stepNumber]);
+    }
+  };
 
   if (!currentProcessus) return;
 
@@ -141,7 +147,10 @@ export default function OrderProcess() {
               icon={{node: <DynamicIcon iconName='BsArrowLeft'/>, orientation: 'start'}}/>
           )}
         </div>
-        <Progression steps={processuses} currentStep={currentProcessus.number}/>
+        <Progression
+          steps={processuses}
+          currentStep={currentProcessus.number}
+          onClick={onStepProgressClick}/>
         <div className='order-process-progression-secure flex flex-row gap-2 justify-center items-center'>
           <DynamicIcon iconName='BsLock'/>
           <div className='order-process-progression-secure-text'>
