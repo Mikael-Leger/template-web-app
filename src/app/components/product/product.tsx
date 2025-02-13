@@ -60,7 +60,7 @@ export default function Product({item}: ProductProps) {
                   key={index}>
                   <Button
                     icon={{
-                      node: action.iconName ? <DynamicIcon iconName={action.iconName}/> : undefined
+                      node: action.iconName ? <DynamicIcon iconName={action.iconName} size={16}/> : undefined
                     }}
                     size={action.size}
                     input={action.input}

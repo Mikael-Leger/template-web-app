@@ -64,21 +64,23 @@ export default function Button({
 
   if (input === 'number') {
     return (
-      <input
-        type='text'
-        inputMode='numeric'
-        pattern='[0-9]*'
-        value={capitalizeFirstLetter(title?.toString() ?? '')}
-        min={0}
-        max={maxChars ? Number('9'.repeat(maxChars)) : undefined}
-        onChange={onInputChange}
-        className={`button button-front button-${size} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} input-${backgroundColor} text-center appearance-none p-2`}
-        role='button'
-        style={{
-          outlineColor: borderColor,
-          width: 50,
-        }}
-      />
+      <div className={`button input background input-${type} input-${backgroundColor}`}>
+        <input
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]*'
+          value={capitalizeFirstLetter(title?.toString() ?? '')}
+          min={0}
+          max={maxChars ? Number('9'.repeat(maxChars)) : undefined}
+          onChange={onInputChange}
+          className={`button-front button-${size} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${round && 'round'} ${underline ? 'underline' : 'background'} input-${backgroundColor} text-center appearance-none p-2`}
+          role='button'
+          style={{
+            outlineColor: borderColor,
+            width: 50,
+          }}
+        />
+      </div>
     );
   }
 

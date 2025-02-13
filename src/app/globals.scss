@@ -17,6 +17,7 @@
   --color-6: #18122a;
   --primary: #ee948e;
   --gradient-primary: linear-gradient(#f8e8d3 0%, #ecbabb, #ee948e);
+  --gradient-primary-2: linear-gradient(-18deg, var(--primary), var(--color-2) 200%);
   --gradient-primary-hover: linear-gradient(#f8e8d3, #ee948e);
   --info: #86b3e5;
   --success: #82e87e;

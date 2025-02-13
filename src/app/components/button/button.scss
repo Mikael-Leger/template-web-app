@@ -4,6 +4,47 @@
   position: relative;
   font-weight: var(--font-weight-2);
   font-size: var(--font-size-1);
+  color: var(--white);
+  overflow: hidden;
+  transition: var(--animation-1);
+  
+  &:before {
+    content: "";
+    background-color: var(--color-2);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: var(--animation-1);
+  }
+
+  &:not(.round) {
+    &:before {
+      height: 150px;
+      width: 200px;
+      top: 100%;
+      border-radius: 50%;
+    }
+  
+    &:hover:before {
+      top: -30px;
+      left: -30px;
+    }
+  }
+
+  &.round {
+    &:before {
+      height: 0%;
+      width: 0%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+  
+    &:hover:before {
+      height: 105%;
+      width: 105%;
+    }
+  }
 
   &.button-full-width {
     width: 100%;
@@ -33,8 +74,9 @@
   } 
 
   &:hover:not(.disabled) {
-    filter: brightness(120%);
-    -webkit-filter: brightness(120%);
+    color: var(--black);
+    // filter: brightness(120%);
+    // -webkit-filter: brightness(120%);
   }
   
   &-medium {
@@ -59,7 +101,7 @@
 
   &.background {
     border-radius: var(--border-radius-actions);
-    outline: 1px solid var(--black);
+    // outline: 1px solid var(--black);
   }
 
   &.round {
@@ -69,16 +111,20 @@
       .button-front {
         padding: var(--inner-y);
       }
-    } 
+    }
   }
 
   &.input {
     &-primary {
-      background-color: var(--primary);
+      background: var(--gradient-primary-2);
     }
 
     &-secondary {
       background-color: var(--secondary);
+    }
+
+    input {
+      background-color: transparent;
     }
   }
 
@@ -88,7 +134,7 @@
     }
 
     &.background {
-      background-color: var(--primary);
+      background: var(--gradient-primary-2);
     }
   }
 
