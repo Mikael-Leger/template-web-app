@@ -24,7 +24,9 @@ import {
   BsPencil,
   BsDashCircle,
   BsCheck2Circle,
-  BsLock
+  BsLock,
+  BsClock,
+  BsPinMap
 } from 'react-icons/bs';
 
 interface IconsContextType {
@@ -72,7 +74,9 @@ export const IconsProvider: React.FC<IconsProviderProps> = ({ children }) => {
       BsPencil,
       BsDashCircle,
       BsCheck2Circle,
-      BsLock 
+      BsLock,
+      BsClock,
+      BsPinMap 
     };
   };
 

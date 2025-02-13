@@ -21,7 +21,7 @@ export default function Basket() {
 
   const numberOfItems = getNumberOfItemsInBasket();
 
-  if (numberOfItems <= 0 || pathname === '/order') return;
+  if (numberOfItems <= 0 || pathname === '/order' || pathname === '/contact') return;
 
   const handleClick = () => {
     const url = '/order';

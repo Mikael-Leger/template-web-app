@@ -16,11 +16,11 @@
       cursor: pointer;
       transition:  var(--animation-bg);
 
-      &.active {
-        text-decoration: underline;
+      &.active:not(.main) {
+        background-color: var(--color-0);
       }
 
-      &:hover {
+      &:hover:not(.main) {
         background-color: var(--color-1);
       }
 

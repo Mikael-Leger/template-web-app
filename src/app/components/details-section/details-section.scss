@@ -1,0 +1,28 @@
+.details-section {
+  background-color: var(--color-1);
+  border-radius: var(--border-radius);
+  margin-top: 50px;
+
+  &-item {
+    padding-top: 50px;
+
+    &-icon {
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 80px;
+      background-color: var(--color-5);
+      border-radius: 50%;
+      color: var(--white);
+    }
+
+    &-title {
+      font-size: var(--font-size-3);
+    }
+
+    &-content {
+      font-size: var(--font-size-2);
+    }
+  }
+}

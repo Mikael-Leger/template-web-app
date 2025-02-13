@@ -57,7 +57,9 @@ export default function Navbar() {
 
       tl.to('.navbar-content-title', {
         fontSize: '-=6',
-        padding: 0
+        padding: '/=2',
+        height: '/=2',
+        gap: '/=2'
       }, 0);
     });
 
@@ -171,7 +173,7 @@ export default function Navbar() {
 
   return (
     <div className='navbar w-full fixed top-0' ref={navbarRef}>
-      <div className={`navbar-content h-full w-full flex flex-row ${getJustifyStyle()} items-center ${isMobile && 'padding-inner'}`}>
+      <div className={`navbar-content h-full w-full flex flex-row flex-gap ${getJustifyStyle()} items-center ${isMobile && 'padding-inner'}`}>
         {renderNavbarItems()}
       </div>
       {renderSidebar()}

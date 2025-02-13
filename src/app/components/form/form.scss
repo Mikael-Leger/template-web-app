@@ -1,9 +1,20 @@
 .form {
   &-content {
-    width: 60vw;
+    border-radius: var(--border-radius);
 
     .input-text, .input-phone-container {
       flex: 1;
+    }
+
+    &-text {
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+
+    &-loading {
+      background-color: var(--grey-opacity);
+      border-radius: var(--border-radius);
     }
   }
 }
