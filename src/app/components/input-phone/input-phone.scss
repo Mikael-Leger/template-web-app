@@ -1,13 +1,22 @@
 .input-phone {
   border: 1px solid var(--color-5);
   border-radius: var(--border-radius);
-  font-size: var(--font-size-2);
+
+  &-container {
+    font-size: var(--font-size-2);
+  }
 
   > input {
     background: transparent;
     padding: var(--inner-y) var(--inner-x);
-    padding-left: 128px;
     border-radius: var(--border-radius);
+
+    &.left-gap {
+      padding-left: 128px;
+    }
+    &:not(.left-gap) {
+      padding-left: 92px;
+    }
 
     &:focus {
       outline: 2px solid var(--color-5);

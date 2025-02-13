@@ -8,6 +8,9 @@ const pages = [
   {
     title: 'order',
     value: 100
+  },
+  {
+    title: 'contact'
   }
 ];
 

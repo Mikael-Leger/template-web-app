@@ -14,6 +14,7 @@ export interface InputTextProps {
   value?: string;
   color?: 'error' | 'black';
   border?: boolean;
+  textarea?: boolean;
   required?: boolean;
   disabled?: boolean;
   hide?: boolean;
@@ -24,7 +25,7 @@ export interface InputTextProps {
   onClick?: (_value: FullAddress) => void;
 }
 
-export default function InputText({name, title, placeholder, value, required, disabled, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
+export default function InputText({name, title, placeholder, value, textarea, required, disabled, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
   const [inputValue, setInputValue] = useState<string>(value ?? '');
 
   useEffect(() => {
@@ -39,6 +40,18 @@ export default function InputText({name, title, placeholder, value, required, di
     }
   }, [value]);
 
+  const inputObject = {
+    className: 'flex-1 resize-none',
+    style: {height: textarea ? 150 : undefined},
+    name: name,
+    placeholder: placeholder,
+    value: value ? value : inputValue,
+    onChange: (e: any) => setInputValue(e.target.value),
+    required: required,
+    onBlur: () => onBlur && onBlur(),
+    disabled: disabled
+  };
+
   return (
     <div className={'input-text flex flex-col gap-1'}>
       {title && (
@@ -47,16 +60,14 @@ export default function InputText({name, title, placeholder, value, required, di
         </div>
       )}
       <div className={`input-text-content flex flex-row justify-between relative input-text-${color} ${border && 'input-text-content-border'}`}>
-        <input
-          className='flex-1'
-          type='text'
-          name={name}
-          placeholder={placeholder}
-          value={value ? value : inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          required={required}
-          onBlur={() => onBlur && onBlur()}
-          disabled={disabled}/>
+        {textarea ? (
+          <textarea
+            {...inputObject}/>
+        ): (
+          <input
+            type='text'
+            {...inputObject}/>
+        )}
         {disabled && (
           <div className='input-text-content-disabled absolute'>
             <Tooltip text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'>

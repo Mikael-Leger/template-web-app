@@ -1,0 +1,9 @@
+.form {
+  &-content {
+    width: 60vw;
+
+    .input-text, .input-phone-container {
+      flex: 1;
+    }
+  }
+}

@@ -73,7 +73,7 @@ export default function Delivery({hasErrors}: DeliveryProps) {
         <div className='delivery-container-content'>
           <Title text='Numéro de téléphone' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputPhone defaultValue={phoneNumber} onChange={setPhoneNumber}/>
+            <InputPhone leftGap defaultValue={phoneNumber} onChange={setPhoneNumber}/>
           </div>
         </div>
       </div>

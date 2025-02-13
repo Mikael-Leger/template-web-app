@@ -85,6 +85,7 @@ export default function Navbar() {
         <div
           className={`navbar${sidebar ? '-sidebar' : ''}-content-title padding-inner ${getNavbarItemHeight(sidebar)} flex items-center ${item.main && 'main'} ${item.url === pathname && 'active'}`}
           onClick={() => handleItemClick(item.url)}
+          style={{height: 100}}
           key={item.title}>
           {sidebar && item.icon && <DynamicIcon iconName={item.icon}/>}
           {item.image ? <img className='h-full' src={item.image} alt={item.title}/> : item.title}
@@ -170,7 +171,7 @@ export default function Navbar() {
 
   return (
     <div className='navbar w-full fixed top-0' ref={navbarRef}>
-      <div className={`navbar-content h-full w-full flex flex-row ${getJustifyStyle()} items-center`}>
+      <div className={`navbar-content h-full w-full flex flex-row ${getJustifyStyle()} items-center ${isMobile && 'padding-inner'}`}>
         {renderNavbarItems()}
       </div>
       {renderSidebar()}

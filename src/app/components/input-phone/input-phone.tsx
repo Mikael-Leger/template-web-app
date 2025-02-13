@@ -15,13 +15,16 @@ interface PhoneCode {
 
 interface InputPhoneProps {
   defaultValue: string;
+  title?: string;
+  required?: boolean;
+  leftGap?: boolean;
   onChange?: (_value: string) => void;
   color?: 'error' | 'black';
 }
 
 type Country = typeof callingCountries.all[0];
 
-export default function InputPhone({defaultValue, color = 'black', onChange}: InputPhoneProps) {
+export default function InputPhone({defaultValue, required, title, leftGap, color = 'black', onChange}: InputPhoneProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentCode, setCurrentCode] = useState<PhoneCode | null>(null);
   const [isCodesListVisible, setIsCodesListVisible] = useState<boolean>(false);
@@ -75,44 +78,51 @@ export default function InputPhone({defaultValue, color = 'black', onChange}: In
   if (!currentCode) return;
 
   return (
-    <div className={`input-phone flex flex-row justify-between input-phone-${color} relative`}>
-      <div className='input-phone-codes flex flex-row gap-2 justify-center items-center absolute cursor-pointer' onClick={switchCodesListVisibility}>
-        <div className='input-phone-codes-flag'>
-          <img src={`icons/flags/${currentCode.value.toLowerCase()}.svg`}/>
-        </div>
-        <div className='input-phone-codes-code'>
-          {currentCode.code}
-        </div>
-        <div className='input-phone-codes-actiopn'>
-          <DynamicIcon iconName={isCodesListVisible ? 'BsChevronUp' : 'BsChevronDown'}/>
-        </div>
-      </div>
-      {isCodesListVisible && (
-        <div className='input-phone-codes-list absolute flex flex-col gap-1'>
-          <div className='input-phone-codes-list-search flex flex-row gap-2 items-center'>
-            <DynamicIcon iconName='BsSearch'/>
-            <div className='input-phone-codes-list-search-text'>
-              <InputText name='search' placeholder='Rechercher' onChange={refreshPhoneCodes}/>
-            </div>
-          </div>
-          <Separator/>
-          {getPhoneCodesList().map(phoneCode => (
-            <div
-              className='input-phone-codes-list-code cursor-pointer'
-              onClick={() => selectPhoneCode(phoneCode)}
-              key={phoneCode.value}>
-              {phoneCode.name} ({phoneCode.code})
-            </div>
-          ))}
+    <div className='input-phone-container flex flex-col gap-1'>
+      {title && (
+        <div className='input-phone-title'>
+          {title} {required && '*'}
         </div>
       )}
-      <input
-        className='flex-1'
-        type='tel'
-        placeholder={'1 23 45 67 89'}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onBlur={() => setIsCodesListVisible(false)}/>
+      <div className={`input-phone flex flex-row justify-between input-phone-${color} relative`}>
+        <div className='input-phone-codes flex flex-row gap-2 justify-center items-center absolute cursor-pointer' onClick={switchCodesListVisibility}>
+          <div className='input-phone-codes-flag'>
+            <img src={`icons/flags/${currentCode.value.toLowerCase()}.svg`}/>
+          </div>
+          <div className='input-phone-codes-code'>
+            {currentCode.code}
+          </div>
+          <div className='input-phone-codes-actiopn'>
+            <DynamicIcon iconName={isCodesListVisible ? 'BsChevronUp' : 'BsChevronDown'}/>
+          </div>
+        </div>
+        {isCodesListVisible && (
+          <div className='input-phone-codes-list absolute flex flex-col gap-1'>
+            <div className='input-phone-codes-list-search flex flex-row gap-2 items-center'>
+              <DynamicIcon iconName='BsSearch'/>
+              <div className='input-phone-codes-list-search-text'>
+                <InputText name='search' placeholder='Rechercher' onChange={refreshPhoneCodes}/>
+              </div>
+            </div>
+            <Separator/>
+            {getPhoneCodesList().map(phoneCode => (
+              <div
+                className='input-phone-codes-list-code cursor-pointer'
+                onClick={() => selectPhoneCode(phoneCode)}
+                key={phoneCode.value}>
+                {phoneCode.name} ({phoneCode.code})
+              </div>
+            ))}
+          </div>
+        )}
+        <input
+          className={`flex-1 ${leftGap && 'left-gap'} w-full`}
+          type='tel'
+          placeholder={'1 23 45 67 89'}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onBlur={() => setIsCodesListVisible(false)}/>
+      </div>
     </div>
   );
 }
