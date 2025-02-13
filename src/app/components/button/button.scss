@@ -20,15 +20,17 @@
 
   &:not(.round) {
     &:before {
-      height: 150px;
-      width: 200px;
+      height: 300%;
+      width: 150%;
       top: 100%;
       border-radius: 50%;
     }
-  
-    &:hover:before {
-      top: -30px;
-      left: -30px;
+
+    &:not(.underline) {
+      &:hover:before {
+        top: -50%;
+        left: -25%;
+      }
     }
   }
 
@@ -40,9 +42,11 @@
       transform: translate(-50%, -50%);
     }
   
-    &:hover:before {
-      height: 105%;
-      width: 105%;
+    &:not(.underline) {
+      &:hover:before {
+        height: 105%;
+        width: 105%;
+      }
     }
   }
 

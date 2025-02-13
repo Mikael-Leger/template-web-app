@@ -1,6 +1,6 @@
 .navbar {
   height: 142px;
-  background-color: var(--color-1);
+  background-color: var(--white);
   border-bottom: 2px solid var(--color-5);
   color: var(--color-5);
   box-shadow: -1px -2px 10px var(--black);
@@ -14,15 +14,17 @@
       gap: var(--inner-y) var(--inner-x);
       font-size: var(--font-size-3);
       font-weight: var(--font-weight-2);
+      border-radius: var(--border-radius);
       text-transform: uppercase;
       cursor: pointer;
+      transition:  var(--animation-bg);
 
       &.active {
         text-decoration: underline;
       }
 
       &:hover {
-        color: var(--color-4);
+        background-color: var(--color-1);
       }
     }
   }
@@ -60,9 +62,9 @@
     }
 
     &-content {
-      width: 70vw;
+      width: 90vw;
       height: 100vh;
-      background-color: var(--color-1);
+      background-color: var(--white);
       border-right: 2px solid var(--color-5);
       z-index: 1000;
       transition: var(--animation-1);
@@ -89,7 +91,7 @@
         &:not(.main) {
           height: 64px;
           border-radius: var(--border-radius);
-          padding: var(--inner-y) var(--inner-x);
+          padding: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
           
           &.active {
             background-color: var(--color-2);

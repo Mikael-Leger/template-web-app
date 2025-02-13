@@ -14,6 +14,7 @@ import { useIsMobile } from '@/app/contexts/mobile-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Separator from '../separator/separator';
 import { calculateMarginTop } from '@/app/services/page-content';
+import { useSidebar } from '@/app/contexts/sidebar-context';
 
 import './navbar.scss';
 
@@ -21,9 +22,9 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const {isMobile} = useIsMobile();
+  const {isSidebarVisible, setIsSidebarVisible} = useSidebar();
   
   const [language, setLanguage] = useState<string>('fr');
-  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);
 
   const navbarRef = useRef<HTMLDivElement | null>(null);
   
@@ -55,7 +56,8 @@ export default function Navbar() {
       }, 0);
 
       tl.to('.navbar-content-title', {
-        fontSize: '-=6'
+        fontSize: '-=6',
+        padding: 0
       }, 0);
     });
 
@@ -81,7 +83,7 @@ export default function Navbar() {
     return (
       <React.Fragment key={item.title}>
         <div
-          className={`navbar${sidebar ? '-sidebar' : ''}-content-title ${getNavbarItemHeight(sidebar)} flex items-center ${item.main && 'main'} ${item.url === pathname && 'active'}`}
+          className={`navbar${sidebar ? '-sidebar' : ''}-content-title padding-inner ${getNavbarItemHeight(sidebar)} flex items-center ${item.main && 'main'} ${item.url === pathname && 'active'}`}
           onClick={() => handleItemClick(item.url)}
           key={item.title}>
           {sidebar && item.icon && <DynamicIcon iconName={item.icon}/>}
@@ -127,7 +129,7 @@ export default function Navbar() {
 
     return (
       <div
-        className='navbar-sidebar-content flex flex-col fixed top-0 left-0'
+        className={'navbar-sidebar-content flex flex-col fixed top-0 left-0'}
         style={{
           left: isSidebarVisible ? undefined : '-120%'
         }}>
@@ -149,7 +151,7 @@ export default function Navbar() {
     if (!isMobile) return;
 
     return (
-      <div className='navbar-sidebar'>
+      <div className={`navbar-sidebar ${isSidebarVisible && 'sidebar-visible'}`}>
         <div
           className='navbar-sidebar-shadow fixed top-0 left-0 h-full w-full'
           style={{
@@ -163,7 +165,7 @@ export default function Navbar() {
   };
 
   const getJustifyStyle = () => {
-    return (isMobile) ? 'justify-start' : 'justify-center';
+    return (isMobile) ? 'justify-between' : 'justify-center';
   };
 
   return (

@@ -1,22 +1,21 @@
+const pages = [
+  {
+    title: 'home'
+  },
+  {
+    title: 'products'
+  },
+  {
+    title: 'order',
+    value: 100
+  }
+];
+
 const calculateMarginTop = () => {
-  const pages = [
-    {
-      title: 'home',
-      value: 400
-    },
-    {
-      title: 'products',
-      value: 200
-    },
-    {
-      title: 'order',
-      value: 200
-    }
-  ];
 
   for (const page of pages) {
     const foundSelector = document.querySelector(`.${page.title}`);
-    if (foundSelector) return page.value;
+    if (foundSelector) return 112 + (page.value ?? 0);
   }
 
   return 0;

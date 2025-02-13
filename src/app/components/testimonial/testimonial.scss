@@ -1,5 +1,6 @@
 $testimonial-height: 400px;
 $margin-top: 48px;
+$margin-bottom: 30px;
 $padding-top: 64px;
 
 .testimonial {
@@ -75,6 +76,6 @@ $padding-top: 64px;
 
 .testimonials {
   perspective: 800px;
-  height: calc($testimonial-height + $margin-top + var(--inner-y) * 3);
+  height: calc($testimonial-height + $margin-top + $margin-bottom + var(--inner-y) * 3);
   overflow: hidden;
 }

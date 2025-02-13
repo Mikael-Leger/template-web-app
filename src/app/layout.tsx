@@ -6,6 +6,7 @@ import { IsMobileProvider } from './contexts/mobile-context';
 import { LanguageProvider } from './contexts/language-context';
 import { BasketProvider } from './contexts/basket-context';
 import { IconsProvider } from './contexts/icons-context';
+import { SidebarProvider } from './contexts/sidebar-context';
 import Navbar from './components/navbar/navbar';
 import PageContent from './components/page-content/page-content';
 import Basket from './components/basket/basket';
@@ -42,12 +43,14 @@ export default function RootLayout({
           <LanguageProvider>
             <IconsProvider>
               <BasketProvider>
-                <Navbar/>
-                <PageContent>
-                  {children}
-                </PageContent>
-                <Basket/>
-                <Footer/>
+                <SidebarProvider>
+                  <Navbar/>
+                  <PageContent>
+                    {children}
+                  </PageContent>
+                  <Basket/>
+                  <Footer/>
+                </SidebarProvider>
               </BasketProvider>
             </IconsProvider>
           </LanguageProvider>
