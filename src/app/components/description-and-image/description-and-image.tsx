@@ -23,7 +23,9 @@ interface DescriptionAndImageProps {
   transition?: 'swipe' | 'circle';
   delayMs?: number;
   buttons?: DescriptionAndImageButton[];
+  noTopPadding?: boolean;
   noBottomPadding?: boolean;
+  fullWidth?: boolean;
 }
 
 type TextAlign = 'start' |'center' |'end';
@@ -40,7 +42,9 @@ export default function DescriptionAndImage({
   flip = false,
   opacity = 1,
   absolute = false,
-  noBottomPadding = false
+  noTopPadding = false,
+  noBottomPadding = false,
+  fullWidth = false,
 }: DescriptionAndImageProps) {
   const {isMobile} = useIsMobile();
 
@@ -109,7 +113,7 @@ export default function DescriptionAndImage({
 
   const getPanelWidth = () => {
     if (absolute && isMobile) return '80%';
-    if (isMobile) return '100%';
+    if (isMobile || fullWidth) return '100%';
 
     return '50%';
   };
@@ -190,7 +194,8 @@ export default function DescriptionAndImage({
       className={'description-and-image flex flex-col w-full'}
       style={{
         alignSelf: orientation,
-        paddingBottom: noBottomPadding ? '0' : undefined
+        paddingBottom: noBottomPadding ? '0' : undefined,
+        paddingTop: noTopPadding ? '0' : undefined,
       }}>
       {renderContent()}
     </div>

@@ -11,6 +11,7 @@ import { InteractiveShowcases } from './components/interactive-showcase/interact
 import Layout from './components/layout/layout';
 import ParallaxCover from './components/parallax-cover/parallax-cover';
 import PageBackground from './components/page-background/page-background';
+import Newsletter from './components/newsletter/newsletter';
 
 export default function HomePage() {
   const router = useRouter();
@@ -69,6 +70,17 @@ export default function HomePage() {
               type: 'primary',
               onClick: handleFirstButtonClick
             }
+          ]}/>
+      </Card>
+      <Card size='big' padding='none'>
+        <Newsletter 
+          titles={[
+            'Abonnez-vous à notre newsletter',
+            'Abonné à notre newsletter',
+          ]}
+          descriptions={[
+            'Inscrivez-vous à notre newsletter et recevez les dernières actualités, offres exclusives et conseils directement dans votre boîte mail.',
+            'Vous êtes inscris à notre newsletter et recevrez les dernières actualités, offres exclusives et conseils directement dans votre boîte mail.',
           ]}/>
       </Card>
       <Card size='medium'>

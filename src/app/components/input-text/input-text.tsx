@@ -14,10 +14,11 @@ export interface InputTextProps {
   value?: string;
   color?: 'error' | 'black';
   border?: boolean;
-  textarea?: boolean;
   required?: boolean;
   disabled?: boolean;
+  type?: 'text' | 'email' | 'textarea';
   hide?: boolean;
+  error?: string;
   ref?: RefObject<HTMLDivElement | null>;
   submit?: (_payload: any) => void;
   onBlur?: () => void;
@@ -25,7 +26,7 @@ export interface InputTextProps {
   onClick?: (_value: FullAddress) => void;
 }
 
-export default function InputText({name, title, placeholder, value, textarea, required, disabled, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
+export default function InputText({name, title, placeholder, value, type = 'text', required, disabled, error, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
   const [inputValue, setInputValue] = useState<string>(value ?? '');
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function InputText({name, title, placeholder, value, textarea, re
 
   const inputObject = {
     className: 'flex-1 resize-none',
-    style: {height: textarea ? 150 : undefined},
+    style: {height: type === 'textarea' ? 150 : undefined},
     name: name,
     placeholder: placeholder,
     value: value ? value : inputValue,
@@ -60,13 +61,18 @@ export default function InputText({name, title, placeholder, value, textarea, re
         </div>
       )}
       <div className={`input-text-content flex flex-row justify-between relative input-text-${color} ${border && 'input-text-content-border'}`}>
-        {textarea ? (
+        {type === 'textarea' ? (
           <textarea
             {...inputObject}/>
         ): (
           <input
-            type='text'
+            type={type}
             {...inputObject}/>
+        )}
+        {error && (
+          <div className='input-text-error'>
+            {error}
+          </div>
         )}
         {disabled && (
           <div className='input-text-content-disabled absolute'>

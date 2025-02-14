@@ -14,6 +14,7 @@ export default function ContactPage() {
           name: 'email',
           title: 'E-mail',
           placeholder: 'john.doe@exemple.com',
+          type: 'email'
         },
         {
           name: 'name',
@@ -41,7 +42,7 @@ export default function ContactPage() {
           name: 'message',
           title: 'Message',
           placeholder: 'Votre message...',
-          textarea: true
+          type: 'textarea'
         },
       ]
     }

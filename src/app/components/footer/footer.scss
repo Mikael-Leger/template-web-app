@@ -2,7 +2,7 @@
   min-height: 62px;
   background-color: var(--white);
   border-top: 2px solid var(--color-5);
-  margin-top: var(--outer-y);
+  margin-top: calc(-1 * var(--outer-y));
   color: var(--color-5);
   padding: var(--outer-y) var(--outer-x);
   box-shadow: -1px 4px 10px var(--black);

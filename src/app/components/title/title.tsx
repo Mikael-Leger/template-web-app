@@ -8,9 +8,10 @@ interface TitleProps {
   size?: 'small' | 'medium' |'big';
   underline?: boolean;
   margin?: 'none' | 'inner' | 'outer';
+  className?: string;
 }
 
-export default function Title({text, underline, orientation = 'center', size = 'small', margin = 'inner'}: TitleProps) {
+export default function Title({text, underline, className, orientation = 'center', size = 'small', margin = 'inner'}: TitleProps) {
   const getClassNames = () => {
     const sizeClassMap: Record<string, string> = {
       small: 'title-small',
@@ -33,7 +34,7 @@ export default function Title({text, underline, orientation = 'center', size = '
   };
 
   return (
-    <div className={`title ${getClassNames()} title-margin-${margin} flex flex-col`} style={{alignSelf: orientation}}>
+    <div className={`${className} title ${getClassNames()} title-margin-${margin} flex flex-col`} style={{alignSelf: orientation}}>
       {text}
       {underline && (
         <div className='title-underline'/>
