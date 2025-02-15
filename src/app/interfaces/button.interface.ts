@@ -13,6 +13,7 @@ export interface ButtonInterface {
   underline?: boolean;
   borderColor?: 'white' | 'black';
   backgroundColor?: 'primary' | 'secondary' | 'white';
+  width?: string | number;
   fullHeight?: boolean;
   fullWidth?: boolean;
   type?: Type;
@@ -21,6 +22,8 @@ export interface ButtonInterface {
   maxChars?: number;
   disabled?: boolean;
   buttonType?: 'submit';
+  outline?: boolean;
+  className?: string;
   onClick?: (_payload?: any) => any;
   onChange?: (_payload?: any) => any;
 }

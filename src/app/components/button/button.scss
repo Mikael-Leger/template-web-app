@@ -1,5 +1,4 @@
 .button {
-  width: fit-content;
   height: fit-content;
   position: relative;
   font-weight: var(--font-weight-2);
@@ -7,7 +6,7 @@
   color: var(--white);
   overflow: hidden;
   transition: var(--animation-1);
-  
+
   &:before {
     content: "";
     background-color: var(--color-2);
@@ -65,10 +64,36 @@
       align-items: center;
     }
   }
+  
+  &-outline {
+    &:after {
+      content: '';
+      display: flex;
+      position: absolute;
+      z-index: 0;
+      inset: 3px;
+      border-radius: 3px;
+      background-color: var(--white);
+      pointer-events: none;
+    }
+
+    .button-front {
+      color: var(--color-5);
+      transition: var(--animation-1);
+
+      &:hover {
+        color: var(--black);
+      }
+    }
+  }
 
   &-front {
     position: relative;
     gap: var(--inner-x);
+
+    &-text {
+      z-index: 1;
+    }
   }
   
   &-padding {

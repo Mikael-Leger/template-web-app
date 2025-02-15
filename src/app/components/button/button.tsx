@@ -8,21 +8,24 @@ import './button.scss';
 export default function Button({
   title,
   icon,
-  onClick,
-  onChange,
   round,
   buttonType,
+  width,
+  fullHeight,
+  fullWidth,
+  underline,
+  disabled,
+  outline,
+  input,
+  maxChars,
+  className,
   borderColor = 'black',
   backgroundColor = 'white',
   type = 'primary',
   size = 'medium',
-  fullHeight = false,
-  fullWidth = false,
-  underline = false,
   padding = true,
-  input = undefined,
-  maxChars = undefined,
-  disabled = false,
+  onClick,
+  onChange,
 }: ButtonInterface) {
   const onButtonClick = () => {
     if (!onClick || disabled) return;
@@ -86,9 +89,9 @@ export default function Button({
 
   return (
     <button
-      className={`button button-${size} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${padding && 'button-padding'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'}`}
+      className={`button button-${size} ${outline && 'button-outline'} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${padding && 'button-padding'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'} ${className}`}
       role='button'
-      style={{ outlineColor: borderColor }}
+      style={{ outlineColor: borderColor, width: width ? width : 'fit-content' }}
       onClick={onButtonClick}
       disabled={disabled}
       type={buttonType}

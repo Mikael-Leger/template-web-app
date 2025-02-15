@@ -4,13 +4,13 @@
     "image": "sample_1.png",
     "short_description": "Lorem ipsum",
     "price": {
-      "new": 0.99,
+      "nouveau": 0.99,
       "old": 1.19
     },
     "priceByDosage": "0.25€ / Kg",
     "quantity": "La pièce",
     "tags": [
-      "bakery"
+      "boulangerie"
     ]
   },
   {
@@ -19,7 +19,7 @@
     "short_description": "Lorem ipsum",
     "price": 0.59,
     "tags": [
-      "bakery"
+      "boulangerie"
     ]
   },
   {
@@ -28,8 +28,8 @@
     "short_description": "Lorem ipsum",
     "price": 1.29,
     "tags": [
-      "new",
-      "pastry"
+      "nouveau",
+      "pâtisserie"
     ]
   },
   {
@@ -38,8 +38,8 @@
     "short_description": "Lorem ipsum",
     "price": 1.49,
     "tags": [
-      "new",
-      "pastry"
+      "nouveau",
+      "pâtisserie"
     ]
   },
   {
@@ -48,7 +48,7 @@
     "short_description": "Lorem ipsum",
     "price": 1.89,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -57,7 +57,7 @@
     "short_description": "Lorem ipsum",
     "price": 13.99,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -66,7 +66,7 @@
     "short_description": "Lorem ipsum",
     "price": 3.29,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -75,7 +75,7 @@
     "short_description": "Lorem ipsum",
     "price": 2.49,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -84,7 +84,7 @@
     "short_description": "Lorem ipsum",
     "price": 4.69,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -93,7 +93,7 @@
     "short_description": "Lorem ipsum",
     "price": 3.29,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -103,8 +103,8 @@
     "price": 3.14,
     "priceByDosage": "3.14€ / Kg",
     "tags": [
-      "pastry",
-      "new"
+      "pâtisserie",
+      "nouveau"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "short_description": "Lorem ipsum",
     "price": 3.29,
     "tags": [
-      "bakery"
+      "boulangerie"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "short_description": "Lorem ipsum",
     "price": 5.19,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "short_description": "Lorem ipsum",
     "price": 7.39,
     "tags": [
-      "pastry"
+      "pâtisserie"
     ]
   }
 ]

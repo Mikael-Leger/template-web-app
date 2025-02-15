@@ -6,42 +6,58 @@ import { useBasket } from '@/app/contexts/basket-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
 import { capitalizeFirstLetter } from '@/app/services/formatter';
+import Price from '../price/price';
 
 import './product.scss';
-import Price from '../price/price';
 
 interface ProductProps {
   item: ProductItem;
 }
 
 export default function Product({item}: ProductProps) {
-  const {isMobile} = useIsMobile();
+  const {breakpoint} = useIsMobile();
   const {getActions} = useBasket();
 
   const getImageHeight = () => {
-    return isMobile ? 200 : 300;
+    switch (breakpoint) {
+    case 'xxs':
+      return 300;
+    case 'xs':
+      return 300;
+    case 'sm':
+      return 320;
+    case 'md':
+      return 300;
+    default:
+      return 320;
+    }
   };
 
-  const getProductWidth = () => {
-    return isMobile ? 125 : 200;
+  const getImageWidth = () => {
+    switch (breakpoint) {
+    case 'xxs':
+      return 200;
+    case 'xs':
+      return 180;
+    case 'sm':
+      return 200;
+    case 'md':
+      return 180;
+    default:
+      return 200;
+    }
   };
 
   return (
-    <div className='product' style={{width: getProductWidth()}}>
+    <div className='product' style={{width: getImageWidth()}}>
       <div className='product-image' style={{height: getImageHeight()}}>
         {item.image && <img src={`images/catalog/${item.image}`} style={{height: getImageHeight()}}/>}
-        {item.tags?.includes('new') && (
+        {item.tags?.includes('nouveau') && (
           <div className='product-image-new relative'>
             <div className='product-image-new-icon absolute'>
-              <DynamicIcon iconName='BsStars' color='red' size={isMobile ? 32: 48}/>
+              <DynamicIcon iconName='BsStars' color='red' size={48}/>
             </div>
-            <div
-              className='product-image-new-text absolute flex justify-center items-center'
-              style={{
-                width: isMobile ? '32px': '48px',
-                height: isMobile ? '32px': '48px',
-                fontSize: isMobile ? '12px': '20px'
-              }}>
+            <div className='product-image-new-text absolute flex justify-center items-center'>
               NEW
             </div>
           </div>
@@ -75,7 +91,7 @@ export default function Product({item}: ProductProps) {
           </div>
         </div>
       </div>
-      <div className='product-details flex flex-col justify-center items-center'>
+      <div className='product-details flex flex-col items-center'>
         <div className='product-details-title'>
           {capitalizeFirstLetter(item.title)}
         </div>

@@ -1,6 +1,7 @@
 .catalog {
   padding: var(--inner-y) var(--inner-x);
   user-select: none;
+  overflow: hidden;
 
   &-filters {
     > *:not(.separator) {
@@ -11,6 +12,7 @@
 
   &-products {
     gap: var(--inner-y) var(--inner-x);
-    padding: var(--inner-y) 0;
+    padding: var(--outer-y) 0;
+    width: 80vw;
   }
 }

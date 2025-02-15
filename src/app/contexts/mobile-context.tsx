@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type Breakpoint = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface IsMobileContextType {
     isMobile: boolean;
@@ -34,7 +34,9 @@ export const IsMobileProvider: React.FC<IsMobileProviderProps> = ({ children }) 
       setIsMobile(window.innerWidth <= 768);
 
       let breakpointInfix: Breakpoint = 'xl';
-      if (window.innerWidth < 576) {
+      if (window.innerWidth < 480) {
+        breakpointInfix = 'xxs';
+      } else if (window.innerWidth < 576) {
         breakpointInfix = 'xs';
       } else if (window.innerWidth < 768) {
         breakpointInfix = 'sm';
