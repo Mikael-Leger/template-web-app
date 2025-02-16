@@ -12,6 +12,7 @@ import Layout from './components/layout/layout';
 import ParallaxCover from './components/parallax-cover/parallax-cover';
 import PageBackground from './components/page-background/page-background';
 import Newsletter from './components/newsletter/newsletter';
+import Image from './components/image/image';
 
 export default function HomePage() {
   const router = useRouter();
@@ -27,6 +28,15 @@ export default function HomePage() {
   return (
     <div className='home w-full h-full flex'>
       <PageBackground imagePath='images/sample_8.png'/>
+      <Card
+        size='big'
+        padding={'none'}>
+        <Image
+          className='w-full h-[287px]'
+          objectFit='cover'
+          objectPosition='80% 30%'
+          path='images/news/sample_1.png'/>
+      </Card>
       <Card
         size='big'
         padding={'none'}>
