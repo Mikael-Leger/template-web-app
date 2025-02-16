@@ -87,6 +87,8 @@ interface TestimonialsProps {
 export function Testimonials({delayMs}: TestimonialsProps) {
   const {breakpoint} = useIsMobile();
 
+  const isAnimating = useRef<boolean>(false);
+
   const [itemIndex, setItemIndex] = useState<{
     current: number,
     direction: 'left' | 'right'
@@ -187,6 +189,11 @@ export function Testimonials({delayMs}: TestimonialsProps) {
     });
   };
 
+  const onItemClick = () => {
+    if (isAnimating.current) return;
+    handleNewIndex();
+  };
+
   const handleNewIndex = () => {
     let newIndex = (itemIndexRef.current.direction === 'left') ? itemIndexRef.current.current + 1 : itemIndexRef.current.current - 1;
     
@@ -213,10 +220,14 @@ export function Testimonials({delayMs}: TestimonialsProps) {
     const offsetValue = getOffset();
     const rotateValue = 50;
 
+    const duration = .8;
+
     elements.forEach((element, index) => {
       const neighbour = itemIndexRef.current.current === index - 1
       || itemIndexRef.current.current === index
       || itemIndexRef.current.current === index + 1;
+
+      isAnimating.current = true;
 
       gsap.to(element, {
         x: `${itemIndexRef.current.direction === 'right' ? '+' : '-'}=${offsetValue}`,
@@ -224,13 +235,17 @@ export function Testimonials({delayMs}: TestimonialsProps) {
         scale: itemIndexRef.current.current === index ? 1 : .85,
         opacity: neighbour ? 1 : 0,
         ease: 'power3.inOut',
-        duration: .8
+        duration
       });
+
+      setTimeout(() => {
+        isAnimating.current = false;
+      }, duration * 1000);
     });
   };
 
   return (
-    <div className='testimonials relative' onClick={handleNewIndex}>
+    <div className='testimonials relative' onClick={onItemClick}>
       {testimonials.map((item: TestimonialFormatted, index) => (
         <Testimonial {...item} index={index} key={index}/>
       ))}
