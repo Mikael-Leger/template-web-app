@@ -144,16 +144,14 @@
   }
 
   &.input {
-    &-primary {
-      background: var(--gradient-primary-2);
-    }
-
-    &-secondary {
-      background-color: var(--secondary);
-    }
-
     input {
       background-color: transparent;
+    }
+
+    &-primary {
+      input {
+        background: var(--gradient-primary-2);
+      }
     }
   }
 

@@ -81,17 +81,29 @@ export default function Button({
           style={{
             outlineColor: borderColor,
             width: 50,
+            color: underline ? type : '',
           }}
         />
       </div>
     );
   }
 
+  const getButtonWidth = () => {
+    if (width) return width;
+    if (fullWidth) return '100%';
+
+    return 'fit-content';
+  };
+
   return (
     <button
       className={`button button-${size} ${outline && 'button-outline'} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${padding && 'button-padding'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'} ${className}`}
       role='button'
-      style={{ outlineColor: borderColor, width: width ? width : 'fit-content' }}
+      style={{
+        outlineColor: borderColor,
+        width: getButtonWidth(),
+        color: underline ? type : '',
+      }}
       onClick={onButtonClick}
       disabled={disabled}
       type={buttonType}

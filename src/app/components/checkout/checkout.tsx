@@ -37,8 +37,22 @@ export default function Checkout({error, submit}: CheckoutProps) {
 
   const reductionsPrice = getReductionsPrice(promotion ?? undefined);
 
+  const renderActions = () => {
+    return (
+      <div className='checkout-actions'>
+        {error ? (
+          <Tooltip text={error}>
+            <Button title={'Continuer'} fullWidth onClick={submit} disabled/>
+          </Tooltip>
+        ) : (
+          <Button title={'Continuer'} fullWidth onClick={submit}/>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className='checkout flex flex-col'>
+    <div className='checkout flex flex-col padding-inner'>
       <div className='checkout-content flex flex-col'>
         <CheckoutMainDetails/>
         <div className='checkout-content-subtotal'>
@@ -121,15 +135,7 @@ export default function Checkout({error, submit}: CheckoutProps) {
           </div>
         </div>
       </div>
-      <div className='checkout-actions'>
-        {error ? (
-          <Tooltip text={error}>
-            <Button title={'Continuer'} fullWidth onClick={submit} disabled/>
-          </Tooltip>
-        ) : (
-          <Button title={'Continuer'} fullWidth onClick={submit}/>
-        )}
-      </div>
+      {renderActions()}
     </div>
   );
 }

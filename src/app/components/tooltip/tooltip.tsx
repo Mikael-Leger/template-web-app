@@ -17,7 +17,7 @@ export default function Tooltip({children, text}: TooltipProps) {
       onMouseLeave={() => setIsTooltipVisible(false)}
     >
       {children}
-      <div className='tooltip-content absolute' style={{
+      <div className='tooltip-content w-full absolute' style={{
         opacity: isTooltipVisible ? 1 : 0,
         borderWidth: isTooltipVisible ? 1 : 0,
         outlineWidth: isTooltipVisible ? 1 : 0,

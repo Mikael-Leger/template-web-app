@@ -2,16 +2,12 @@
   &-content {
     right: 0;
     top: 100%;
-    width: 250px;
+    min-width: 250px;
     height: 130px;
     padding: var(--inner-y) var(--inner-x);
     background-color: var(--white);
     border-radius: var(--border-radius);
     outline: 1px solid var(--color-5);
     transition: var(--animation-1);
-
-    &-text {
-      
-    }
   }
 }

@@ -79,7 +79,6 @@ export default function ProductsList({hasErrors}: ProductsListProps) {
                           }}
                           type='black'
                           input={action.input}
-                          backgroundColor= 'secondary'
                           maxChars={action.maxChars}
                           title={action.title}
                           round={action.round}

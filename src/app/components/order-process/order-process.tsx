@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useIsMobile } from '@/app/contexts/mobile-context';
 import Title from '../title/title';
 import Layout from '../layout/layout';
 import ProductsList from '../products-list/products-list';
@@ -12,11 +13,13 @@ import { Step } from '@/app/interfaces/step.interface';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
 import { useBasket } from '@/app/contexts/basket-context';
+import Tooltip from '../tooltip/tooltip';
 
 import './order-process.scss';
 
 export default function OrderProcess() {
   const router = useRouter();
+  const {isMobile} = useIsMobile();
 
   const {clearItems} = useBasket();
 
@@ -105,11 +108,25 @@ export default function OrderProcess() {
     }
   };
 
+  const renderActions = () => {
+    return (
+      <>
+        {currentProcessus?.error ? (
+          <Tooltip text={currentProcessus.error}>
+            <Button title={'Continuer'} fullWidth onClick={goToNextProcess} disabled/>
+          </Tooltip>
+        ) : (
+          <Button title={'Continuer'} fullWidth onClick={goToNextProcess}/>
+        )}
+      </>
+    );
+  };
+
   if (!currentProcessus) return;
 
   return (
     <div className='order-process flex flex-col flex-gap'>
-      <div className='order-process-progression flex flex-row'>
+      <div className={`order-process-progression flex ${isMobile ? 'flex-col' : 'flex-row'} flex-gap`}>
         <div className='order-process-progression-back'>
           {currentProcessus.number > 0 && currentProcessus.number < processuses.length - 1 && (
             <Button
@@ -137,6 +154,11 @@ export default function OrderProcess() {
           </div>
         </div>
       </div>
+      {isMobile && (
+        <div className='order-process-actions padding-inner'>
+          {renderActions()}
+        </div>
+      )}
       <div className='order-process-current flex flex-col'>
         <Title text={currentProcessus.title} size='big' orientation={currentProcessus.number === processuses.length - 1 ? 'center' : 'start'} underline/>
         {currentProcessus.number !== processuses.length - 1 ? (
