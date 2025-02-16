@@ -6,7 +6,7 @@
   &-filters {
     > *:not(.separator) {
       gap: var(--inner-y) var(--inner-x);
-      padding: var(--inner-y) var(--inner-x);
+      padding: var(--inner-y) 0;
     }
   }
 

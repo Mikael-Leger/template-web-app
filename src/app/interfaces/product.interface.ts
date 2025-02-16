@@ -7,6 +7,7 @@ export interface ProductItem {
   priceByDosage?: string;
   quantity?: string;
   tags?: string[];
+  hide?: boolean;
 }
 
 export type PriceType = number | {

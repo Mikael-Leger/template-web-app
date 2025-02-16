@@ -8,6 +8,7 @@ import Product from '../product/product';
 import Button from '../button/button';
 import Separator from '../separator/separator';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
+import InputText from '../input-text/input-text';
 
 import './catalog.scss';
 
@@ -29,6 +30,7 @@ interface CatalogFilters {
 }
 
 interface CatalogProps {
+  searchBar?: boolean;
   pagination?: boolean;
   itemsPerPage?: number;
   totalVisiblePages?: number;
@@ -36,7 +38,7 @@ interface CatalogProps {
 
 const productItems: ProductItem[] = productsJson.sort((a, b) => (a.tags.includes('nouveau') ? -1 : b.tags.includes('nouveau') ? 1 : 0));
 
-export default function Catalog({itemsPerPage, totalVisiblePages = 5, pagination = false}: CatalogProps) {
+export default function Catalog({searchBar, itemsPerPage, totalVisiblePages = 5, pagination}: CatalogProps) {
   const {isMobile, breakpoint} = useIsMobile();
   const [itemsFiltered, setItemsFiltered] = useState<ProductItem[]>([]);
   const [filters, setFilters] = useState<CatalogFilters>({
@@ -301,7 +303,7 @@ export default function Catalog({itemsPerPage, totalVisiblePages = 5, pagination
     const itemsPerRow = getItemsPerRow();
     
     const groupedProducts = itemsFiltered
-      .filter((_, index) => index >= filters.offset && index < filters.offset + filters.limit)
+      .filter((item, index) => !item.hide && index >= filters.offset && index < filters.offset + filters.limit)
       .reduce((acc, item, index) => {
         if (index % itemsPerRow === 0) acc.push([]);
         acc[acc.length - 1].push(item);
@@ -375,15 +377,40 @@ export default function Catalog({itemsPerPage, totalVisiblePages = 5, pagination
       key={tag}/>;
   };
 
+  const handleSearchChange = (searchValue: string) => {
+    setItemsFiltered(prevState => {
+      return prevState.map(item => {
+        const searchLower = searchValue.toLowerCase();
+        const titleLower = item.title.toLowerCase();
+        const descriptionLower = (item.short_description?.toLowerCase() ?? '') + item.long_description?.toLowerCase();
+
+        item.hide = (!titleLower.includes(searchLower) && !descriptionLower.includes(searchLower));
+
+        return item;
+      });
+    });
+  };
+
   const renderFilters = () => {
     return (
       <div className='catalog-filters flex flex-row flex-wrap justify-center items-center w-full'>
-        <div className='catalog-filters-tags flex flex-wrap justify-center w-[80%]'>
+        <div className={`catalog-filters-tags flex flex-wrap justify-center w-[${isMobile ? 100 : 80}%]`}>
           {renderTag('Tous', filters.tags.length !== 0, true)}
           {getAllTags().map(tag => (
             renderTag(tag, !filters.tags.includes(tag))
           ))}
         </div>
+        {searchBar && (
+          <div className='catalog-filters-search flex flex-wrap justify-center w-[80%]'>
+            <InputText
+              className='w-full'
+              name='search-products-bakery'
+              placeholder='Rechercher un produit...'
+              icon={{name: 'BsSearch'}}
+              onChange={handleSearchChange}
+              border/>
+          </div>
+        )}
       </div>
     );
   };

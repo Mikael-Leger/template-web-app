@@ -4,7 +4,7 @@
     "image": "sample_1.png",
     "short_description": "Lorem ipsum",
     "price": {
-      "nouveau": 0.99,
+      "new": 0.99,
       "old": 1.19
     },
     "priceByDosage": "0.25€ / Kg",
@@ -26,7 +26,10 @@
     "title": "cookie",
     "image": "sample_3.png",
     "short_description": "Lorem ipsum",
-    "price": 1.29,
+    "price": {
+      "new": 0.89,
+      "old": 1.29
+    },
     "tags": [
       "nouveau",
       "pâtisserie"

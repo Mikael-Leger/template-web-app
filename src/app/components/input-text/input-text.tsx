@@ -19,6 +19,10 @@ export interface InputTextProps {
   type?: 'text' | 'email' | 'textarea';
   hide?: boolean;
   error?: string;
+  className?: string;
+  icon?: {
+    name: string;
+  };
   ref?: RefObject<HTMLDivElement | null>;
   submit?: (_payload: any) => void;
   onBlur?: () => void;
@@ -26,7 +30,7 @@ export interface InputTextProps {
   onClick?: (_value: FullAddress) => void;
 }
 
-export default function InputText({name, title, placeholder, value, type = 'text', required, disabled, error, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
+export default function InputText({name, title, placeholder, icon, value, type = 'text', required, disabled, error, className, color = 'black', border = false, submit, onBlur, onChange}: InputTextProps) {
   const [inputValue, setInputValue] = useState<string>(value ?? '');
 
   useEffect(() => {
@@ -42,7 +46,7 @@ export default function InputText({name, title, placeholder, value, type = 'text
   }, [value]);
 
   const inputObject = {
-    className: 'flex-1 resize-none',
+    className: 'flex-1 resize-none min-w-0 truncate',
     style: {height: type === 'textarea' ? 150 : undefined},
     name: name,
     placeholder: placeholder,
@@ -54,10 +58,15 @@ export default function InputText({name, title, placeholder, value, type = 'text
   };
 
   return (
-    <div className={'input-text flex flex-col gap-1'}>
+    <div className={`input-text flex flex-col gap-1 relative ${className}`}>
       {title && (
         <div className='input-text-title'>
           {title} {required && '*'}
+        </div>
+      )}
+      {icon && (
+        <div className='input-text-icon absolute'>
+          <DynamicIcon iconName={icon.name}/>
         </div>
       )}
       <div className={`input-text-content flex flex-row justify-between relative input-text-${color} ${border && 'input-text-content-border'}`}>

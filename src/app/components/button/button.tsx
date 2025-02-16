@@ -52,7 +52,7 @@ export default function Button({
           </div>
         )}
         {title && (
-          <div className='button-front-text'>
+          <div className='button-front-text resize-none min-w-0 truncate'>
             {capitalizeFirstLetter(title.toString())}
           </div>
         )}

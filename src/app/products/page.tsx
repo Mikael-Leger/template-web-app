@@ -13,7 +13,7 @@ export default function ProductsPage() {
   return (
     <div className='products w-full h-full flex'>
       <Card size='big' padding='none'>
-        <Catalog pagination itemsPerPage={7} totalVisiblePages={5}/>
+        <Catalog searchBar pagination itemsPerPage={7} totalVisiblePages={5}/>
       </Card>
       <Card size='big' padding='none'>
         <Testimonials delayMs={2500}/>

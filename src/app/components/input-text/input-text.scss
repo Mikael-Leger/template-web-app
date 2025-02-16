@@ -1,6 +1,13 @@
 .input-text {
   font-size: var(--font-size-2);
 
+  &-icon {
+    right: var(--inner-x);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--grey);
+  }
+
   &-content {
     input, textarea {
       background: transparent;
