@@ -14,6 +14,7 @@ export default function Testimonial({text, imagePath, author, role, company, dat
 
   const getWidth = () => {
     switch (breakpoint) {
+    case 'xxs':
     case 'xs':
       return '90vw';
     case 'sm':
