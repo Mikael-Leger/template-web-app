@@ -28,10 +28,18 @@
 
   &-padding {
     &-inner {
-      padding: var(--inner-y) var(--inner-x);
+      padding: var(--inner-y) 0;
     }
 
     &-outer {
+      padding: var(--outer-y) 0;
+    }
+
+    &-inner-full {
+      padding: var(--inner-y) var(--inner-x);
+    }
+
+    &-outer-full {
       padding: var(--outer-y) var(--outer-x);
     }
 

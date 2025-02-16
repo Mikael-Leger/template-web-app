@@ -40,7 +40,7 @@ export default function HomePage() {
       </Card>
       <Card
         size='big'
-        padding={'none'}>
+        padding={'inner'}>
         <Title
           text='Text and image absolute center carousel swipe'
           orientation='center'
@@ -85,7 +85,6 @@ export default function HomePage() {
       </Card>
       <Card
         size='big'
-        style={{marginBottom: 0}}
         padding='none'>
         <Newsletter 
           titles={[
@@ -99,15 +98,14 @@ export default function HomePage() {
       </Card>
       <Card
         size='big'
-        style={{marginTop: 0}}
-        padding={'none'}>
+        padding={'inner'}>
         <Video
           className='w-full'
           objectFit='cover'
           objectPosition='80% 30%'
           path='videos/sample_1.mp4'/>
       </Card>
-      <Card size='medium'>
+      <Card size='medium' padding='outer-full'>
         <Title
           text='Text and image absolute center carousel circle'
           orientation='center'
@@ -130,6 +128,8 @@ export default function HomePage() {
           ]}
           opacity={.7}
           absolute
+          noTopPadding
+          noBottomPadding
           transition='circle'
           delayMs={7000}/>
       </Card>

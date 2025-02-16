@@ -12,7 +12,7 @@ interface CardProps {
   width?: number;
   height?: number;
   background?: 'default' | 'gradient';
-  padding?: 'none' | 'inner' | 'outer';
+  padding?: 'none' | 'inner' | 'inner-full' | 'outer' | 'outer-full';
   margin?: 'none' | 'inner' | 'outer';
   className?: string;
   borderColor?: 'primary' | 'black';

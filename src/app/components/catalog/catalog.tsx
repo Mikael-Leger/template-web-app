@@ -416,7 +416,7 @@ export default function Catalog({searchBar, itemsPerPage, totalVisiblePages = 5,
   };
 
   return (
-    <div className='catalog flex flex-col items-center'>
+    <div className='catalog flex flex-col flex-gap items-center'>
       {renderFilters()}
       {pagination && isMobile && renderPagination()}
       <Separator height={2}/>

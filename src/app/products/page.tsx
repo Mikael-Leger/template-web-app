@@ -12,7 +12,10 @@ export default function ProductsPage() {
 
   return (
     <div className='products w-full h-full flex'>
-      <Card size='big' padding='none'>
+      <Card
+        size='big'
+        style={{paddingTop: 50}}
+        padding='none'>
         <Catalog searchBar pagination itemsPerPage={7} totalVisiblePages={5}/>
       </Card>
       <Card size='big' padding='none'>
