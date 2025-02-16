@@ -12,8 +12,8 @@ import Layout from './components/layout/layout';
 import ParallaxCover from './components/parallax-cover/parallax-cover';
 import PageBackground from './components/page-background/page-background';
 import Newsletter from './components/newsletter/newsletter';
-import Image from './components/image/image';
 import Video from './components/video/video';
+import BannerImage from './components/banner-image/banner-image';
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,11 +32,7 @@ export default function HomePage() {
       <Card
         size='big'
         padding={'none'}>
-        <Image
-          className='w-full h-[287px]'
-          objectFit='cover'
-          objectPosition='80% 30%'
-          path='images/news/sample_1.png'/>
+        <BannerImage height={'287'} path='images/news/sample_1.png' onClick={() => router.push('/products')}/>
       </Card>
       <Card
         size='big'
