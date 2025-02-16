@@ -17,9 +17,10 @@ interface CardProps {
   className?: string;
   borderColor?: 'primary' | 'black';
   id?: string;
+  style?: object;
 }
 
-export default function Card({children, width, height, className, id, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
+export default function Card({children, width, height, className, id, style, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
   const {isMobile} = useIsMobile();
   const isInCard = useIsInCard();
 
@@ -47,8 +48,9 @@ export default function Card({children, width, height, className, id, orientatio
     <CardContext.Provider value={true}>
       <div
         id={id}
-        className={`flex ${className} card ${getSize()} card-${background} card-padding-${isMobile ? 'mobile' : padding} ${isInCard && 'aspect-[1/1]'} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'}`}
+        className={`flex card ${getSize()} card-${background} card-padding-${isMobile ? 'mobile' : padding} ${isInCard && 'aspect-[1/1]'} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'} ${className}`}
         style={{
+          ...style,
           ...getDimensionStyles(),
           alignSelf: orientation
         }}>

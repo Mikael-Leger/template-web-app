@@ -13,6 +13,7 @@ import ParallaxCover from './components/parallax-cover/parallax-cover';
 import PageBackground from './components/page-background/page-background';
 import Newsletter from './components/newsletter/newsletter';
 import Image from './components/image/image';
+import Video from './components/video/video';
 
 export default function HomePage() {
   const router = useRouter();
@@ -82,7 +83,10 @@ export default function HomePage() {
             }
           ]}/>
       </Card>
-      <Card size='big' padding='none'>
+      <Card
+        size='big'
+        style={{marginBottom: 0}}
+        padding='none'>
         <Newsletter 
           titles={[
             'Abonnez-vous à notre newsletter',
@@ -92,6 +96,16 @@ export default function HomePage() {
             'Inscrivez-vous à notre newsletter et recevez les dernières actualités, offres exclusives et conseils directement dans votre boîte mail.',
             'Vous êtes inscris à notre newsletter et recevrez les dernières actualités, offres exclusives et conseils directement dans votre boîte mail.',
           ]}/>
+      </Card>
+      <Card
+        size='big'
+        style={{marginTop: 0}}
+        padding={'none'}>
+        <Video
+          className='w-full'
+          objectFit='cover'
+          objectPosition='80% 30%'
+          path='videos/sample_1.mp4'/>
       </Card>
       <Card size='medium'>
         <Title
