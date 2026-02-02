@@ -34,8 +34,8 @@ export default function PageContent({children}: PageContentProps) {
   }, []);
 
   return (
-    <div className='page-content' ref={pageRef}>
+    <main id='main-content' className='page-content' ref={pageRef} role='main'>
       {children}
-    </div>
+    </main>
   );
 }

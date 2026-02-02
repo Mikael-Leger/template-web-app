@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 import './products-list.scss';
 
-interface ProductsListProps extends StepErrors {}
+type ProductsListProps = StepErrors;
 
 export default function ProductsList({hasErrors}: ProductsListProps) {
   const router = useRouter();

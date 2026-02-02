@@ -1,14 +1,10 @@
 [
   {
-    "title": "Français",
-    "value": "fr"
+    "title": "Fran\u00e7ais",
+    "value": "baguette"
   },
   {
     "title": "English",
     "value": "en"
-  },
-  {
-    "title": "Nederlands",
-    "value": "nl"
   }
 ]

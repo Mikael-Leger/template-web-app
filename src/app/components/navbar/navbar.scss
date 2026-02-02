@@ -1,27 +1,43 @@
 .navbar {
-  height: 142px;
-  background-color: var(--white);
-  border-bottom: 2px solid var(--color-5);
-  color: var(--color-5);
-  box-shadow: -1px -2px 10px var(--black);
-  z-index: 100;
+  height: 80px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  color: var(--gray-700);
+  box-shadow: var(--shadow-sm);
+  z-index: var(--z-fixed);
+  transition: all var(--transition-normal);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: rgba(30, 41, 59, 0.95);
+    border-bottom-color: var(--gray-700);
+  }
 
   &-content {
     &-title {
-      gap: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
-      font-size: var(--font-size-3);
+      gap: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
       font-weight: var(--font-weight-2);
-      border-radius: var(--border-radius);
+      border-radius: var(--radius-md);
       text-transform: uppercase;
+      letter-spacing: 0.05em;
       cursor: pointer;
-      transition:  var(--animation-bg);
+      transition: all var(--transition-fast);
+      padding: var(--space-2) var(--space-4);
 
       &.active:not(.main) {
-        background-color: var(--color-0);
+        background-color: var(--primary-light);
+        color: var(--primary);
       }
 
       &:hover:not(.main) {
-        background-color: var(--color-1);
+        background-color: var(--gray-100);
+        color: var(--primary);
+
+        @media (prefers-color-scheme: dark) {
+          background-color: var(--gray-700);
+        }
       }
 
       &.main {
@@ -57,53 +73,76 @@
 
   &-sidebar {
     &-shadow {
-      z-index: 900;
-      background-color: var(--grey-opacity);
-      transition: var(--animation-1);
+      z-index: var(--z-modal-backdrop);
+      background-color: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all var(--transition-normal);
     }
 
     &-content {
-      width: 90vw;
+      width: 85vw;
+      max-width: 320px;
       height: 100vh;
-      background-color: var(--white);
-      border-right: 2px solid var(--color-5);
-      z-index: 1000;
-      transition: var(--animation-1);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow-xl);
+      z-index: var(--z-modal);
+      transition: transform var(--transition-slow);
+
+      @media (prefers-color-scheme: dark) {
+        background-color: var(--gray-800);
+      }
 
       &-items {
-        gap: var(--inner-y) var(--inner-x);
-        padding: var(--inner-y) var(--inner-x);
+        gap: var(--space-2);
+        padding: var(--space-4);
       }
 
       &-title {
-        gap: var(--inner-y) var(--inner-x);
-        font-size: var(--font-size-3);
+        gap: var(--space-3);
+        font-size: var(--font-size-lg);
         font-weight: var(--font-weight-2);
         cursor: pointer;
-  
+        transition: all var(--transition-fast);
+
         &:hover {
-          color: var(--color-4);
+          color: var(--primary);
         }
 
         &.main {
-          padding: var(--outer-y) var(--outer-x);
+          padding: var(--space-6);
         }
 
         &:not(.main) {
-          height: 64px;
-          border-radius: var(--border-radius);
-          padding: calc(var(--inner-y) / 2) calc(var(--inner-x) / 2);
-          
+          height: 56px;
+          border-radius: var(--radius-md);
+          padding: var(--space-3) var(--space-4);
+
           &.active {
-            background-color: var(--color-2);
+            background-color: var(--primary-light);
+            color: var(--primary);
+          }
+
+          &:hover {
+            background-color: var(--gray-100);
+
+            @media (prefers-color-scheme: dark) {
+              background-color: var(--gray-700);
+            }
           }
         }
       }
 
       &-bottom {
-        gap: var(--inner-y) var(--inner-x);
-        padding: var(--outer-y) var(--outer-x);
-        background-color: var(--color-2);
+        gap: var(--space-4);
+        padding: var(--space-6);
+        background-color: var(--gray-50);
+        border-top: 1px solid var(--border);
+
+        @media (prefers-color-scheme: dark) {
+          background-color: var(--gray-900);
+        }
       }
     }
   }

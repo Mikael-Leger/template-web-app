@@ -1,36 +1,87 @@
 .footer {
-  min-height: 62px;
-  background-color: var(--white);
-  border-top: 2px solid var(--color-5);
+  min-height: 64px;
+  background-color: var(--gray-900);
+  border-top: 1px solid var(--gray-800);
   margin-top: calc(-1 * var(--outer-y));
-  color: var(--color-5);
-  padding: var(--outer-y) var(--outer-x);
-  box-shadow: -1px 4px 10px var(--black);
-  z-index: 100;
+  color: var(--gray-400);
+  padding: var(--space-6) var(--space-7);
+  z-index: var(--z-sticky);
   position: absolute;
 
+  @media (prefers-color-scheme: light) {
+    background-color: var(--gray-50);
+    border-top-color: var(--border);
+    color: var(--gray-600);
+  }
+
   &-content {
-    gap: var(--inner-y) var(--inner-x);
+    gap: var(--space-4) var(--space-6);
 
     &-container {
-      gap: var(--inner-y) var(--inner-x);
+      gap: var(--space-3) var(--space-4);
 
       &-title {
-        font-size: var(--font-size-2);
+        font-size: var(--font-size-sm);
         font-weight: var(--font-weight-2);
+        transition: color var(--transition-fast);
 
         &.clickable {
           cursor: pointer;
-          text-decoration: underline;
-    
+          text-decoration: none;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary);
+            transition: width var(--transition-normal);
+          }
+
           &:hover {
-            color: var(--color-4);
+            color: var(--primary);
+
+            &::after {
+              width: 100%;
+            }
           }
         }
       }
-  
+
       &-separator {
-        font-size: var(--font-size-3);
+        font-size: var(--font-size-xs);
+        color: var(--gray-500);
+      }
+
+      /* Social icons */
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        background-color: transparent;
+        color: var(--gray-400);
+        transition: all var(--transition-fast);
+
+        &:hover {
+          background-color: var(--primary-light);
+          color: var(--primary);
+          transform: translateY(-2px);
+        }
+
+        @media (prefers-color-scheme: light) {
+          color: var(--gray-500);
+
+          &:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+          }
+        }
       }
     }
   }

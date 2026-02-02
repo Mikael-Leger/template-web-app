@@ -64,8 +64,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     localStorage.setItem('lang', language);
   }, [language]);
 
+  // Placeholder getText - overridden by useLanguage hook when component is specified
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const defaultGetText = (_index: number) => '';
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, getTextByComponent, getText: (index: number) => '' }}>
+    <LanguageContext.Provider value={{ language, setLanguage, getTextByComponent, getText: defaultGetText }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(npm run build:*)",
+      "Bash(npx eslint:*)",
+      "Bash(curl:*)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__select_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__hover",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__press_key",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_network_request",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__close_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(xargs:*)",
+      "Bash(npx kill-port 4000)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__handle_dialog",
+      "Bash(timeout:*)",
+      "Bash(cmd //c \"taskkill /PID 45496 /F\")",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_console_message",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

@@ -44,7 +44,6 @@ export default function Newsletter({titles, descriptions}: NewsletterProps) {
   return (
     <div className='newsletter flex flex-col'>
       <Title
-        className='padding-inner'
         size='medium'
         text={isRegisteredToNewsletter ? titles[1] : titles[0]}
         orientation='start'/>
@@ -52,10 +51,9 @@ export default function Newsletter({titles, descriptions}: NewsletterProps) {
         className='flex-1'
         items={[
           {
-            node: renderNewsletter()
-            ,
+            node: renderNewsletter(),
             space: 2,
-            className: 'padding-outer flex-gap'
+            className: 'flex-gap'
           },
           {
             node: <img className='absolute top-[-30px]' src='/images/newsletter/sample_1.png'/>,

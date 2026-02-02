@@ -21,7 +21,10 @@ export default async function handler(req, res) {
   if (!data1.results.length || !data2.results.length) {
     console.error('Une ou les deux adresses sont invalides.');
 
-    return;
+    return res.status(400).json({
+      error: 'Invalid address',
+      message: 'One or both addresses could not be geocoded'
+    });
   }
 
   const matrixUrl = `https://api.geoapify.com/v1/routematrix?apiKey=${apiKey}`;
@@ -49,7 +52,10 @@ export default async function handler(req, res) {
   if (matrixData.error) {
     console.error('Erreur lors du calcul de la distance :', matrixData.error);
 
-    return;
+    return res.status(500).json({
+      error: 'Distance calculation failed',
+      message: matrixData.error
+    });
   }
 
   const {distance} = matrixData.sources_to_targets[0][0];

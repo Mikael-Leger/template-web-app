@@ -19,6 +19,7 @@ export default function Button({
   input,
   maxChars,
   className,
+  ariaLabel,
   borderColor = 'black',
   backgroundColor = 'white',
   type = 'primary',
@@ -98,7 +99,6 @@ export default function Button({
   return (
     <button
       className={`button button-${size} ${outline && 'button-outline'} ${fullWidth && 'button-full-width'} ${fullHeight && 'button-full-height'} ${padding && 'button-padding'} ${round && 'round'} ${underline ? 'underline' : 'background'} button-${type} ${disabled && 'disabled'} ${className}`}
-      role='button'
       style={{
         outlineColor: borderColor,
         width: getButtonWidth(),
@@ -107,6 +107,8 @@ export default function Button({
       onClick={onButtonClick}
       disabled={disabled}
       type={buttonType}
+      aria-label={ariaLabel || (typeof title === 'string' ? title : undefined)}
+      aria-disabled={disabled}
     >
       {buttonContent()}
     </button>

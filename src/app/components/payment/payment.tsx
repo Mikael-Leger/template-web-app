@@ -11,7 +11,7 @@ interface PaymentMethod {
   onSubmit: () => void
 }
 
-interface PaymentProps extends StepErrors {}
+type PaymentProps = StepErrors;
 
 export default function Payment({hasErrors}: PaymentProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);

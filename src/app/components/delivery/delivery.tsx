@@ -8,7 +8,7 @@ import { StepErrors } from '@/app/interfaces/step.interface';
 
 import './delivery.scss';
 
-interface DeliveryProps extends StepErrors {}
+type DeliveryProps = StepErrors;
 
 export default function Delivery({hasErrors}: DeliveryProps) {
   const [address, setAddress] = useState<FullAddress>({

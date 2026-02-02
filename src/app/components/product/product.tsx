@@ -1,11 +1,12 @@
 import React from 'react';
+import Link from 'next/link';
 
 import { ProductItem } from '@/app/interfaces/product.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
 import { useBasket } from '@/app/contexts/basket-context';
 import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Button from '../button/button';
-import { capitalizeFirstLetter } from '@/app/services/formatter';
+import { capitalizeFirstLetter, slugify } from '@/app/services/formatter';
 import Price from '../price/price';
 
 import './product.scss';
@@ -51,7 +52,7 @@ export default function Product({item}: ProductProps) {
   return (
     <div className='product' style={{width: getImageWidth()}}>
       <div className='product-image' style={{height: getImageHeight()}}>
-        {item.image && <img src={`images/catalog/${item.image}`} style={{height: getImageHeight()}}/>}
+        {item.image && <img src={`/images/catalog/${item.image}`} style={{height: getImageHeight()}}/>}
         {item.tags?.includes('nouveau') && (
           <div className='product-image-new relative'>
             <div className='product-image-new-icon absolute'>
@@ -92,9 +93,9 @@ export default function Product({item}: ProductProps) {
         </div>
       </div>
       <div className='product-details flex flex-col items-center'>
-        <div className='product-details-title'>
+        <Link href={`/products/${slugify(item.title)}`} className='product-details-title'>
           {capitalizeFirstLetter(item.title)}
-        </div>
+        </Link>
         <div className='product-details-price'>
           {item.price && (
             <Price price={item.price} priceByDosage={item.priceByDosage}/>

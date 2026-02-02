@@ -1,0 +1,107 @@
+{
+  "id": "home-page-001",
+  "slug": "home",
+  "metadata": {
+    "title": "Home",
+    "description": "Welcome to La Pâte Dorée - Your favorite bakery",
+    "keywords": ["bakery", "bread", "pastries", "cookies"]
+  },
+  "components": [
+    {
+      "id": "banner-1",
+      "componentType": "BannerImage",
+      "order": 0,
+      "props": {
+        "path": "/images/news/sample_1.png",
+        "height": 350
+      }
+    },
+    {
+      "id": "card-intro",
+      "componentType": "Card",
+      "order": 1,
+      "props": {
+        "size": "big",
+        "padding": "outer",
+        "background": "default",
+        "orientation": "center"
+      },
+      "children": [
+        {
+          "id": "title-welcome",
+          "componentType": "Title",
+          "order": 0,
+          "props": {
+            "text": "Welcome to La Pâte Dorée",
+            "size": "big",
+            "orientation": "center",
+            "underline": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-newsletter",
+      "componentType": "Card",
+      "order": 2,
+      "props": {
+        "size": "medium",
+        "padding": "outer",
+        "background": "gradient",
+        "orientation": "center"
+      },
+      "children": [
+        {
+          "id": "newsletter-1",
+          "componentType": "Newsletter",
+          "order": 0,
+          "props": {
+            "titles": ["Subscribe to our Newsletter", "Thank you!"],
+            "descriptions": ["Get the latest news and updates from our bakery.", "You are now subscribed to our newsletter."]
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-products",
+      "componentType": "Card",
+      "order": 3,
+      "props": {
+        "size": "big",
+        "padding": "outer",
+        "background": "default",
+        "orientation": "center"
+      },
+      "children": [
+        {
+          "id": "title-products",
+          "componentType": "Title",
+          "order": 0,
+          "props": {
+            "text": "Our Products",
+            "size": "medium",
+            "orientation": "center",
+            "underline": true
+          }
+        },
+        {
+          "id": "catalog-1",
+          "componentType": "Catalog",
+          "order": 1,
+          "props": {
+            "searchBar": true,
+            "pagination": true,
+            "itemsPerPage": 6
+          }
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "layout": "default",
+    "spacing": "normal"
+  },
+  "createdAt": "2026-02-02T10:00:00Z",
+  "updatedAt": "2026-02-02T10:00:00Z",
+  "version": 1
+}

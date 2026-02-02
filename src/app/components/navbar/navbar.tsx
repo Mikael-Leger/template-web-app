@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { BsList } from 'react-icons/bs';
 import gsap from 'gsap';
@@ -15,6 +15,7 @@ import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Separator from '../separator/separator';
 import { calculateMarginTop } from '@/app/services/page-content';
 import { useSidebar } from '@/app/contexts/sidebar-context';
+import { useLanguage, LanguageType } from '@/app/contexts/language-context';
 
 import './navbar.scss';
 
@@ -23,14 +24,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const {isMobile} = useIsMobile();
   const {isSidebarVisible, setIsSidebarVisible} = useSidebar();
-  
-  const [language, setLanguage] = useState<string>('fr');
+  const {language, setLanguage} = useLanguage();
 
   const navbarRef = useRef<HTMLDivElement | null>(null);
   
   const navbarItems: NavbarItem[] = navbarItemsJson;
 
-  const languageItems: LanguageItem[] = languageItemsJson;
+  const languageItems = languageItemsJson as LanguageItem[];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -71,7 +71,7 @@ export default function Navbar() {
     setIsSidebarVisible(false);
   };
 
-  const handleFlagClick = (itemValue: string) => {
+  const handleFlagClick = (itemValue: LanguageType) => {
     setLanguage(itemValue);
   };
 

@@ -1,21 +1,27 @@
 .title {
-  font-size: var(--font-size-3);
+  font-size: var(--font-size-xl);
   font-family: "Cormorant Garamond", serif;
+  font-weight: var(--font-weight-2);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  color: var(--foreground);
 
   &-medium {
-    font-size: var(--font-size-4);
+    font-size: var(--font-size-3xl);
   }
 
   &-big {
-    font-size: var(--font-size-5);
-    font-weight: var(--font-weight-2);
+    font-size: var(--font-size-5xl);
+    font-weight: var(--font-weight-3);
+    letter-spacing: -0.03em;
   }
 
   &-underline {
     width: 0%;
-    height: 5px;
-    background-color: var(--color-6);
-    transition: var(--animation-1);
+    height: 3px;
+    background: var(--gradient-primary-2);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
   }
 
   &:hover {
@@ -26,11 +32,11 @@
 
   &-margin {
     &-inner {
-      margin: var(--inner-y) var(--inner-x);
+      margin: var(--space-4) var(--space-5);
     }
 
     &-outer {
-      margin: var(--outer-y) var(--outer-x);
+      margin: var(--space-6) var(--space-7);
     }
   }
 }

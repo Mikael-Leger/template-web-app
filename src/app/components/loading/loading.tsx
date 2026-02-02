@@ -3,10 +3,7 @@ import gsap from 'gsap';
 
 import './loading.scss';
 
-interface LoadingProps {
-}
-
-export default function Loading({}: LoadingProps) {
+export default function Loading() {
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

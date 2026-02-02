@@ -24,6 +24,7 @@ export interface ButtonInterface {
   buttonType?: 'submit';
   outline?: boolean;
   className?: string;
+  ariaLabel?: string;
   onClick?: (_payload?: any) => any;
   onChange?: (_payload?: any) => any;
 }
