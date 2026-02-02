@@ -1,0 +1,31 @@
+.text-component {
+  margin: 0;
+  padding: 0 var(--space-6);
+  line-height: 1.6;
+  color: var(--foreground);
+  white-space: pre-wrap;
+
+  &.text-size-small {
+    font-size: var(--font-size-sm);
+  }
+
+  &.text-size-medium {
+    font-size: var(--font-size-base);
+  }
+
+  &.text-size-big {
+    font-size: var(--font-size-lg);
+  }
+
+  &.text-start {
+    text-align: left;
+  }
+
+  &.text-center {
+    text-align: center;
+  }
+
+  &.text-end {
+    text-align: right;
+  }
+}

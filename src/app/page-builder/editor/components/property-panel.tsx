@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { BsSliders, BsTrash } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
 import { getComponent } from '../../registry/component-registry';
 import { PropDefinition } from '../../interfaces/page-config.interface';
-import ConfirmationModal from '@/app/components/modal/confirmation-modal';
 import RatioEditor from './ratio-editor';
+import SpacingEditor, { SpacingValue, DEFAULT_SPACING } from './spacing-editor';
 
 export default function PropertyPanel() {
   const { selectedComponent, updateComponentProps, removeComponent } = useEditor();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Get registry entry (memoized to avoid recalculation)
   const registryEntry = useMemo(() => {
@@ -56,14 +55,8 @@ export default function PropertyPanel() {
 
   // Handle delete
   const handleDelete = useCallback(() => {
-    setShowDeleteModal(true);
-  }, []);
-
-  // Confirm delete
-  const confirmDelete = useCallback(() => {
     if (!selectedComponent) return;
     removeComponent(selectedComponent.id);
-    setShowDeleteModal(false);
   }, [selectedComponent, removeComponent]);
 
   // Handle ratio change from the RatioEditor
@@ -71,6 +64,22 @@ export default function PropertyPanel() {
     if (!selectedComponent) return;
     updateComponentProps(selectedComponent.id, { childRatios: newRatios });
   }, [selectedComponent, updateComponentProps]);
+
+  // Handle padding change
+  const handlePaddingChange = useCallback((padding: SpacingValue) => {
+    if (!selectedComponent) return;
+    updateComponentProps(selectedComponent.id, { _padding: padding });
+  }, [selectedComponent, updateComponentProps]);
+
+  // Handle margin change
+  const handleMarginChange = useCallback((margin: SpacingValue) => {
+    if (!selectedComponent) return;
+    updateComponentProps(selectedComponent.id, { _margin: margin });
+  }, [selectedComponent, updateComponentProps]);
+
+  // Get current padding and margin values
+  const currentPadding = (selectedComponent?.props._padding as SpacingValue) || DEFAULT_SPACING;
+  const currentMargin = (selectedComponent?.props._margin as SpacingValue) || DEFAULT_SPACING;
 
   // Render field helper
   const renderField = useCallback((propName: string, definition: PropDefinition) => {
@@ -86,6 +95,17 @@ export default function PropertyPanel() {
           value={(value as string) || ''}
           onChange={(e) => handlePropChange(propName, e.target.value)}
           placeholder={definition.defaultValue as string}
+        />
+      );
+
+    case 'textarea':
+      return (
+        <textarea
+          className='editor-panel-field-textarea'
+          value={(value as string) || ''}
+          onChange={(e) => handlePropChange(propName, e.target.value)}
+          placeholder={definition.defaultValue as string}
+          rows={4}
         />
       );
 
@@ -194,7 +214,7 @@ export default function PropertyPanel() {
   return (
     <aside className='editor-panel'>
       <div className='editor-panel-header'>
-        <h3 className='editor-panel-header-title'>{registryEntry.displayName}</h3>
+        <h3 className='editor-panel-header-title'>{selectedComponent.name || registryEntry.displayName}</h3>
         <p className='editor-panel-header-type'>{selectedComponent.componentType}</p>
       </div>
 
@@ -225,6 +245,21 @@ export default function PropertyPanel() {
               </div>
             );
           })}
+        </div>
+
+        {/* Spacing Section - available for all components */}
+        <div className='editor-panel-section'>
+          <div className='editor-panel-section-title'>Spacing</div>
+          <SpacingEditor
+            label="Padding"
+            value={currentPadding}
+            onChange={handlePaddingChange}
+          />
+          <SpacingEditor
+            label="Margin"
+            value={currentMargin}
+            onChange={handleMarginChange}
+          />
         </div>
 
         {/* Child Ratios Section for Layout components */}
@@ -258,17 +293,6 @@ export default function PropertyPanel() {
           Delete Component
         </button>
       </div>
-
-      <ConfirmationModal
-        isOpen={showDeleteModal}
-        title="Delete Component"
-        message="Are you sure you want to delete this component? This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        variant="danger"
-        onConfirm={confirmDelete}
-        onCancel={() => setShowDeleteModal(false)}
-      />
     </aside>
   );
 }

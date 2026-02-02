@@ -16,6 +16,7 @@ import {
 // Import components
 import Card from '@/app/components/card/card';
 import Title from '@/app/components/title/title';
+import Text from '@/app/components/text/text';
 import Button from '@/app/components/button/button';
 import Image from '@/app/components/image/image';
 import Separator from '@/app/components/separator/separator';
@@ -24,6 +25,12 @@ import BannerImage from '@/app/components/banner-image/banner-image';
 import Newsletter from '@/app/components/newsletter/newsletter';
 import Video from '@/app/components/video/video';
 import Catalog from '@/app/components/catalog/catalog';
+import { Testimonials } from '@/app/components/testimonial/testimonial';
+import CarouselWrapper from '@/app/page-builder/components/carousel-wrapper';
+import ParallaxCover from '@/app/components/parallax-cover/parallax-cover';
+import Footer from '@/app/components/footer/footer';
+import DescriptionAndImageWrapper from '@/app/page-builder/components/description-and-image-wrapper';
+import Tooltip from '@/app/components/tooltip/tooltip';
 
 /**
  * Helper to create a prop definition
@@ -176,6 +183,25 @@ componentRegistry.set('Title', {
   },
 });
 
+componentRegistry.set('Text', {
+  component: Text as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Text',
+  category: 'content',
+  icon: 'BsTextLeft',
+  description: 'Paragraph text block',
+  acceptsChildren: false,
+  propsSchema: {
+    content: prop('textarea', 'Content', { required: true, defaultValue: 'Enter your text here...' }),
+    size: selectProp('Size', sizeOptions, 'medium'),
+    orientation: selectProp('Alignment', orientationOptions, 'start'),
+  },
+  defaultProps: {
+    content: 'Enter your text here...',
+    size: 'medium',
+    orientation: 'start',
+  },
+});
+
 componentRegistry.set('Image', {
   component: Image as unknown as React.ComponentType<Record<string, unknown>>,
   displayName: 'Image',
@@ -311,6 +337,133 @@ componentRegistry.set('Catalog', {
     pagination: true,
     itemsPerPage: 6,
   },
+});
+
+// ===== ADDITIONAL CONTENT COMPONENTS =====
+
+componentRegistry.set('Testimonials', {
+  component: Testimonials as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Testimonials',
+  category: 'content',
+  icon: 'BsChatQuote',
+  description: 'Customer testimonials carousel with auto-rotation',
+  acceptsChildren: false,
+  propsSchema: {
+    delayMs: prop('number', 'Auto-rotate Delay (ms)', { defaultValue: 5000, min: 1000, max: 15000 }),
+  },
+  defaultProps: {
+    delayMs: 5000,
+  },
+});
+
+componentRegistry.set('Carousel', {
+  component: CarouselWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Image Carousel',
+  category: 'content',
+  icon: 'BsImages',
+  description: 'Slideshow of images with transitions',
+  acceptsChildren: false,
+  propsSchema: {
+    image1: prop('image', 'Image 1', { defaultValue: '/images/placeholder.png' }),
+    image2: prop('image', 'Image 2', { defaultValue: '/images/placeholder.png' }),
+    image3: prop('image', 'Image 3', { defaultValue: '' }),
+    image4: prop('image', 'Image 4', { defaultValue: '' }),
+    transition: selectProp('Transition', [
+      { label: 'Swipe', value: 'swipe' },
+      { label: 'Circle', value: 'circle' },
+    ], 'swipe'),
+    delayMs: prop('number', 'Auto-rotate Delay (ms)', { defaultValue: 3000, min: 1000, max: 10000 }),
+  },
+  defaultProps: {
+    image1: '/images/placeholder.png',
+    image2: '/images/placeholder.png',
+    image3: '',
+    image4: '',
+    transition: 'swipe',
+    delayMs: 3000,
+  },
+});
+
+componentRegistry.set('ParallaxCover', {
+  component: ParallaxCover as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Parallax Cover',
+  category: 'navigation',
+  icon: 'BsLayers',
+  description: 'Parallax scrolling image effect',
+  acceptsChildren: false,
+  propsSchema: {
+    imagePath: prop('image', 'Image Path', { required: true, defaultValue: '/images/banner.jpg' }),
+    height: prop('number', 'Height (px)', { defaultValue: 300, min: 100, max: 800 }),
+  },
+  defaultProps: {
+    imagePath: '/images/banner.jpg',
+    height: 300,
+  },
+});
+
+componentRegistry.set('DescriptionAndImage', {
+  component: DescriptionAndImageWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Text & Image',
+  category: 'content',
+  icon: 'BsLayoutTextWindow',
+  description: 'Text content with image side by side',
+  acceptsChildren: false,
+  propsSchema: {
+    text: prop('string', 'Text Content', { defaultValue: 'Add your description here...' }),
+    orientation: selectProp('Layout', [
+      { label: 'Image Left', value: 'end' },
+      { label: 'Text Left', value: 'start' },
+      { label: 'Centered', value: 'center' },
+    ], 'start'),
+    axis: selectProp('Direction', [
+      { label: 'Horizontal', value: 'row' },
+      { label: 'Vertical', value: 'col' },
+    ], 'row'),
+    imagePath: prop('image', 'Image Path', { defaultValue: '/images/placeholder.png' }),
+    imageCaption: prop('string', 'Image Caption', { defaultValue: '' }),
+    shape: selectProp('Image Shape', [
+      { label: 'Default', value: 'none' },
+      { label: 'Circle', value: 'circle' },
+    ], 'none'),
+    flip: prop('boolean', 'Flip Animation on Hover', { defaultValue: false }),
+    fullWidth: prop('boolean', 'Full Width', { defaultValue: false }),
+  },
+  defaultProps: {
+    text: 'Add your description here...',
+    orientation: 'start',
+    axis: 'row',
+    imagePath: '/images/placeholder.png',
+    imageCaption: '',
+    shape: 'none',
+    flip: false,
+    fullWidth: false,
+  },
+});
+
+componentRegistry.set('Tooltip', {
+  component: Tooltip as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Tooltip',
+  category: 'utility',
+  icon: 'BsChat',
+  description: 'Hover tooltip wrapper for content',
+  acceptsChildren: true,
+  propsSchema: {
+    text: prop('string', 'Tooltip Text', { required: true, defaultValue: 'Hover for info' }),
+  },
+  defaultProps: {
+    text: 'Hover for info',
+  },
+});
+
+componentRegistry.set('Footer', {
+  component: Footer as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Footer',
+  category: 'navigation',
+  icon: 'BsWindowDock',
+  description: 'Site footer with links and social media',
+  acceptsChildren: false,
+  propsSchema: {},
+  defaultProps: {},
 });
 
 /**

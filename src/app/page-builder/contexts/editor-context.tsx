@@ -19,12 +19,34 @@ export interface ValidationError {
 }
 
 /**
+ * Context Menu State
+ */
+interface ContextMenuState {
+  isOpen: boolean;
+  x: number;
+  y: number;
+  componentId: string | null;
+}
+
+/**
+ * Clipboard State
+ */
+interface ClipboardState {
+  component: ComponentInstance | null;
+  isCut: boolean;
+}
+
+/**
  * Editor State
  */
 interface EditorState {
   page: PageConfig | null;
   selectedComponentId: string | null;
   hoveredComponentId: string | null;
+  renamingComponentId: string | null;
+  sidebarTab: 'components' | 'layers';
+  contextMenu: ContextMenuState;
+  clipboard: ClipboardState;
   isDragging: boolean;
   draggedComponentType: string | null;
   history: PageConfig[];
@@ -42,12 +64,21 @@ type EditorAction =
   | { type: 'SET_PAGE'; payload: PageConfig }
   | { type: 'SELECT_COMPONENT'; payload: string | null }
   | { type: 'HOVER_COMPONENT'; payload: string | null }
+  | { type: 'START_RENAME'; payload: string }
+  | { type: 'STOP_RENAME' }
+  | { type: 'SET_SIDEBAR_TAB'; payload: 'components' | 'layers' }
+  | { type: 'OPEN_CONTEXT_MENU'; payload: { x: number; y: number; componentId: string } }
+  | { type: 'CLOSE_CONTEXT_MENU' }
   | { type: 'START_DRAG'; payload: string }
   | { type: 'END_DRAG' }
   | { type: 'ADD_COMPONENT'; payload: { parentId: string | null; componentType: string; index: number } }
   | { type: 'REMOVE_COMPONENT'; payload: string }
+  | { type: 'RENAME_COMPONENT'; payload: { id: string; name: string } }
   | { type: 'UPDATE_COMPONENT_PROPS'; payload: { id: string; props: Record<string, unknown> } }
   | { type: 'MOVE_COMPONENT'; payload: { id: string; newParentId: string | null; newIndex: number } }
+  | { type: 'COPY_COMPONENT'; payload: string }
+  | { type: 'CUT_COMPONENT'; payload: string }
+  | { type: 'PASTE_COMPONENT'; payload: { parentId: string | null; index: number } }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'SET_SAVING'; payload: boolean }
@@ -62,6 +93,10 @@ const initialState: EditorState = {
   page: null,
   selectedComponentId: null,
   hoveredComponentId: null,
+  renamingComponentId: null,
+  sidebarTab: 'components',
+  contextMenu: { isOpen: false, x: 0, y: 0, componentId: null },
+  clipboard: { component: null, isCut: false },
   isDragging: false,
   draggedComponentType: null,
   history: [],
@@ -88,6 +123,28 @@ function findComponentById(
     }
   }
 
+  return null;
+}
+
+/**
+ * Find the parent ID and index of a component
+ * Returns { parentId: null, index } for root-level components
+ */
+function findComponentParentAndIndex(
+  components: ComponentInstance[],
+  id: string,
+  parentId: string | null = null
+): { parentId: string | null; index: number } | null {
+  for (let i = 0; i < components.length; i++) {
+    const comp = components[i];
+    if (comp.id === id) {
+      return { parentId, index: i };
+    }
+    if (comp.children) {
+      const found = findComponentParentAndIndex(comp.children, id, comp.id);
+      if (found) return found;
+    }
+  }
   return null;
 }
 
@@ -200,6 +257,42 @@ function updateComponentPropsInTree(
 }
 
 /**
+ * Rename a component in the tree
+ */
+function renameComponentInTree(
+  components: ComponentInstance[],
+  id: string,
+  name: string
+): ComponentInstance[] {
+  return components.map((c) => {
+    if (c.id === id) {
+      return { ...c, name };
+    }
+
+    if (c.children) {
+      return {
+        ...c,
+        children: renameComponentInTree(c.children, id, name),
+      };
+    }
+
+    return c;
+  });
+}
+
+/**
+ * Deep clone a component with new IDs
+ */
+function cloneComponentWithNewIds(component: ComponentInstance): ComponentInstance {
+  const newId = crypto.randomUUID();
+  return {
+    ...component,
+    id: newId,
+    children: component.children?.map(child => cloneComponentWithNewIds(child)),
+  };
+}
+
+/**
  * Push to history helper
  */
 function pushHistory(state: EditorState, newPage: PageConfig): EditorState {
@@ -241,6 +334,33 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
   case 'HOVER_COMPONENT':
     return { ...state, hoveredComponentId: action.payload };
+
+  case 'START_RENAME':
+    return { ...state, renamingComponentId: action.payload };
+
+  case 'STOP_RENAME':
+    return { ...state, renamingComponentId: null };
+
+  case 'SET_SIDEBAR_TAB':
+    return { ...state, sidebarTab: action.payload };
+
+  case 'OPEN_CONTEXT_MENU':
+    return {
+      ...state,
+      contextMenu: {
+        isOpen: true,
+        x: action.payload.x,
+        y: action.payload.y,
+        componentId: action.payload.componentId,
+      },
+      selectedComponentId: action.payload.componentId,
+    };
+
+  case 'CLOSE_CONTEXT_MENU':
+    return {
+      ...state,
+      contextMenu: { isOpen: false, x: 0, y: 0, componentId: null },
+    };
 
   case 'START_DRAG':
     return { ...state, isDragging: true, draggedComponentType: action.payload };
@@ -296,6 +416,20 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     };
   }
 
+  case 'RENAME_COMPONENT': {
+    if (!state.page) return state;
+
+    const newComponents = renameComponentInTree(
+      state.page.components,
+      action.payload.id,
+      action.payload.name
+    );
+
+    const newPage = { ...state.page, components: newComponents };
+
+    return pushHistory(state, newPage);
+  }
+
   case 'UPDATE_COMPONENT_PROPS': {
     if (!state.page) return state;
 
@@ -344,6 +478,67 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     const newPage = { ...state.page, components: newComponents };
 
     return pushHistory(state, newPage);
+  }
+
+  case 'COPY_COMPONENT': {
+    if (!state.page) return state;
+
+    const componentToCopy = findComponentById(state.page.components, action.payload);
+    if (!componentToCopy) return state;
+
+    // Deep clone the component for clipboard
+    const clonedComponent = JSON.parse(JSON.stringify(componentToCopy));
+
+    return {
+      ...state,
+      clipboard: { component: clonedComponent, isCut: false },
+    };
+  }
+
+  case 'CUT_COMPONENT': {
+    if (!state.page) return state;
+
+    const componentToCut = findComponentById(state.page.components, action.payload);
+    if (!componentToCut) return state;
+
+    // Deep clone the component for clipboard
+    const clonedComponent = JSON.parse(JSON.stringify(componentToCut));
+
+    return {
+      ...state,
+      clipboard: { component: clonedComponent, isCut: true },
+    };
+  }
+
+  case 'PASTE_COMPONENT': {
+    if (!state.page || !state.clipboard.component) return state;
+
+    const { parentId, index } = action.payload;
+
+    // Clone the component with new IDs
+    const pastedComponent = cloneComponentWithNewIds(state.clipboard.component);
+    pastedComponent.order = index;
+
+    // Add to tree
+    let newComponents = addComponentToTree(
+      state.page.components,
+      parentId,
+      pastedComponent,
+      index
+    );
+
+    // If it was a cut operation, remove the original
+    if (state.clipboard.isCut) {
+      newComponents = removeComponentFromTree(newComponents, state.clipboard.component.id);
+    }
+
+    const newPage = { ...state.page, components: newComponents };
+
+    return {
+      ...pushHistory(state, newPage),
+      clipboard: state.clipboard.isCut ? { component: null, isCut: false } : state.clipboard,
+      selectedComponentId: pastedComponent.id,
+    };
   }
 
   case 'UNDO': {
@@ -395,13 +590,24 @@ interface EditorContextValue {
   selectComponent: (_id: string | null) => void;
   addComponent: (_componentType: string, _parentId?: string | null, _index?: number) => void;
   removeComponent: (_id: string) => void;
+  renameComponent: (_id: string, _name: string) => void;
+  startRename: (_id: string) => void;
+  stopRename: () => void;
+  setSidebarTab: (_tab: 'components' | 'layers') => void;
+  openContextMenu: (_x: number, _y: number, _componentId: string) => void;
+  closeContextMenu: () => void;
   updateComponentProps: (_id: string, _props: Record<string, unknown>) => void;
   moveComponent: (_id: string, _newParentId: string | null, _newIndex: number) => void;
+  copyComponent: (_id: string) => void;
+  cutComponent: (_id: string) => void;
+  pasteComponent: (_parentId: string | null, _index: number) => void;
+  getComponentParentInfo: (_id: string) => { parentId: string | null; index: number } | null;
   setValidationErrors: (_errors: ValidationError[]) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  canPaste: boolean;
   hasValidationErrors: boolean;
   selectedComponent: ComponentInstance | null;
 }
@@ -430,6 +636,30 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'REMOVE_COMPONENT', payload: id });
   }, []);
 
+  const renameComponent = useCallback((id: string, name: string) => {
+    dispatch({ type: 'RENAME_COMPONENT', payload: { id, name } });
+  }, []);
+
+  const startRename = useCallback((id: string) => {
+    dispatch({ type: 'START_RENAME', payload: id });
+  }, []);
+
+  const stopRename = useCallback(() => {
+    dispatch({ type: 'STOP_RENAME' });
+  }, []);
+
+  const setSidebarTab = useCallback((tab: 'components' | 'layers') => {
+    dispatch({ type: 'SET_SIDEBAR_TAB', payload: tab });
+  }, []);
+
+  const openContextMenu = useCallback((x: number, y: number, componentId: string) => {
+    dispatch({ type: 'OPEN_CONTEXT_MENU', payload: { x, y, componentId } });
+  }, []);
+
+  const closeContextMenu = useCallback(() => {
+    dispatch({ type: 'CLOSE_CONTEXT_MENU' });
+  }, []);
+
   const updateComponentProps = useCallback((id: string, props: Record<string, unknown>) => {
     dispatch({ type: 'UPDATE_COMPONENT_PROPS', payload: { id, props } });
   }, []);
@@ -437,6 +667,23 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const moveComponent = useCallback((id: string, newParentId: string | null, newIndex: number) => {
     dispatch({ type: 'MOVE_COMPONENT', payload: { id, newParentId, newIndex } });
   }, []);
+
+  const copyComponent = useCallback((id: string) => {
+    dispatch({ type: 'COPY_COMPONENT', payload: id });
+  }, []);
+
+  const cutComponent = useCallback((id: string) => {
+    dispatch({ type: 'CUT_COMPONENT', payload: id });
+  }, []);
+
+  const pasteComponent = useCallback((parentId: string | null, index: number) => {
+    dispatch({ type: 'PASTE_COMPONENT', payload: { parentId, index } });
+  }, []);
+
+  const getComponentParentInfo = useCallback((id: string) => {
+    if (!state.page) return null;
+    return findComponentParentAndIndex(state.page.components, id);
+  }, [state.page]);
 
   const undo = useCallback(() => {
     dispatch({ type: 'UNDO' });
@@ -452,6 +699,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const canUndo = state.historyIndex > 0;
   const canRedo = state.historyIndex < state.history.length - 1;
+  const canPaste = state.clipboard.component !== null;
   const hasValidationErrors = state.validationErrors.length > 0;
 
   const selectedComponent = state.selectedComponentId && state.page
@@ -464,13 +712,24 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     selectComponent,
     addComponent,
     removeComponent,
+    renameComponent,
+    startRename,
+    stopRename,
+    setSidebarTab,
+    openContextMenu,
+    closeContextMenu,
     updateComponentProps,
     moveComponent,
+    copyComponent,
+    cutComponent,
+    pasteComponent,
+    getComponentParentInfo,
     setValidationErrors,
     undo,
     redo,
     canUndo,
     canRedo,
+    canPaste,
     hasValidationErrors,
     selectedComponent,
   };

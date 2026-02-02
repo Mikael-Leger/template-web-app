@@ -10,6 +10,7 @@ import EditorHeader from './components/editor-header';
 import ComponentSidebar from './components/component-sidebar';
 import EditorCanvas from './components/editor-canvas';
 import PropertyPanel from './components/property-panel';
+import ContextMenu from './components/context-menu';
 import './page-editor.scss';
 
 interface PageEditorProps {
@@ -18,7 +19,7 @@ interface PageEditorProps {
 }
 
 function EditorContent({ pageId, onExit }: PageEditorProps) {
-  const { state, dispatch } = useEditor();
+  const { state, dispatch, getComponentParentInfo } = useEditor();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +69,115 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
 
     onExit?.();
   }, [state.hasUnsavedChanges, onExit]);
+
+  // Handle keyboard shortcuts (Delete, F2, Ctrl+C, Ctrl+X, Ctrl+V)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if typing in an input field (except for rename input)
+      const target = e.target as HTMLElement;
+      const isRenameInput = target.classList.contains('editor-wrapper-rename-input');
+
+      if ((target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) && !isRenameInput) {
+        return;
+      }
+
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+      // Copy (Ctrl+C)
+      if (isCtrlOrCmd && e.key === 'c' && state.selectedComponentId && !state.renamingComponentId) {
+        e.preventDefault();
+        dispatch({ type: 'COPY_COMPONENT', payload: state.selectedComponentId });
+      }
+      // Cut (Ctrl+X)
+      else if (isCtrlOrCmd && e.key === 'x' && state.selectedComponentId && !state.renamingComponentId) {
+        e.preventDefault();
+        dispatch({ type: 'CUT_COMPONENT', payload: state.selectedComponentId });
+      }
+      // Paste (Ctrl+V)
+      else if (isCtrlOrCmd && e.key === 'v' && state.clipboard.component && !state.renamingComponentId) {
+        e.preventDefault();
+        // Paste in the same scope as the selected component (as a sibling after it)
+        let parentId: string | null = null;
+        let index = state.page?.components.length || 0;
+
+        if (state.selectedComponentId) {
+          const parentInfo = getComponentParentInfo(state.selectedComponentId);
+          if (parentInfo) {
+            parentId = parentInfo.parentId;
+            index = parentInfo.index + 1; // Insert after the selected component
+          }
+        }
+
+        dispatch({ type: 'PASTE_COMPONENT', payload: { parentId, index } });
+      }
+      // Delete
+      else if (e.key === 'Delete' && state.selectedComponentId && !state.renamingComponentId) {
+        dispatch({ type: 'REMOVE_COMPONENT', payload: state.selectedComponentId });
+      }
+      // Rename (F2)
+      else if (e.key === 'F2' && state.selectedComponentId && !state.renamingComponentId) {
+        e.preventDefault();
+        dispatch({ type: 'SET_SIDEBAR_TAB', payload: 'layers' });
+        dispatch({ type: 'START_RENAME', payload: state.selectedComponentId });
+      }
+      // Cancel rename (Escape)
+      else if (e.key === 'Escape' && state.renamingComponentId) {
+        e.preventDefault();
+        dispatch({ type: 'STOP_RENAME' });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state.selectedComponentId, state.renamingComponentId, state.clipboard.component, state.page?.components.length, getComponentParentInfo, dispatch]);
+
+  // Context menu handlers - must be defined before any conditional returns
+  const handleContextMenuCopy = useCallback(() => {
+    if (state.contextMenu.componentId) {
+      dispatch({ type: 'COPY_COMPONENT', payload: state.contextMenu.componentId });
+    }
+  }, [state.contextMenu.componentId, dispatch]);
+
+  const handleContextMenuCut = useCallback(() => {
+    if (state.contextMenu.componentId) {
+      dispatch({ type: 'CUT_COMPONENT', payload: state.contextMenu.componentId });
+    }
+  }, [state.contextMenu.componentId, dispatch]);
+
+  const handleContextMenuPaste = useCallback(() => {
+    if (state.clipboard.component) {
+      // Paste in the same scope as the context menu component (as a sibling after it)
+      let parentId: string | null = null;
+      let index = state.page?.components.length || 0;
+
+      if (state.contextMenu.componentId) {
+        const parentInfo = getComponentParentInfo(state.contextMenu.componentId);
+        if (parentInfo) {
+          parentId = parentInfo.parentId;
+          index = parentInfo.index + 1; // Insert after the right-clicked component
+        }
+      }
+
+      dispatch({ type: 'PASTE_COMPONENT', payload: { parentId, index } });
+    }
+  }, [state.clipboard.component, state.page?.components.length, state.contextMenu.componentId, getComponentParentInfo, dispatch]);
+
+  const handleContextMenuRename = useCallback(() => {
+    if (state.contextMenu.componentId) {
+      dispatch({ type: 'SET_SIDEBAR_TAB', payload: 'layers' });
+      dispatch({ type: 'START_RENAME', payload: state.contextMenu.componentId });
+    }
+  }, [state.contextMenu.componentId, dispatch]);
+
+  const handleContextMenuDelete = useCallback(() => {
+    if (state.contextMenu.componentId) {
+      dispatch({ type: 'REMOVE_COMPONENT', payload: state.contextMenu.componentId });
+    }
+  }, [state.contextMenu.componentId, dispatch]);
+
+  const handleContextMenuClose = useCallback(() => {
+    dispatch({ type: 'CLOSE_CONTEXT_MENU' });
+  }, [dispatch]);
 
   // Loading state
   if (loading) {
@@ -121,6 +231,19 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
         <EditorCanvas/>
         <PropertyPanel/>
       </div>
+      {state.contextMenu.isOpen && (
+        <ContextMenu
+          x={state.contextMenu.x}
+          y={state.contextMenu.y}
+          onCopy={handleContextMenuCopy}
+          onCut={handleContextMenuCut}
+          onPaste={handleContextMenuPaste}
+          onRename={handleContextMenuRename}
+          onDelete={handleContextMenuDelete}
+          onClose={handleContextMenuClose}
+          canPaste={state.clipboard.component !== null}
+        />
+      )}
     </div>
   );
 }

@@ -8,8 +8,9 @@ import PageRenderer from '../../renderer/page-renderer';
 import DropZone from './drop-zone';
 
 export default function EditorCanvas() {
-  const { state, selectComponent, addComponent, moveComponent, dispatch } = useEditor();
+  const { state, selectComponent, addComponent, moveComponent, openContextMenu, dispatch } = useEditor();
   const [draggingComponentId, setDraggingComponentId] = useState<string | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [activeDropZone, setActiveDropZone] = useState<{
     parentId: string | null;
     index: number;
@@ -33,6 +34,7 @@ export default function EditorCanvas() {
   const handleDragEnd = useCallback(() => {
     setDraggingComponentId(null);
     setActiveDropZone(null);
+    setIsDraggingOver(false);
     dispatch({ type: 'END_DRAG' });
   }, [dispatch]);
 
@@ -40,6 +42,21 @@ export default function EditorCanvas() {
     e.preventDefault();
     const existingId = e.dataTransfer.types.includes('existingcomponentid');
     e.dataTransfer.dropEffect = existingId ? 'move' : 'copy';
+  }, []);
+
+  const handleCanvasDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingOver(true);
+  }, []);
+
+  const handleCanvasDragLeave = useCallback((e: React.DragEvent) => {
+    // Only set false if leaving the canvas entirely
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setIsDraggingOver(false);
+    }
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent, parentId: string | null = null, index?: number) => {
@@ -77,7 +94,12 @@ export default function EditorCanvas() {
     if (activeDropZone) {
       handleDrop(e, activeDropZone.parentId, activeDropZone.index);
     }
+    setIsDraggingOver(false);
   }, [activeDropZone, handleDrop]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent, componentId: string) => {
+    openContextMenu(e.clientX, e.clientY, componentId);
+  }, [openContextMenu]);
 
   // Render components with drop zones between them
   const renderWithDropZones = () => {
@@ -132,6 +154,7 @@ export default function EditorCanvas() {
         onDragEnd={handleDragEnd}
         draggingComponentId={draggingComponentId}
         onDropIntoContainer={handleDropIntoContainer}
+        onContextMenu={handleContextMenu}
       />
     );
   };
@@ -173,15 +196,46 @@ export default function EditorCanvas() {
     );
   }
 
+  // Check if we're dragging (either from sidebar or moving existing component)
+  const isAnyDragging = isDraggingOver || draggingComponentId !== null || state.isDragging;
+  const componentCount = state.page?.components.length || 0;
+
   return (
     <main
-      className='editor-canvas'
+      className={`editor-canvas ${isAnyDragging ? 'editor-canvas-dragging' : ''}`}
       onClick={handleCanvasClick}
       onDragOver={handleDragOver}
+      onDragEnter={handleCanvasDragEnter}
+      onDragLeave={handleCanvasDragLeave}
     >
       <div className='editor-canvas-inner'>
+        {/* Drop zone at the very beginning - always visible when dragging */}
+        {isAnyDragging && (
+          <DropZone
+            key="drop-first"
+            parentId={null}
+            index={0}
+            isActive={activeDropZone?.parentId === null && activeDropZone?.index === 0}
+            onDragEnter={() => setActiveDropZone({ parentId: null, index: 0 })}
+            onDragLeave={() => {}}
+            onDrop={handleDropZoneDrop}
+          />
+        )}
+
         {renderComponents()}
-        {renderWithDropZones()}
+
+        {/* Drop zone at the very end - always visible when dragging */}
+        {isAnyDragging && componentCount > 0 && (
+          <DropZone
+            key="drop-last"
+            parentId={null}
+            index={componentCount}
+            isActive={activeDropZone?.parentId === null && activeDropZone?.index === componentCount}
+            onDragEnter={() => setActiveDropZone({ parentId: null, index: componentCount })}
+            onDragLeave={() => {}}
+            onDrop={handleDropZoneDrop}
+          />
+        )}
       </div>
     </main>
   );

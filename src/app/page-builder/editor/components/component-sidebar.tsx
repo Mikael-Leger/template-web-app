@@ -6,6 +6,7 @@ import {
   BsGrid,
   BsDash,
   BsType,
+  BsTextLeft,
   BsImage,
   BsPlayCircle,
   BsCardImage,
@@ -14,6 +15,11 @@ import {
   BsShop,
   BsLayers,
   BsPuzzle,
+  BsChatQuote,
+  BsImages,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
 } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
@@ -30,12 +36,19 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsGrid,
   BsDash,
   BsType,
+  BsTextLeft,
   BsImage,
   BsPlayCircle,
   BsCardImage,
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsChatQuote,
+  BsImages,
+  BsLayers,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
 };
 
 // Category display names
@@ -50,9 +63,9 @@ const categoryNames: Record<ComponentCategory, string> = {
 };
 
 export default function ComponentSidebar() {
-  const { addComponent, state } = useEditor();
+  const { addComponent, state, setSidebarTab } = useEditor();
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'components' | 'layers'>('components');
+  const activeTab = state.sidebarTab;
 
   const allComponents = useMemo(() => getAllComponents(), []);
   const categories = useMemo(() => getCategories(), []);
@@ -117,14 +130,14 @@ export default function ComponentSidebar() {
       <div className='editor-sidebar-tabs'>
         <button
           className={`editor-sidebar-tab ${activeTab === 'components' ? 'active' : ''}`}
-          onClick={() => setActiveTab('components')}
+          onClick={() => setSidebarTab('components')}
         >
           <BsPuzzle size={14} />
           Components
         </button>
         <button
           className={`editor-sidebar-tab ${activeTab === 'layers' ? 'active' : ''}`}
-          onClick={() => setActiveTab('layers')}
+          onClick={() => setSidebarTab('layers')}
         >
           <BsLayers size={14} />
           Layers

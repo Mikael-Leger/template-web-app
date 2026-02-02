@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   BsCardChecklist,
   BsGrid,
   BsDash,
   BsType,
+  BsTextLeft,
   BsImage,
   BsPlayCircle,
   BsCardImage,
@@ -14,6 +15,12 @@ import {
   BsShop,
   BsChevronDown,
   BsChevronRight,
+  BsChatQuote,
+  BsImages,
+  BsLayers,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
 } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
@@ -26,20 +33,31 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsGrid,
   BsDash,
   BsType,
+  BsTextLeft,
   BsImage,
   BsPlayCircle,
   BsCardImage,
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsChatQuote,
+  BsImages,
+  BsLayers,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
 };
 
 interface LayerNodeProps {
   component: ComponentInstance;
   depth: number;
   selectedId: string | null;
+  renamingId: string | null;
   onSelect: (id: string) => void;
   onMove: (id: string, newParentId: string | null, newIndex: number) => void;
+  onRename: (id: string, name: string) => void;
+  onStopRename: () => void;
+  onContextMenu: (e: React.MouseEvent, componentId: string) => void;
   parentId: string | null;
   index: number;
   siblings: ComponentInstance[];
@@ -50,8 +68,12 @@ function LayerNode({
   component,
   depth,
   selectedId,
+  renamingId,
   onSelect,
   onMove,
+  onRename,
+  onStopRename,
+  onContextMenu,
   parentId,
   index,
   siblings,
@@ -60,12 +82,48 @@ function LayerNode({
   const [isExpanded, setIsExpanded] = useState(true);
   const [dropPosition, setDropPosition] = useState<'before' | 'inside' | 'after' | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const hasChildren = component.children && component.children.length > 0;
   const registryEntry = getComponent(component.componentType);
   const canAcceptChildren = registryEntry?.acceptsChildren ?? false;
+  const isRenaming = renamingId === component.id;
+  const displayName = component.name || registryEntry?.displayName || component.componentType;
 
   const IconComponent = registryEntry?.icon ? iconMap[registryEntry.icon] : null;
+
+  // Focus input when renaming starts
+  useEffect(() => {
+    if (isRenaming && inputRef.current) {
+      setRenameValue(displayName);
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isRenaming, displayName]);
+
+  const handleRenameSubmit = () => {
+    if (renameValue.trim()) {
+      onRename(component.id, renameValue.trim());
+    }
+    onStopRename();
+  };
+
+  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleRenameSubmit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onStopRename();
+    }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onContextMenu(e, component.id);
+  };
 
   const handleDragStart = (e: React.DragEvent) => {
     e.stopPropagation();
@@ -175,6 +233,7 @@ function LayerNode({
         className={`layer-node-header ${dropPosition ? `layer-node-drop-${dropPosition}` : ''}`}
         draggable
         onClick={handleClick}
+        onContextMenu={handleContextMenu}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragOver={handleDragOver}
@@ -190,9 +249,22 @@ function LayerNode({
         <span className='layer-node-icon'>
           {IconComponent && <IconComponent size={14} />}
         </span>
-        <span className='layer-node-name'>
-          {registryEntry?.displayName || component.componentType}
-        </span>
+        {isRenaming ? (
+          <input
+            ref={inputRef}
+            type="text"
+            className="layer-node-rename-input"
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onBlur={handleRenameSubmit}
+            onKeyDown={handleRenameKeyDown}
+            onClick={(e) => e.stopPropagation()}
+          />
+        ) : (
+          <span className='layer-node-name'>
+            {displayName}
+          </span>
+        )}
       </div>
 
       {hasChildren && isExpanded && (
@@ -203,8 +275,12 @@ function LayerNode({
               component={child}
               depth={depth + 1}
               selectedId={selectedId}
+              renamingId={renamingId}
               onSelect={onSelect}
               onMove={onMove}
+              onRename={onRename}
+              onStopRename={onStopRename}
+              onContextMenu={onContextMenu}
               parentId={component.id}
               index={childIndex}
               siblings={component.children!}
@@ -246,7 +322,7 @@ function isDescendantOf(component: ComponentInstance, targetId: string): boolean
 }
 
 export default function LayerTree() {
-  const { state, selectComponent, moveComponent } = useEditor();
+  const { state, selectComponent, moveComponent, renameComponent, stopRename, openContextMenu } = useEditor();
 
   const components = state.page?.components || [];
 
@@ -256,6 +332,18 @@ export default function LayerTree() {
 
   const handleMove = (id: string, newParentId: string | null, newIndex: number) => {
     moveComponent(id, newParentId, newIndex);
+  };
+
+  const handleRename = (id: string, name: string) => {
+    renameComponent(id, name);
+  };
+
+  const handleStopRename = () => {
+    stopRename();
+  };
+
+  const handleContextMenu = (e: React.MouseEvent, componentId: string) => {
+    openContextMenu(e.clientX, e.clientY, componentId);
   };
 
   if (components.length === 0) {
@@ -278,8 +366,12 @@ export default function LayerTree() {
           component={component}
           depth={0}
           selectedId={state.selectedComponentId}
+          renamingId={state.renamingComponentId}
           onSelect={handleSelect}
           onMove={handleMove}
+          onRename={handleRename}
+          onStopRename={handleStopRename}
+          onContextMenu={handleContextMenu}
           parentId={null}
           index={index}
           siblings={components}

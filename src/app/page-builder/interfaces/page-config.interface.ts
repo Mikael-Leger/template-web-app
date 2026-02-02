@@ -50,6 +50,7 @@ export interface PageSettings {
 export interface ComponentInstance {
   id: string;
   componentType: string;
+  name?: string;
   props: Record<string, unknown>;
   children?: ComponentInstance[];
   order: number;
@@ -72,7 +73,7 @@ export type ComponentCategory =
  * Property definition for the component registry
  */
 export interface PropDefinition {
-  type: 'string' | 'number' | 'boolean' | 'select' | 'color' | 'image' | 'array' | 'object' | 'icon';
+  type: 'string' | 'textarea' | 'number' | 'boolean' | 'select' | 'color' | 'image' | 'array' | 'object' | 'icon';
   label: string;
   description?: string;
   required?: boolean;

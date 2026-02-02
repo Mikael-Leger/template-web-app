@@ -1,9 +1,49 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import {
+  BsCardChecklist,
+  BsGrid,
+  BsDash,
+  BsType,
+  BsTextLeft,
+  BsImage,
+  BsPlayCircle,
+  BsCardImage,
+  BsHandIndex,
+  BsEnvelope,
+  BsShop,
+  BsChatQuote,
+  BsImages,
+  BsLayers,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
+} from 'react-icons/bs';
 
 import { ComponentInstance, PageConfig } from '../interfaces/page-config.interface';
 import { getComponent } from '../registry/component-registry';
+
+// Icon map for component icons
+const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
+  BsCardChecklist,
+  BsGrid,
+  BsDash,
+  BsType,
+  BsTextLeft,
+  BsImage,
+  BsPlayCircle,
+  BsCardImage,
+  BsHandIndex,
+  BsEnvelope,
+  BsShop,
+  BsChatQuote,
+  BsImages,
+  BsLayers,
+  BsLayoutTextWindow,
+  BsChat,
+  BsWindowDock,
+};
 
 interface PageRendererProps {
   config: PageConfig;
@@ -14,6 +54,7 @@ interface PageRendererProps {
   onDragEnd?: () => void;
   draggingComponentId?: string | null;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
+  onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
 }
 
 /**
@@ -24,8 +65,10 @@ interface EditorWrapperProps {
   componentId: string;
   componentType: string;
   displayName: string;
+  icon?: string;
   isSelected: boolean;
   onClick?: (_id: string) => void;
+  onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
   locked?: boolean;
   children: React.ReactNode;
   onDragStart?: (_componentId: string) => void;
@@ -34,14 +77,17 @@ interface EditorWrapperProps {
   acceptsChildren?: boolean;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
   depth: number;
+  spacingStyle?: React.CSSProperties;
 }
 
 function EditorWrapper({
   componentId,
   componentType,
   displayName,
+  icon,
   isSelected,
   onClick,
+  onContextMenu,
   locked,
   children,
   onDragStart,
@@ -50,7 +96,15 @@ function EditorWrapper({
   acceptsChildren,
   onDropIntoContainer,
   depth,
+  spacingStyle,
 }: EditorWrapperProps) {
+  const IconComponent = icon ? iconMap[icon] : null;
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onContextMenu?.(e, componentId);
+  };
   const [isDropTarget, setIsDropTarget] = React.useState(false);
   const [isLabelDropTarget, setIsLabelDropTarget] = React.useState(false);
 
@@ -165,7 +219,9 @@ function EditorWrapper({
   return (
     <div
       className={`editor-wrapper ${isSelected ? 'editor-wrapper-selected' : ''} ${locked ? 'editor-wrapper-locked' : ''} ${isDragging ? 'editor-wrapper-dragging' : ''} ${isDropTarget ? 'editor-wrapper-drop-target' : ''} ${acceptsChildren ? 'editor-wrapper-container' : ''}`}
+      style={spacingStyle}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
       draggable={!locked}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -189,13 +245,15 @@ function EditorWrapper({
           onDragLeave={handleLabelDragLeave}
           onDrop={handleLabelDrop}
         >
-          {displayName}
+          {IconComponent && <IconComponent size={12} />}
+          <span>{displayName}</span>
         </div>
       )}
       {/* Show label for non-containers only when selected */}
       {!acceptsChildren && isSelected && !locked && (
         <div className='editor-wrapper-label' style={labelStyle}>
-          {displayName}
+          {IconComponent && <IconComponent size={12} />}
+          <span>{displayName}</span>
         </div>
       )}
       {isDropTarget && !isLabelDropTarget && (
@@ -223,6 +281,7 @@ export default function PageRenderer({
   onDragEnd,
   draggingComponentId,
   onDropIntoContainer,
+  onContextMenu,
 }: PageRendererProps) {
   /**
    * Recursively render a component and its children
@@ -240,9 +299,11 @@ export default function PageRenderer({
 
     const { component: Component } = registryEntry;
 
-    // Process props - filter out any undefined values
+    // Process props - filter out any undefined values and internal props
     const processedProps = Object.entries(instance.props).reduce(
       (acc, [key, value]) => {
+        // Skip internal props (starting with _)
+        if (key.startsWith('_')) return acc;
         if (value !== undefined) {
           acc[key] = value;
         }
@@ -252,12 +313,33 @@ export default function PageRenderer({
       {} as Record<string, unknown>
     );
 
+    // Extract spacing props for inline styles
+    const paddingProp = instance.props._padding as { top?: string; right?: string; bottom?: string; left?: string } | undefined;
+    const marginProp = instance.props._margin as { top?: string; right?: string; bottom?: string; left?: string } | undefined;
+
+    const spacingStyle: React.CSSProperties = {};
+    if (paddingProp) {
+      if (paddingProp.top && paddingProp.top !== '0px') spacingStyle.paddingTop = paddingProp.top;
+      if (paddingProp.right && paddingProp.right !== '0px') spacingStyle.paddingRight = paddingProp.right;
+      if (paddingProp.bottom && paddingProp.bottom !== '0px') spacingStyle.paddingBottom = paddingProp.bottom;
+      if (paddingProp.left && paddingProp.left !== '0px') spacingStyle.paddingLeft = paddingProp.left;
+    }
+    if (marginProp) {
+      if (marginProp.top && marginProp.top !== '0px') spacingStyle.marginTop = marginProp.top;
+      if (marginProp.right && marginProp.right !== '0px') spacingStyle.marginRight = marginProp.right;
+      if (marginProp.bottom && marginProp.bottom !== '0px') spacingStyle.marginBottom = marginProp.bottom;
+      if (marginProp.left && marginProp.left !== '0px') spacingStyle.marginLeft = marginProp.left;
+    }
+
     // Render children if component accepts them
     const children = instance.children?.length
       ? instance.children
         .sort((a, b) => a.order - b.order)
         .map((child) => renderComponent(child, depth + 1))
       : undefined;
+
+    // Check if we have any spacing to apply
+    const hasSpacing = Object.keys(spacingStyle).length > 0;
 
     // In edit mode, wrap with editor wrapper
     if (isEditing) {
@@ -266,9 +348,11 @@ export default function PageRenderer({
           key={instance.id}
           componentId={instance.id}
           componentType={instance.componentType}
-          displayName={registryEntry.displayName}
+          displayName={instance.name || registryEntry.displayName}
+          icon={registryEntry.icon}
           isSelected={selectedComponentId === instance.id}
           onClick={onComponentClick}
+          onContextMenu={onContextMenu}
           locked={instance.locked}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
@@ -276,13 +360,22 @@ export default function PageRenderer({
           acceptsChildren={registryEntry.acceptsChildren}
           onDropIntoContainer={onDropIntoContainer}
           depth={depth}
+          spacingStyle={spacingStyle}
         >
           <Component {...processedProps}>{children}</Component>
         </EditorWrapper>
       );
     }
 
-    // Normal render
+    // Normal render - wrap with spacing div if needed
+    if (hasSpacing) {
+      return (
+        <div key={instance.id} style={spacingStyle}>
+          <Component {...processedProps}>{children}</Component>
+        </div>
+      );
+    }
+
     return (
       <Component key={instance.id} {...processedProps}>
         {children}
