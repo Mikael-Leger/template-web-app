@@ -392,12 +392,30 @@ componentRegistry.set('ParallaxCover', {
   description: 'Parallax scrolling image effect',
   acceptsChildren: false,
   propsSchema: {
-    imagePath: prop('image', 'Image Path', { required: true, defaultValue: '/images/banner.jpg' }),
+    imagePath: prop('image', 'Image Path', { required: true, defaultValue: '/images/placeholder.png' }),
     height: prop('number', 'Height (px)', { defaultValue: 300, min: 100, max: 800 }),
+    objectFit: selectProp('Object Fit', [
+      { value: 'cover', label: 'Cover' },
+      { value: 'contain', label: 'Contain' },
+      { value: 'fill', label: 'Fill' },
+    ], { defaultValue: 'cover' }),
+    objectPosition: selectProp('Object Position', [
+      { value: 'center', label: 'Center' },
+      { value: 'top', label: 'Top' },
+      { value: 'bottom', label: 'Bottom' },
+      { value: 'left', label: 'Left' },
+      { value: 'right', label: 'Right' },
+    ], { defaultValue: 'center' }),
+    overlayColor: prop('color', 'Overlay Color', { defaultValue: '' }),
+    overlayOpacity: prop('number', 'Overlay Opacity (%)', { defaultValue: 50, min: 0, max: 100 }),
   },
   defaultProps: {
-    imagePath: '/images/banner.jpg',
+    imagePath: '/images/placeholder.png',
     height: 300,
+    objectFit: 'cover',
+    objectPosition: 'center',
+    overlayColor: '',
+    overlayOpacity: 50,
   },
 });
 

@@ -362,7 +362,7 @@ export default function PageRenderer({
           depth={depth}
           spacingStyle={spacingStyle}
         >
-          <Component {...processedProps}>{children}</Component>
+          <Component {...processedProps} isEditing={true}>{children}</Component>
         </EditorWrapper>
       );
     }
