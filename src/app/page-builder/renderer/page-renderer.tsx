@@ -55,6 +55,8 @@ interface PageRendererProps {
   draggingComponentId?: string | null;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
   onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
+  onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
+  isDraggingExternal?: boolean;
 }
 
 /**
@@ -76,8 +78,11 @@ interface EditorWrapperProps {
   isDragging?: boolean;
   acceptsChildren?: boolean;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
+  onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
+  componentIndex: number;
   depth: number;
   spacingStyle?: React.CSSProperties;
+  isDraggingExternal?: boolean;
 }
 
 function EditorWrapper({
@@ -95,8 +100,11 @@ function EditorWrapper({
   isDragging,
   acceptsChildren,
   onDropIntoContainer,
+  onDropBetween,
+  componentIndex,
   depth,
   spacingStyle,
+  isDraggingExternal,
 }: EditorWrapperProps) {
   const IconComponent = icon ? iconMap[icon] : null;
 
@@ -107,6 +115,16 @@ function EditorWrapper({
   };
   const [isDropTarget, setIsDropTarget] = React.useState(false);
   const [isLabelDropTarget, setIsLabelDropTarget] = React.useState(false);
+  const [dropPosition, setDropPosition] = React.useState<'before' | 'after' | null>(null);
+
+  // Reset drop states when dragging stops
+  React.useEffect(() => {
+    if (!isDraggingExternal) {
+      setDropPosition(null);
+      setIsDropTarget(false);
+      setIsLabelDropTarget(false);
+    }
+  }, [isDraggingExternal]);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -127,51 +145,88 @@ function EditorWrapper({
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    if (!acceptsChildren) return;
     e.preventDefault();
     e.stopPropagation();
 
-    // Don't allow dropping into self
     const existingId = e.dataTransfer.types.includes('existingcomponentid');
-    if (existingId) {
-      e.dataTransfer.dropEffect = 'move';
-    } else {
-      e.dataTransfer.dropEffect = 'copy';
+    e.dataTransfer.dropEffect = existingId ? 'move' : 'copy';
+
+    // Show drop indicator when in bottom portion of component (for between-component drops)
+    if (depth === 0 && !acceptsChildren) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const y = e.clientY;
+      const bottomThreshold = rect.bottom - rect.height * 0.35;
+      setDropPosition(y > bottomThreshold ? 'after' : null);
     }
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
-    if (!acceptsChildren) return;
     e.preventDefault();
     e.stopPropagation();
-    setIsDropTarget(true);
+
+    if (acceptsChildren) {
+      setIsDropTarget(true);
+    } else if (depth === 0) {
+      // Calculate initial position for between-component indicator
+      const rect = e.currentTarget.getBoundingClientRect();
+      const y = e.clientY;
+      const bottomThreshold = rect.bottom - rect.height * 0.35;
+      setDropPosition(y > bottomThreshold ? 'after' : null);
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    if (!acceptsChildren) return;
     e.stopPropagation();
-    // Only set to false if we're leaving the wrapper itself
+
+    // Check if we're entering a child element (including drop indicators)
+    const relatedTarget = e.relatedTarget as Node | null;
+    if (relatedTarget && e.currentTarget.contains(relatedTarget)) {
+      return;
+    }
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX;
     const y = e.clientY;
-    if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) {
+
+    // Expand the check area to include drop indicators (40px above and below)
+    const expandedTop = rect.top - 50;
+    const expandedBottom = rect.bottom + 50;
+
+    if (x < rect.left || x >= rect.right || y < expandedTop || y >= expandedBottom) {
       setIsDropTarget(false);
+      setDropPosition(null);
     }
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    if (!acceptsChildren || !onDropIntoContainer) return;
     e.preventDefault();
     e.stopPropagation();
-    setIsDropTarget(false);
 
     const componentTypeData = e.dataTransfer.getData('componentType');
     const existingComponentId = e.dataTransfer.getData('existingComponentId');
 
     // Don't allow dropping into self
-    if (existingComponentId === componentId) return;
+    if (existingComponentId === componentId) {
+      setIsDropTarget(false);
+      setDropPosition(null);
+      return;
+    }
 
-    onDropIntoContainer(componentId, componentTypeData || undefined, existingComponentId || undefined);
+    // Handle drop into container
+    if (acceptsChildren && onDropIntoContainer && isDropTarget) {
+      setIsDropTarget(false);
+      onDropIntoContainer(componentId, componentTypeData || undefined, existingComponentId || undefined);
+      return;
+    }
+
+    // Handle drop between components (top-level only)
+    if (depth === 0 && dropPosition && onDropBetween) {
+      const insertIndex = dropPosition === 'before' ? componentIndex : componentIndex + 1;
+      onDropBetween(insertIndex, componentTypeData || undefined, existingComponentId || undefined);
+    }
+
+    setIsDropTarget(false);
+    setDropPosition(null);
   };
 
   // Label-specific drop handlers for containers
@@ -216,6 +271,33 @@ function EditorWrapper({
     top: `${depth * 22}px`,
   };
 
+  const showDropIndicator = depth === 0 && dropPosition && isDraggingExternal;
+
+  const handleDropIndicatorDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDropIndicatorDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const componentTypeData = e.dataTransfer.getData('componentType');
+    const existingComponentId = e.dataTransfer.getData('existingComponentId');
+
+    if (existingComponentId === componentId) {
+      setDropPosition(null);
+      return;
+    }
+
+    if (depth === 0 && dropPosition && onDropBetween) {
+      const insertIndex = dropPosition === 'before' ? componentIndex : componentIndex + 1;
+      onDropBetween(insertIndex, componentTypeData || undefined, existingComponentId || undefined);
+    }
+
+    setDropPosition(null);
+  };
+
   return (
     <div
       className={`editor-wrapper ${isSelected ? 'editor-wrapper-selected' : ''} ${locked ? 'editor-wrapper-locked' : ''} ${isDragging ? 'editor-wrapper-dragging' : ''} ${isDropTarget ? 'editor-wrapper-drop-target' : ''} ${acceptsChildren ? 'editor-wrapper-container' : ''}`}
@@ -234,6 +316,16 @@ function EditorWrapper({
       data-accepts-children={acceptsChildren}
     >
       {children}
+      {/* Drop indicator after component - only show "after" to avoid duplicates */}
+      {showDropIndicator && dropPosition === 'after' && (
+        <div
+          className='editor-wrapper-drop-between editor-wrapper-drop-between-after'
+          onDragOver={handleDropIndicatorDragOver}
+          onDrop={handleDropIndicatorDrop}
+        >
+          <span>Drop here</span>
+        </div>
+      )}
       {/* Always show label for containers, with drop target functionality */}
       {acceptsChildren && (
         <div
@@ -282,11 +374,13 @@ export default function PageRenderer({
   draggingComponentId,
   onDropIntoContainer,
   onContextMenu,
+  onDropBetween,
+  isDraggingExternal,
 }: PageRendererProps) {
   /**
    * Recursively render a component and its children
    */
-  const renderComponent = (instance: ComponentInstance, depth: number = 0): React.ReactNode => {
+  const renderComponent = (instance: ComponentInstance, depth: number = 0, index: number = 0): React.ReactNode => {
     const registryEntry = getComponent(instance.componentType);
 
     if (!registryEntry) {
@@ -335,7 +429,7 @@ export default function PageRenderer({
     const children = instance.children?.length
       ? instance.children
         .sort((a, b) => a.order - b.order)
-        .map((child) => renderComponent(child, depth + 1))
+        .map((child, childIndex) => renderComponent(child, depth + 1, childIndex))
       : undefined;
 
     // Check if we have any spacing to apply
@@ -359,8 +453,11 @@ export default function PageRenderer({
           isDragging={draggingComponentId === instance.id}
           acceptsChildren={registryEntry.acceptsChildren}
           onDropIntoContainer={onDropIntoContainer}
+          onDropBetween={onDropBetween}
+          componentIndex={index}
           depth={depth}
           spacingStyle={spacingStyle}
+          isDraggingExternal={isDraggingExternal}
         >
           <Component {...processedProps} isEditing={true}>{children}</Component>
         </EditorWrapper>
@@ -426,7 +523,7 @@ export default function PageRenderer({
 
   return (
     <div className={layoutClass} style={backgroundStyle}>
-      {sortedComponents.map(renderComponent)}
+      {sortedComponents.map((component, index) => renderComponent(component, 0, index))}
     </div>
   );
 }

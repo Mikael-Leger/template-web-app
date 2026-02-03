@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { BsPlus } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
 import PageRenderer from '../../renderer/page-renderer';
 import DropZone from './drop-zone';
+
+const SCROLL_EDGE_SIZE = 60; // pixels from edge to trigger scroll
+const SCROLL_SPEED = 10; // pixels per frame
 
 export default function EditorCanvas() {
   const { state, selectComponent, addComponent, moveComponent, openContextMenu, dispatch } = useEditor();
@@ -15,6 +18,57 @@ export default function EditorCanvas() {
     parentId: string | null;
     index: number;
   } | null>(null);
+
+  const canvasRef = useRef<HTMLElement | null>(null);
+  const scrollIntervalRef = useRef<number | null>(null);
+
+  // Clean up scroll interval on unmount or when dragging ends
+  useEffect(() => {
+    return () => {
+      if (scrollIntervalRef.current) {
+        cancelAnimationFrame(scrollIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const stopAutoScroll = useCallback(() => {
+    if (scrollIntervalRef.current) {
+      cancelAnimationFrame(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
+  }, []);
+
+  // Handle Escape key to cancel drag
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && (isDraggingOver || draggingComponentId || state.isDragging)) {
+        e.preventDefault();
+        setDraggingComponentId(null);
+        setActiveDropZone(null);
+        setIsDraggingOver(false);
+        stopAutoScroll();
+        dispatch({ type: 'END_DRAG' });
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isDraggingOver, draggingComponentId, state.isDragging, stopAutoScroll, dispatch]);
+
+  const startAutoScroll = useCallback((direction: 'up' | 'down') => {
+    stopAutoScroll();
+
+    const scroll = () => {
+      if (canvasRef.current) {
+        const scrollAmount = direction === 'up' ? -SCROLL_SPEED : SCROLL_SPEED;
+        canvasRef.current.scrollTop += scrollAmount;
+      }
+      scrollIntervalRef.current = requestAnimationFrame(scroll);
+    };
+
+    scrollIntervalRef.current = requestAnimationFrame(scroll);
+  }, [stopAutoScroll]);
 
   const handleComponentClick = useCallback((componentId: string) => {
     selectComponent(componentId);
@@ -35,14 +89,29 @@ export default function EditorCanvas() {
     setDraggingComponentId(null);
     setActiveDropZone(null);
     setIsDraggingOver(false);
+    stopAutoScroll();
     dispatch({ type: 'END_DRAG' });
-  }, [dispatch]);
+  }, [dispatch, stopAutoScroll]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const existingId = e.dataTransfer.types.includes('existingcomponentid');
     e.dataTransfer.dropEffect = existingId ? 'move' : 'copy';
-  }, []);
+
+    // Auto-scroll when near edges
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      const y = e.clientY;
+
+      if (y < rect.top + SCROLL_EDGE_SIZE) {
+        startAutoScroll('up');
+      } else if (y > rect.bottom - SCROLL_EDGE_SIZE) {
+        startAutoScroll('down');
+      } else {
+        stopAutoScroll();
+      }
+    }
+  }, [startAutoScroll, stopAutoScroll]);
 
   const handleCanvasDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -88,7 +157,23 @@ export default function EditorCanvas() {
       addComponent(componentType, containerId, 0);
     }
     setDraggingComponentId(null);
-  }, [addComponent, moveComponent]);
+    setIsDraggingOver(false);
+    dispatch({ type: 'END_DRAG' });
+  }, [addComponent, moveComponent, dispatch]);
+
+  const handleDropBetween = useCallback((index: number, componentType?: string, existingId?: string) => {
+    if (existingId) {
+      // Moving existing component
+      moveComponent(existingId, null, index);
+    } else if (componentType) {
+      // Adding new component
+      addComponent(componentType, null, index);
+    }
+    setDraggingComponentId(null);
+    setActiveDropZone(null);
+    setIsDraggingOver(false);
+    dispatch({ type: 'END_DRAG' });
+  }, [addComponent, moveComponent, dispatch]);
 
   const handleDropZoneDrop = useCallback((e: React.DragEvent) => {
     if (activeDropZone) {
@@ -111,7 +196,7 @@ export default function EditorCanvas() {
     // Drop zone at the start
     elements.push(
       <DropZone
-        key="drop-start"
+        key='drop-start'
         parentId={null}
         index={0}
         isActive={activeDropZone?.parentId === null && activeDropZone?.index === 0}
@@ -154,14 +239,16 @@ export default function EditorCanvas() {
         onDragEnd={handleDragEnd}
         draggingComponentId={draggingComponentId}
         onDropIntoContainer={handleDropIntoContainer}
+        onDropBetween={handleDropBetween}
         onContextMenu={handleContextMenu}
+        isDraggingExternal={isDraggingOver || state.isDragging}
       />
     );
   };
 
   if (!state.page) {
     return (
-      <main className='editor-canvas'>
+      <main className='editor-canvas' ref={canvasRef}>
         <div className='editor-canvas-inner'>
           <div className='editor-canvas-empty'>
             <BsPlus className='editor-canvas-empty-icon'/>
@@ -179,6 +266,7 @@ export default function EditorCanvas() {
     return (
       <main
         className='editor-canvas'
+        ref={canvasRef}
         onClick={handleCanvasClick}
         onDragOver={handleDragOver}
         onDrop={(e) => handleDrop(e)}
@@ -203,6 +291,7 @@ export default function EditorCanvas() {
   return (
     <main
       className={`editor-canvas ${isAnyDragging ? 'editor-canvas-dragging' : ''}`}
+      ref={canvasRef}
       onClick={handleCanvasClick}
       onDragOver={handleDragOver}
       onDragEnter={handleCanvasDragEnter}
@@ -212,7 +301,7 @@ export default function EditorCanvas() {
         {/* Drop zone at the very beginning - always visible when dragging */}
         {isAnyDragging && (
           <DropZone
-            key="drop-first"
+            key='drop-first'
             parentId={null}
             index={0}
             isActive={activeDropZone?.parentId === null && activeDropZone?.index === 0}
@@ -227,7 +316,7 @@ export default function EditorCanvas() {
         {/* Drop zone at the very end - always visible when dragging */}
         {isAnyDragging && componentCount > 0 && (
           <DropZone
-            key="drop-last"
+            key='drop-last'
             parentId={null}
             index={componentCount}
             isActive={activeDropZone?.parentId === null && activeDropZone?.index === componentCount}

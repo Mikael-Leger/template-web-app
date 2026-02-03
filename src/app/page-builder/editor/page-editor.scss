@@ -1033,6 +1033,35 @@
     pointer-events: none;
     border-radius: var(--radius-md);
   }
+
+  &-drop-between {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(34, 197, 94, 0.15);
+    border: 2px dashed var(--success);
+    border-radius: var(--radius-md);
+    color: var(--success);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-2);
+    z-index: 20;
+
+    &-before {
+      top: 0;
+      transform: translateY(-100%);
+      margin-top: -4px;
+    }
+
+    &-after {
+      bottom: 0;
+      transform: translateY(100%);
+      margin-bottom: -4px;
+    }
+  }
 }
 
 /* ===== EDITOR COMPONENT WRAPPER ===== */
