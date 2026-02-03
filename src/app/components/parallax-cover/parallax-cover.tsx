@@ -11,6 +11,10 @@ interface ParallaxCoverProps {
   objectPosition?: 'center' | 'top' | 'bottom' | 'left' | 'right';
   overlayColor?: string;
   overlayOpacity?: number;
+  scrollStart?: number;
+  scrollEnd?: number;
+  useMaskImage?: boolean;
+  maskImagePath?: string;
   isEditing?: boolean;
 }
 
@@ -21,10 +25,15 @@ export default function ParallaxCover({
   objectPosition = 'center',
   overlayColor = '',
   overlayOpacity = 0,
+  scrollStart = -10,
+  scrollEnd = 210,
+  useMaskImage = false,
+  maskImagePath = '',
   isEditing = false
 }: ParallaxCoverProps) {
   const parallaxCoverRef = useRef<HTMLDivElement | null>(null);
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
+  const maskImageRef = useRef<HTMLImageElement | null>(null);
   const [isInPageBuilder, setIsInPageBuilder] = useState(false);
 
   // Detect if we're inside the page builder (editor or preview)
@@ -52,18 +61,33 @@ export default function ParallaxCover({
         scrollTrigger: {
           trigger: parallaxCoverRef.current,
           scroller: scroller || undefined,
-          start: '-10% bottom',
-          end: '210% top',
+          start: `${scrollStart}% bottom`,
+          end: `${scrollEnd}% top`,
           scrub: true
         },
       });
 
+      // Background image: reveal from top, then hide to bottom
       tl.to(imageContainerRef.current, { clipPath: 'inset(0% 0% 0% 0%)' })
         .to(imageContainerRef.current, { clipPath: 'inset(0% 0% 100% 0%)' });
+
+      // Mask image: starts visible, hides to bottom as bg reveals (reverse parallax)
+      if (useMaskImage && maskImageRef.current) {
+        gsap.to(maskImageRef.current, {
+          clipPath: 'inset(0% 0% 100% 0%)',
+          scrollTrigger: {
+            trigger: parallaxCoverRef.current,
+            scroller: scroller || undefined,
+            start: `${scrollStart}% bottom`,
+            end: `${(scrollStart + scrollEnd) / 2}% top`,
+            scrub: true
+          },
+        });
+      }
     });
 
     return () => ctx.revert();
-  }, [isInPageBuilder]);
+  }, [isInPageBuilder, scrollStart, scrollEnd, useMaskImage]);
 
   const imageStyle: React.CSSProperties = {
     objectFit,
@@ -75,6 +99,8 @@ export default function ParallaxCover({
     backgroundColor: overlayColor || '#000000',
     opacity: overlayOpacity / 100,
   };
+
+  const showMaskImage = useMaskImage && maskImagePath;
 
   // Page builder mode (editor or preview) - use absolute positioning within container
   if (isInPageBuilder || isEditing) {
@@ -93,6 +119,13 @@ export default function ParallaxCover({
             alt="Parallax cover"/>
           {hasOverlay && <div className='parallax-cover-overlay' style={overlayStyle}/>}
         </div>
+        {showMaskImage && (
+          <img
+            className='parallax-cover-mask w-full'
+            ref={maskImageRef}
+            src={maskImagePath}
+            alt="Parallax mask"/>
+        )}
       </div>
     );
   }
@@ -113,6 +146,13 @@ export default function ParallaxCover({
           alt="Parallax cover"/>
         {hasOverlay && <div className='parallax-cover-overlay' style={overlayStyle}/>}
       </div>
+      {showMaskImage && (
+        <img
+          className='parallax-cover-mask w-full'
+          ref={maskImageRef}
+          src={maskImagePath}
+          alt="Parallax mask"/>
+      )}
     </div>
   );
 }
