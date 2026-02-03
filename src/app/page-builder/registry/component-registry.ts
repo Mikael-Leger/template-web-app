@@ -372,6 +372,7 @@ componentRegistry.set('Carousel', {
       { label: 'Swipe', value: 'swipe' },
       { label: 'Circle', value: 'circle' },
     ], 'swipe'),
+    autoRotate: prop('boolean', 'Auto-rotate', { defaultValue: false }),
     delayMs: prop('number', 'Auto-rotate Delay (ms)', { defaultValue: 3000, min: 1000, max: 10000 }),
   },
   defaultProps: {
@@ -380,6 +381,7 @@ componentRegistry.set('Carousel', {
     image3: '',
     image4: '',
     transition: 'swipe',
+    autoRotate: false,
     delayMs: 3000,
   },
 });

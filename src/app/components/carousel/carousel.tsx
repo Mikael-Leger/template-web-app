@@ -12,15 +12,18 @@ interface CarouselProps {
     caption?: string;
   }[];
   transition: 'swipe' | 'circle';
+  autoRotate?: boolean;
   delayMs?: number;
 }
 
 const IMAGE_HEIGHT = 717;
 
-export default function Carousel({images, transition, delayMs}: CarouselProps) {
+export default function Carousel({images, transition, autoRotate = false, delayMs}: CarouselProps) {
   const {isMobile} = useIsMobile();
 
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const actionsDisabledCpt = useRef<number>(0);
 
   const [imageIndexes, setImageIndex] = useState<{
     current: number;
@@ -30,130 +33,128 @@ export default function Carousel({images, transition, delayMs}: CarouselProps) {
     lastAction: 'none'
   });
 
-  const imageSwitched = useRef<boolean>(false);
-  const actionsDisabledCpt = useRef<number>(0);
+  const startAutoRotate = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    if (!autoRotate || !delayMs) return;
+
+    intervalRef.current = setInterval(() => {
+      setImageIndex(prevstate => {
+        const prevIndex = prevstate.current;
+        const newIndex = (prevIndex === images.length - 1) ? 0 : prevIndex + 1;
+
+        return {
+          current: newIndex,
+          lastAction: 'right'
+        };
+      });
+    }, delayMs);
+  };
 
   useEffect(() => {
     imageRefs.current = imageRefs.current.slice(0, images.length);
+    startAutoRotate();
 
-    if (!delayMs) return;
-
-    setInterval(() => {
-      if (imageSwitched.current) {
-        imageSwitched.current = false;
-
-        return;
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
-      
-      setImageIndex(prevstate => {
-        const prevIndex = prevstate.current;
-        const newIndex = (prevIndex === images.length -1) ? 0 : prevIndex + 1;
-        
-        return {
-          current: newIndex,
-          prev: prevIndex,
-          lastAction: 'right'
-        };});
-
-    }, delayMs);    
-  }, []);
+    };
+  }, [autoRotate, delayMs, images.length]);
 
   useEffect(() => {
     const prevImageIndex = (imageIndexes.current === 0) ? images.length - 1 : imageIndexes.current - 1;
     const nextImageIndex = (imageIndexes.current === images.length - 1) ? 0 : imageIndexes.current + 1;
-  
-    const getClipPath = (index: number) => {
-      if (transition === 'swipe') {
-        if (index === imageIndexes.current) {
-          return 'inset(0% 0% 0% 0%)';
-        } else if (index === prevImageIndex) {
-          return 'inset(0% 100% 0% 0%)';
-        } else if (index === nextImageIndex) {
-          return 'inset(0% 0% 0% 100%)';
-        } else {
-          return 'inset(0% 100% 0% 100%)';
-        }
-      }
-      if (transition === 'circle') {
-        if (index === imageIndexes.current) {
-          return 'circle(100%)';
-        } else if (index === prevImageIndex) {
-          return imageIndexes.lastAction === 'none' ? 'circle(0%)' : 'circle(100%)';
-        } else if (index === nextImageIndex) {
-          return 'circle(0%)';
-        } else {
-          return 'circle(0%)';
-        }
-      }
-    };
-
-    const getMask = (index: number) => {
-      if (index === imageIndexes.current) {
-        return 'radial-gradient(0px, transparent 0%, rgb(0, 0, 0))';
-      } else if (index === prevImageIndex) {
-        return 'radial-gradient(2000px, transparent 98%, rgb(0, 0, 0))';
-      } else if (index === nextImageIndex) {
-        return 'radial-gradient(0px, transparent 98%, rgb(0, 0, 0))';
-      }
-
-      return 'radial-gradient(2000px, transparent 98%, rgb(0, 0, 0))';
-    };
-  
-    const animationMethod = imageIndexes.lastAction === 'none' ? gsap.set : gsap.to;
-  
-    const duration = transition === 'swipe' ? .3 : .7;
+    const isInitial = imageIndexes.lastAction === 'none';
+    const duration = transition === 'swipe' ? 0.3 : 0.7;
 
     images.forEach((image, index) => {
-      animationMethod(imageRefs.current[index], {
-        clipPath: getClipPath(index),
-        webkitMask: transition === 'circle' ? getMask(index) : undefined,
-        mask: transition === 'circle' ? getMask(index) : undefined,
-        opacity: 1,
-        duration: duration,
-        ease: 'power2.inOut'
-      });
+      const element = imageRefs.current[index];
+      if (!element) return;
+
+      if (transition === 'swipe') {
+        let clipPath: string;
+        if (index === imageIndexes.current) {
+          clipPath = 'inset(0% 0% 0% 0%)';
+        } else if (index === prevImageIndex) {
+          clipPath = 'inset(0% 100% 0% 0%)';
+        } else if (index === nextImageIndex) {
+          clipPath = 'inset(0% 0% 0% 100%)';
+        } else {
+          clipPath = 'inset(0% 100% 0% 100%)';
+        }
+
+        if (isInitial) {
+          gsap.set(element, { clipPath, zIndex: 'auto', webkitMask: 'none', mask: 'none', opacity: 1 });
+        } else {
+          gsap.to(element, { clipPath, zIndex: 'auto', webkitMask: 'none', mask: 'none', opacity: 1, duration, ease: 'power2.inOut' });
+        }
+      }
+
+      if (transition === 'circle') {
+        // Set z-index: current on top, prev underneath, others below
+        let zIndex = 0;
+        if (index === imageIndexes.current) {
+          zIndex = 2;
+        } else if (index === prevImageIndex) {
+          zIndex = 1;
+        }
+
+        if (isInitial) {
+          // On initial load, current is fully visible, others hidden
+          const clipPath = index === imageIndexes.current ? 'circle(150% at 50% 50%)' : 'circle(0% at 50% 50%)';
+          gsap.set(element, { clipPath, zIndex, opacity: 1 });
+        } else if (index === imageIndexes.current) {
+          // New current image: animate circle expanding from center
+          gsap.set(element, { zIndex, clipPath: 'circle(0% at 50% 50%)', opacity: 1 });
+          gsap.to(element, { clipPath: 'circle(150% at 50% 50%)', duration, ease: 'power2.inOut' });
+        } else if (index === prevImageIndex) {
+          // Previous image stays fully visible underneath
+          gsap.set(element, { zIndex, clipPath: 'circle(150% at 50% 50%)', opacity: 1 });
+        } else {
+          // Other images hidden
+          gsap.set(element, { zIndex, clipPath: 'circle(0% at 50% 50%)', opacity: 1 });
+        }
+      }
     });
-  }, [imageIndexes, images]);
+  }, [imageIndexes, images, transition]);
 
   const handleLeftClick = () => {
-    imageSwitched.current = true;
+    if (actionsDisabledCpt.current > 0) return;
+
+    actionsDisabledCpt.current++;
     const prevIndex = imageIndexes.current;
-    const newIndex = (prevIndex === 0) ? images.length -1 : prevIndex - 1;
+    const newIndex = (prevIndex === 0) ? images.length - 1 : prevIndex - 1;
     setImageIndex({
       current: newIndex,
       lastAction: 'left'
     });
     disableActions();
+    startAutoRotate();
   };
 
   const handleRightClick = () => {
-    imageSwitched.current = true;
+    if (actionsDisabledCpt.current > 0) return;
+
+    actionsDisabledCpt.current++;
     const prevIndex = imageIndexes.current;
-    const newIndex = (prevIndex === images.length -1) ? 0 : prevIndex + 1;
+    const newIndex = (prevIndex === images.length - 1) ? 0 : prevIndex + 1;
     setImageIndex({
       current: newIndex,
       lastAction: 'right'
     });
     disableActions();
+    startAutoRotate();
   };
 
   const disableActions = () => {
-    actionsDisabledCpt.current++;
-
     const duration = transition === 'swipe' ? .3 : .7;
-
-    gsap.set(['.carousel-actions-left', '.carousel-actions-right'], {
-      pointerEvents: 'none'
-    });
 
     setTimeout(() => {
       actionsDisabledCpt.current--;
-
-      if (actionsDisabledCpt.current > 0) return;
-
-      gsap.set(['.carousel-actions-left', '.carousel-actions-right'], {
-        pointerEvents: 'auto'
-      });
     }, duration * 1000);
   };
 

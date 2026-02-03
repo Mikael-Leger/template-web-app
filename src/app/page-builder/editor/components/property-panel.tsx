@@ -130,7 +130,7 @@ export default function PropertyPanel() {
             checked={(value as boolean) || false}
             onChange={(e) => handlePropChange(propName, e.target.checked)}
           />
-          <span>{definition.label}</span>
+          <label htmlFor={`prop-${propName}`}>{definition.label}</label>
         </div>
       );
 

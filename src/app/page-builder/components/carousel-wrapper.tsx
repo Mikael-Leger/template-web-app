@@ -9,6 +9,7 @@ interface CarouselWrapperProps {
   image3?: string;
   image4?: string;
   transition?: 'swipe' | 'circle';
+  autoRotate?: boolean;
   delayMs?: number;
 }
 
@@ -18,6 +19,7 @@ export default function CarouselWrapper({
   image3,
   image4,
   transition = 'swipe',
+  autoRotate = false,
   delayMs,
 }: CarouselWrapperProps) {
   // Build images array from individual image props
@@ -34,6 +36,7 @@ export default function CarouselWrapper({
     <Carousel
       images={images}
       transition={transition}
+      autoRotate={autoRotate}
       delayMs={delayMs}
     />
   );
