@@ -17,3 +17,9 @@ export interface TestimonialProps extends TestimonialFormatted {
 export interface TestimonialJson extends TestimonialInterface {
   date?: string;
 }
+
+export interface TestimonialStorageItem extends TestimonialJson {
+  id?: string;
+  _isStatic?: boolean;
+  hide?: boolean;
+}

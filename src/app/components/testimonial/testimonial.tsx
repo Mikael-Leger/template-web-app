@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { BsQuote } from 'react-icons/bs';
 
-import { formatDate, parseDate } from '@/app/services/date';
-import { TestimonialFormatted, TestimonialJson, TestimonialProps } from '@/app/interfaces/testimonial.interface';
-import testimonialsJson from '@/app/data/testimonials.json';
+import { formatDate } from '@/app/services/date';
+import { getVisibleTestimonials } from '@/app/services/testimonial-service';
+import { TestimonialFormatted, TestimonialProps } from '@/app/interfaces/testimonial.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
 
 import './testimonial.scss';
@@ -109,19 +109,8 @@ export function Testimonials({delayMs}: TestimonialsProps) {
   const [testimonials, setTestimonials] = useState<TestimonialFormatted[]>([]);
 
   useEffect(() => {
-    const testimonialsFormatted = (testimonialsJson as TestimonialJson[]).map(testimonialJson => {
-      const testimonialFormatted: TestimonialFormatted = { 
-        text: testimonialJson.text,
-        imagePath: testimonialJson.imagePath,
-        author: testimonialJson.author,
-        role: testimonialJson.role,
-        company: testimonialJson.company,
-        date: testimonialJson.date ? parseDate(testimonialJson.date) : undefined
-      };
-      
-      return testimonialFormatted;
-    });
-    setTestimonials(testimonialsFormatted);
+    const testimonialsData = getVisibleTestimonials();
+    setTestimonials(testimonialsData);
   }, []);
 
   useEffect(() => {
