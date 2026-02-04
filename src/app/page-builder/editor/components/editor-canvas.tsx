@@ -38,23 +38,45 @@ export default function EditorCanvas() {
     }
   }, []);
 
-  // Handle Escape key to cancel drag
+  // Track if any drag is active using a ref for the escape handler
+  const isDraggingRef = useRef(false);
+
+  // Keep ref in sync with drag state
+  useEffect(() => {
+    isDraggingRef.current = isDraggingOver || draggingComponentId !== null || state.isDragging;
+  }, [isDraggingOver, draggingComponentId, state.isDragging]);
+
+  // Cleanup function that resets all drag state
+  const cleanupDragState = useCallback(() => {
+    setDraggingComponentId(null);
+    setActiveDropZone(null);
+    setIsDraggingOver(false);
+    stopAutoScroll();
+    dispatch({ type: 'END_DRAG' });
+  }, [stopAutoScroll, dispatch]);
+
+  // Handle Escape key - use ref to always have current drag state
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && (isDraggingOver || draggingComponentId || state.isDragging)) {
+      if (e.key === 'Escape' && isDraggingRef.current) {
         e.preventDefault();
-        setDraggingComponentId(null);
-        setActiveDropZone(null);
-        setIsDraggingOver(false);
-        stopAutoScroll();
-        dispatch({ type: 'END_DRAG' });
+        cleanupDragState();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    // Global dragend handler to ensure drag state is cleared when any drag ends
+    const handleGlobalDragEnd = () => {
+      cleanupDragState();
+    };
 
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isDraggingOver, draggingComponentId, state.isDragging, stopAutoScroll, dispatch]);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('dragend', handleGlobalDragEnd);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('dragend', handleGlobalDragEnd);
+    };
+  }, [cleanupDragState]);
 
   const startAutoScroll = useCallback((direction: 'up' | 'down') => {
     stopAutoScroll();

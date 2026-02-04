@@ -63,7 +63,7 @@ const categoryNames: Record<ComponentCategory, string> = {
 };
 
 export default function ComponentSidebar() {
-  const { addComponent, state, setSidebarTab } = useEditor();
+  const { addComponent, state, setSidebarTab, dispatch } = useEditor();
   const [searchQuery, setSearchQuery] = useState('');
   const activeTab = state.sidebarTab;
 
@@ -105,6 +105,11 @@ export default function ComponentSidebar() {
   const handleDragStart = (e: React.DragEvent, componentType: string) => {
     e.dataTransfer.setData('componentType', componentType);
     e.dataTransfer.effectAllowed = 'copy';
+    dispatch({ type: 'START_DRAG', payload: componentType });
+  };
+
+  const handleDragEnd = () => {
+    dispatch({ type: 'END_DRAG' });
   };
 
   const handleClick = (componentType: string) => {
@@ -172,6 +177,7 @@ export default function ComponentSidebar() {
                       className='editor-sidebar-item'
                       draggable
                       onDragStart={(e) => handleDragStart(e, comp.type || '')}
+                      onDragEnd={handleDragEnd}
                       onClick={() => handleClick(comp.type || '')}
                       title={comp.description}
                     >
