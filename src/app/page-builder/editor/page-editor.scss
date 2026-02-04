@@ -1359,6 +1359,62 @@
   }
 }
 
+/* ===== DIMENSION EDITOR ===== */
+.dimension-editor {
+  &-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-2);
+    color: var(--foreground);
+    margin-bottom: var(--space-1);
+    display: block;
+  }
+
+  &-row {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  &-input {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    background-color: var(--surface);
+    color: var(--foreground);
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    // Hide spinner buttons
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    -moz-appearance: textfield;
+  }
+
+  &-unit {
+    width: 50px;
+    padding: var(--space-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    background-color: var(--surface);
+    color: var(--foreground);
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+  }
+}
+
 /* ===== ERROR STATE ===== */
 .page-editor-error {
   display: flex;

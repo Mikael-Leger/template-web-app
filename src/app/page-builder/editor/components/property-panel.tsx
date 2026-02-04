@@ -8,6 +8,7 @@ import { getComponent } from '../../registry/component-registry';
 import { PropDefinition } from '../../interfaces/page-config.interface';
 import RatioEditor from './ratio-editor';
 import SpacingEditor, { SpacingValue, DEFAULT_SPACING } from './spacing-editor';
+import DimensionEditor from './dimension-editor';
 
 export default function PropertyPanel() {
   const { selectedComponent, updateComponentProps, removeComponent } = useEditor();
@@ -168,6 +169,16 @@ export default function PropertyPanel() {
           value={(value as string) || '#000000'}
           onChange={(e) => handlePropChange(propName, e.target.value)}
           style={{ padding: '2px', height: '36px' }}
+        />
+      );
+
+    case 'dimension':
+      return (
+        <DimensionEditor
+          label={definition.label}
+          value={(value as string) || ''}
+          onChange={(val) => handlePropChange(propName, val)}
+          placeholder={definition.defaultValue as string}
         />
       );
 

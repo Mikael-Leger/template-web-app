@@ -231,15 +231,36 @@ componentRegistry.set('Video', {
   acceptsChildren: false,
   propsSchema: {
     path: prop('string', 'Video URL', { required: true, defaultValue: '' }),
-    autoplay: prop('boolean', 'Autoplay', { defaultValue: false }),
+    width: prop('dimension', 'Width', { defaultValue: '100%' }),
+    height: prop('dimension', 'Height', { defaultValue: '' }),
+    aspectRatio: selectProp('Aspect Ratio', [
+      { label: 'Auto', value: 'auto' },
+      { label: '16:9 (Widescreen)', value: '16:9' },
+      { label: '4:3 (Standard)', value: '4:3' },
+      { label: '1:1 (Square)', value: '1:1' },
+      { label: '9:16 (Vertical)', value: '9:16' },
+    ], 'auto'),
+    objectFit: selectProp('Object Fit', [
+      { label: 'Cover', value: 'cover' },
+      { label: 'Contain', value: 'contain' },
+      { label: 'Fill', value: 'fill' },
+      { label: 'None', value: 'none' },
+    ], 'cover'),
+    autoplay: prop('boolean', 'Autoplay', { defaultValue: true }),
     muted: prop('boolean', 'Muted', { defaultValue: true }),
     loop: prop('boolean', 'Loop', { defaultValue: true }),
+    controls: prop('boolean', 'Show Controls', { defaultValue: false }),
   },
   defaultProps: {
     path: '',
-    autoplay: false,
+    width: '100%',
+    height: '',
+    aspectRatio: 'auto',
+    objectFit: 'cover',
+    autoplay: true,
     muted: true,
     loop: true,
+    controls: false,
   },
 });
 

@@ -73,7 +73,7 @@ export type ComponentCategory =
  * Property definition for the component registry
  */
 export interface PropDefinition {
-  type: 'string' | 'textarea' | 'number' | 'boolean' | 'select' | 'color' | 'image' | 'array' | 'object' | 'icon';
+  type: 'string' | 'textarea' | 'number' | 'boolean' | 'select' | 'color' | 'image' | 'array' | 'object' | 'icon' | 'dimension';
   label: string;
   description?: string;
   required?: boolean;

@@ -57,6 +57,7 @@ interface PageRendererProps {
   onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   isDraggingExternal?: boolean;
+  renderDropZoneBetween?: (_index: number) => React.ReactNode;
 }
 
 /**
@@ -80,6 +81,7 @@ interface EditorWrapperProps {
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   componentIndex: number;
+  totalComponents: number;
   depth: number;
   spacingStyle?: React.CSSProperties;
   isDraggingExternal?: boolean;
@@ -102,6 +104,7 @@ function EditorWrapper({
   onDropIntoContainer,
   onDropBetween,
   componentIndex,
+  totalComponents,
   depth,
   spacingStyle,
   isDraggingExternal,
@@ -151,8 +154,9 @@ function EditorWrapper({
     const existingId = e.dataTransfer.types.includes('existingcomponentid');
     e.dataTransfer.dropEffect = existingId ? 'move' : 'copy';
 
-    // Show drop indicator when in bottom portion of component (for between-component drops)
-    if (depth === 0 && !acceptsChildren) {
+    // Show drop indicator for nested components (depth > 0) only
+    // Root-level drops are handled by DropZones in editor-canvas
+    if (depth > 0 && !acceptsChildren) {
       const rect = e.currentTarget.getBoundingClientRect();
       const y = e.clientY;
       const bottomThreshold = rect.bottom - rect.height * 0.35;
@@ -166,8 +170,8 @@ function EditorWrapper({
 
     if (acceptsChildren) {
       setIsDropTarget(true);
-    } else if (depth === 0) {
-      // Calculate initial position for between-component indicator
+    } else if (depth > 0) {
+      // Calculate initial position for nested component indicator
       const rect = e.currentTarget.getBoundingClientRect();
       const y = e.clientY;
       const bottomThreshold = rect.bottom - rect.height * 0.35;
@@ -190,18 +194,9 @@ function EditorWrapper({
       return;
     }
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX;
-    const y = e.clientY;
-
-    // Expand the check area to include drop indicators (40px above and below)
-    const expandedTop = rect.top - 50;
-    const expandedBottom = rect.bottom + 50;
-
-    if (x < rect.left || x >= rect.right || y < expandedTop || y >= expandedBottom) {
-      setIsDropTarget(false);
-      setDropPosition(null);
-    }
+    // Cursor left the component entirely - clear drop states
+    setIsDropTarget(false);
+    setDropPosition(null);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -277,7 +272,10 @@ function EditorWrapper({
     top: `${depth * 22}px`,
   };
 
-  const showDropIndicator = depth === 0 && dropPosition && isDraggingExternal;
+  // Don't show "after" drop indicator for root-level components (depth === 0)
+  // since DropZones in editor-canvas now handle all between-component drops
+  // Only show drop indicators for nested components inside containers (depth > 0)
+  const showDropIndicator = depth > 0 && dropPosition && isDraggingExternal;
 
   const handleDropIndicatorDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -382,11 +380,12 @@ export default function PageRenderer({
   onContextMenu,
   onDropBetween,
   isDraggingExternal,
+  renderDropZoneBetween,
 }: PageRendererProps) {
   /**
    * Recursively render a component and its children
    */
-  const renderComponent = (instance: ComponentInstance, depth: number = 0, index: number = 0): React.ReactNode => {
+  const renderComponent = (instance: ComponentInstance, depth: number = 0, index: number = 0, totalSiblings: number = 0): React.ReactNode => {
     const registryEntry = getComponent(instance.componentType);
 
     if (!registryEntry) {
@@ -435,7 +434,7 @@ export default function PageRenderer({
     const children = instance.children?.length
       ? instance.children
         .sort((a, b) => a.order - b.order)
-        .map((child, childIndex) => renderComponent(child, depth + 1, childIndex))
+        .map((child, childIndex) => renderComponent(child, depth + 1, childIndex, instance.children!.length))
       : undefined;
 
     // Check if we have any spacing to apply
@@ -461,6 +460,7 @@ export default function PageRenderer({
           onDropIntoContainer={onDropIntoContainer}
           onDropBetween={onDropBetween}
           componentIndex={index}
+          totalComponents={totalSiblings}
           depth={depth}
           spacingStyle={spacingStyle}
           isDraggingExternal={isDraggingExternal}
@@ -527,9 +527,29 @@ export default function PageRenderer({
     }
   }, [config.settings.background]);
 
+  // Render components with drop zones between them when editing
+  const renderWithDropZones = () => {
+    const elements: React.ReactNode[] = [];
+
+    sortedComponents.forEach((component, index) => {
+      // Add component
+      elements.push(renderComponent(component, 0, index, sortedComponents.length));
+
+      // Add drop zone after component (except for the last one, handled by editor-canvas)
+      if (renderDropZoneBetween && index < sortedComponents.length - 1) {
+        elements.push(renderDropZoneBetween(index + 1));
+      }
+    });
+
+    return elements;
+  };
+
   return (
     <div className={layoutClass} style={backgroundStyle}>
-      {sortedComponents.map((component, index) => renderComponent(component, 0, index))}
+      {isEditing && renderDropZoneBetween
+        ? renderWithDropZones()
+        : sortedComponents.map((component, index) => renderComponent(component, 0, index, sortedComponents.length))
+      }
     </div>
   );
 }

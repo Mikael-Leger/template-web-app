@@ -247,6 +247,24 @@ export default function EditorCanvas() {
     return elements;
   };
 
+  // Callback to render drop zones between components
+  const renderDropZoneBetween = useCallback((index: number) => {
+    const isAnyDragging = isDraggingOver || draggingComponentId !== null || state.isDragging;
+    if (!isAnyDragging) return null;
+
+    return (
+      <DropZone
+        key={`drop-between-${index}`}
+        parentId={null}
+        index={index}
+        isActive={activeDropZone?.parentId === null && activeDropZone?.index === index}
+        onDragEnter={() => setActiveDropZone({ parentId: null, index })}
+        onDragLeave={() => {}}
+        onDrop={handleDropZoneDrop}
+      />
+    );
+  }, [isDraggingOver, draggingComponentId, state.isDragging, activeDropZone, handleDropZoneDrop]);
+
   // Render all components in a single PageRenderer to maintain proper layout
   const renderComponents = () => {
     if (!state.page || state.page.components.length === 0) return null;
@@ -264,6 +282,7 @@ export default function EditorCanvas() {
         onDropBetween={handleDropBetween}
         onContextMenu={handleContextMenu}
         isDraggingExternal={isDraggingOver || state.isDragging}
+        renderDropZoneBetween={renderDropZoneBetween}
       />
     );
   };
