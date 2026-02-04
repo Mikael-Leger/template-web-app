@@ -53,7 +53,7 @@ interface PageRendererProps {
   onDragStart?: (_componentId: string) => void;
   onDragEnd?: () => void;
   draggingComponentId?: string | null;
-  onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
+  onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string, _index?: number) => void;
   onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   isDraggingExternal?: boolean;
@@ -78,7 +78,7 @@ interface EditorWrapperProps {
   onDragEnd?: () => void;
   isDragging?: boolean;
   acceptsChildren?: boolean;
-  onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string) => void;
+  onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string, _index?: number) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   componentIndex: number;
   totalComponents: number;
@@ -362,6 +362,68 @@ function EditorWrapper({
 }
 
 /**
+ * Nested Drop Zone Component
+ * Drop zone that appears between nested children inside a container
+ */
+interface NestedDropZoneProps {
+  parentId: string;
+  index: number;
+  onDropIntoParent?: (_containerId: string, _componentType?: string, _existingId?: string, _index?: number) => void;
+}
+
+function NestedDropZone({ parentId, index, onDropIntoParent }: NestedDropZoneProps) {
+  const [isActive, setIsActive] = React.useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsActive(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setIsActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const componentType = e.dataTransfer.getData('componentType');
+    const existingComponentId = e.dataTransfer.getData('existingComponentId');
+
+    if (onDropIntoParent) {
+      onDropIntoParent(parentId, componentType || undefined, existingComponentId || undefined, index);
+    }
+    setIsActive(false);
+  };
+
+  return (
+    <div
+      className={`drop-zone drop-zone-nested ${isActive ? 'drop-zone-active' : ''}`}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      data-parent-id={parentId}
+      data-index={index}
+    >
+      {isActive && <span className="drop-zone-label">Drop here</span>}
+    </div>
+  );
+}
+
+/**
  * Page Renderer Component
  *
  * Renders a PageConfig by dynamically instantiating components
@@ -430,12 +492,56 @@ export default function PageRenderer({
       if (marginProp.left && marginProp.left !== '0px') spacingStyle.marginLeft = marginProp.left;
     }
 
-    // Render children if component accepts them
-    const children = instance.children?.length
-      ? instance.children
-        .sort((a, b) => a.order - b.order)
-        .map((child, childIndex) => renderComponent(child, depth + 1, childIndex, instance.children!.length))
-      : undefined;
+    // Render children if component accepts them (with drop zones when editing)
+    const children = (() => {
+      // For containers with children
+      if (instance.children?.length) {
+        const sortedChildren = [...instance.children].sort((a, b) => a.order - b.order);
+        if (isEditing && isDraggingExternal && renderDropZoneBetween) {
+          // Render children with drop zones at start, between, and end
+          const elements: React.ReactNode[] = [];
+
+          // Drop zone at the start (before first child)
+          elements.push(
+            <NestedDropZone
+              key={`nested-drop-${instance.id}-start`}
+              parentId={instance.id}
+              index={0}
+              onDropIntoParent={onDropIntoContainer}
+            />
+          );
+
+          sortedChildren.forEach((child, childIndex) => {
+            elements.push(renderComponent(child, depth + 1, childIndex, instance.children!.length));
+            // Add drop zone after each child
+            elements.push(
+              <NestedDropZone
+                key={`nested-drop-${instance.id}-${childIndex + 1}`}
+                parentId={instance.id}
+                index={childIndex + 1}
+                onDropIntoParent={onDropIntoContainer}
+              />
+            );
+          });
+          return elements;
+        }
+        return sortedChildren.map((child, childIndex) => renderComponent(child, depth + 1, childIndex, instance.children!.length));
+      }
+
+      // For empty containers that accept children, show a drop zone when dragging
+      if (registryEntry.acceptsChildren && isEditing && isDraggingExternal && renderDropZoneBetween) {
+        return (
+          <NestedDropZone
+            key={`nested-drop-${instance.id}-empty`}
+            parentId={instance.id}
+            index={0}
+            onDropIntoParent={onDropIntoContainer}
+          />
+        );
+      }
+
+      return undefined;
+    })();
 
     // Check if we have any spacing to apply
     const hasSpacing = Object.keys(spacingStyle).length > 0;

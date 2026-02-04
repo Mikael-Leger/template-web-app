@@ -885,6 +885,11 @@
   transition: outline-color var(--transition-fast);
   cursor: grab;
 
+  // When inside a Card (flex-col container), wrapper should stretch to full width
+  .card > & {
+    width: 100%;
+  }
+
   // When inside a flex container (like Layout), non-containers become transparent to layout
   // This allows child cards to participate directly in flex sizing
   // BUT containers keep their positioning context for labels
@@ -1141,6 +1146,20 @@
     color: var(--primary);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-2);
+  }
+
+  &-nested {
+    height: 32px;
+    margin: var(--space-1) 0;
+
+    &::before {
+      top: -4px;
+      bottom: -4px;
+    }
+
+    &::after {
+      font-size: var(--font-size-xs);
+    }
   }
 }
 
@@ -1454,3 +1473,17 @@
     }
   }
 }
+
+/* ===== PAGE RENDERER EDITING MODE ===== */
+.page-renderer-editing {
+  display: flex;
+  flex-direction: column;
+
+  // Top-level editor wrappers should stretch to allow card centering inside
+  > .editor-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+

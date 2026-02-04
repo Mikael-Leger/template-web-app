@@ -170,13 +170,14 @@ export default function EditorCanvas() {
     setDraggingComponentId(null);
   }, [addComponent, moveComponent, state.page?.components.length]);
 
-  const handleDropIntoContainer = useCallback((containerId: string, componentType?: string, existingId?: string) => {
+  const handleDropIntoContainer = useCallback((containerId: string, componentType?: string, existingId?: string, index?: number) => {
+    const insertIndex = index ?? 0;
     if (existingId) {
       // Moving existing component into container
-      moveComponent(existingId, containerId, 0);
+      moveComponent(existingId, containerId, insertIndex);
     } else if (componentType) {
       // Adding new component into container
-      addComponent(componentType, containerId, 0);
+      addComponent(componentType, containerId, insertIndex);
     }
     setDraggingComponentId(null);
     setIsDraggingOver(false);

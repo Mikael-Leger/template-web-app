@@ -32,7 +32,8 @@
       "Bash(cmd //c \"taskkill /PID 45496 /F\")",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_console_message",
       "Bash(npx tsc:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__drag"
     ]
   }
 }

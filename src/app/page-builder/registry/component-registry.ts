@@ -80,6 +80,13 @@ const paddingOptions = [
   { label: 'Outer Full', value: 'outer-full' },
 ];
 
+const marginOptions = [
+  { label: 'None', value: 'none' },
+  { label: 'Inner', value: 'inner' },
+  { label: 'Outer', value: 'outer' },
+  { label: 'Mobile', value: 'mobile' },
+];
+
 /**
  * Component Registry Map
  */
@@ -96,7 +103,8 @@ componentRegistry.set('Card', {
   acceptsChildren: true,
   propsSchema: {
     size: selectProp('Size', sizeOptions, 'medium'),
-    padding: selectProp('Padding', paddingOptions, 'outer'),
+    padding: selectProp('Padding', paddingOptions, 'inner-full'),
+    margin: selectProp('Margin', marginOptions, 'inner'),
     background: selectProp('Background', [
       { label: 'Default (White)', value: 'default' },
       { label: 'Gradient', value: 'gradient' },
@@ -105,7 +113,8 @@ componentRegistry.set('Card', {
   },
   defaultProps: {
     size: 'medium',
-    padding: 'outer',
+    padding: 'inner-full',
+    margin: 'inner',
     background: 'default',
     orientation: 'center',
   },

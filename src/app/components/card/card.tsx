@@ -13,14 +13,14 @@ interface CardProps {
   height?: number;
   background?: 'default' | 'gradient';
   padding?: 'none' | 'inner' | 'inner-full' | 'outer' | 'outer-full';
-  margin?: 'none' | 'inner' | 'outer';
+  margin?: 'none' | 'inner' | 'outer' | 'mobile';
   className?: string;
   borderColor?: 'primary' | 'black';
   id?: string;
   style?: object;
 }
 
-export default function Card({children, width, height, className, id, style, orientation = 'center', size = 'small', background = 'default', padding = 'outer', margin = 'outer', borderColor = 'primary'}: CardProps) {
+export default function Card({children, width, height, className, id, style, orientation = 'center', size = 'small', background = 'default', padding = 'inner-full', margin = 'inner', borderColor = 'primary'}: CardProps) {
   const {isMobile} = useIsMobile();
   const isInCard = useIsInCard();
 
@@ -48,11 +48,10 @@ export default function Card({children, width, height, className, id, style, ori
     <CardContext.Provider value={true}>
       <div
         id={id}
-        className={`flex card ${getSize()} card-${background} card-padding-${isMobile ? 'mobile' : padding} ${isInCard && 'aspect-[1/1]'} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') && 'flex-col'} ${className}`}
+        className={`flex card ${getSize()} card-${background} card-padding-${isMobile ? 'mobile' : padding} card-margin-${margin} card-border-${borderColor} ${!className?.includes('flex-row') ? 'flex-col' : ''} ${className || ''}`}
         style={{
           ...style,
-          ...getDimensionStyles(),
-          alignSelf: orientation
+          ...getDimensionStyles()
         }}>
         {children}
       </div>

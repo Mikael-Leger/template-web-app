@@ -1,12 +1,14 @@
 .card {
-  width: 60%;
+  width: 100%;
+  min-width: 200px;
+  min-height: 100px;
   color: var(--foreground);
   border-radius: var(--radius-lg);
   z-index: 10;
   transition: all var(--transition-normal);
 
   &-medium {
-    width: 80%;
+    width: 100%;
   }
 
   &-big {
@@ -37,6 +39,10 @@
   }
 
   &-padding {
+    &-none {
+      padding: 0;
+    }
+
     &-inner {
       padding: var(--inner-y) 0;
     }
@@ -61,6 +67,10 @@
   }
 
   &-margin {
+    &-none {
+      margin: 0;
+    }
+
     &-inner {
       margin: var(--inner-y) var(--inner-x);
     }
@@ -71,6 +81,16 @@
 
     &-mobile {
       margin: var(--area-mobile-y) var(--area-mobile-x);
+    }
+  }
+
+  // Nested cards: only vertical margin (parent's padding provides horizontal spacing)
+  .card & {
+    &-margin-inner,
+    &-margin-outer,
+    &-margin-mobile {
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 

@@ -22,6 +22,7 @@ export default function PropertyPanel() {
   // Get children count for Layout components
   const childrenCount = selectedComponent?.children?.length || 0;
   const isLayoutComponent = selectedComponent?.componentType === 'Layout';
+  const isCardComponent = selectedComponent?.componentType === 'Card';
 
   // Extract childRatios from props for proper dependency tracking
   const childRatiosFromProps = selectedComponent?.props.childRatios as number[] | undefined;
@@ -258,20 +259,22 @@ export default function PropertyPanel() {
           })}
         </div>
 
-        {/* Spacing Section - available for all components */}
-        <div className='editor-panel-section'>
-          <div className='editor-panel-section-title'>Spacing</div>
-          <SpacingEditor
-            label="Padding"
-            value={currentPadding}
-            onChange={handlePaddingChange}
-          />
-          <SpacingEditor
-            label="Margin"
-            value={currentMargin}
-            onChange={handleMarginChange}
-          />
-        </div>
+        {/* Spacing Section - available for components without their own spacing props */}
+        {!isCardComponent && (
+          <div className='editor-panel-section'>
+            <div className='editor-panel-section-title'>Spacing</div>
+            <SpacingEditor
+              label="Padding"
+              value={currentPadding}
+              onChange={handlePaddingChange}
+            />
+            <SpacingEditor
+              label="Margin"
+              value={currentMargin}
+              onChange={handleMarginChange}
+            />
+          </div>
+        )}
 
         {/* Child Ratios Section for Layout components */}
         {isLayoutComponent && childrenCount > 0 && (
