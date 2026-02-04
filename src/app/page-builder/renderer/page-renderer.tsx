@@ -178,9 +178,15 @@ function EditorWrapper({
   const handleDragLeave = (e: React.DragEvent) => {
     e.stopPropagation();
 
-    // Check if we're entering a child element (including drop indicators)
-    const relatedTarget = e.relatedTarget as Node | null;
+    // Check if we're entering a child element
+    const relatedTarget = e.relatedTarget as Element | null;
     if (relatedTarget && e.currentTarget.contains(relatedTarget)) {
+      // If entering a child that is also a container, clear our drop indicator
+      // to avoid duplicate "Drop inside" messages on nested containers
+      const childContainer = relatedTarget.closest('[data-accepts-children="true"]');
+      if (childContainer && childContainer !== e.currentTarget) {
+        setIsDropTarget(false);
+      }
       return;
     }
 
