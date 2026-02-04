@@ -285,22 +285,38 @@ export default function EditorCanvas() {
   }
 
   if (state.page.components.length === 0) {
+    const isEmptyPageDragging = isDraggingOver || state.isDragging;
+
     return (
       <main
-        className='editor-canvas'
+        className={`editor-canvas ${isEmptyPageDragging ? 'editor-canvas-dragging' : ''}`}
         ref={canvasRef}
         onClick={handleCanvasClick}
         onDragOver={handleDragOver}
+        onDragEnter={handleCanvasDragEnter}
+        onDragLeave={handleCanvasDragLeave}
         onDrop={(e) => handleDrop(e)}
       >
         <div className='editor-canvas-inner'>
-          <div className='editor-canvas-empty'>
-            <BsPlus className='editor-canvas-empty-icon'/>
-            <div className='editor-canvas-empty-title'>Empty Page</div>
-            <div className='editor-canvas-empty-desc'>
-              Drag components from the sidebar or click them to add
+          {isEmptyPageDragging ? (
+            <DropZone
+              key='drop-empty'
+              parentId={null}
+              index={0}
+              isActive={true}
+              onDragEnter={() => {}}
+              onDragLeave={() => {}}
+              onDrop={(e) => handleDrop(e)}
+            />
+          ) : (
+            <div className='editor-canvas-empty'>
+              <BsPlus className='editor-canvas-empty-icon'/>
+              <div className='editor-canvas-empty-title'>Empty Page</div>
+              <div className='editor-canvas-empty-desc'>
+                Drag components from the sidebar or click them to add
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     );
