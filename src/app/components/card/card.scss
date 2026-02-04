@@ -73,14 +73,17 @@
 
     &-inner {
       margin: var(--inner-y) var(--inner-x);
+      width: calc(100% - 2 * var(--inner-x));
     }
 
     &-outer {
       margin: var(--outer-y) var(--outer-x);
+      width: calc(100% - 2 * var(--outer-x));
     }
 
     &-mobile {
       margin: var(--area-mobile-y) var(--area-mobile-x);
+      width: calc(100% - 2 * var(--area-mobile-x));
     }
   }
 
@@ -91,6 +94,7 @@
     &-margin-mobile {
       margin-left: 0;
       margin-right: 0;
+      width: 100%;
     }
   }
 

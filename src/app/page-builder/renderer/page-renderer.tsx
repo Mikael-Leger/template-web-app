@@ -528,18 +528,7 @@ export default function PageRenderer({
         return sortedChildren.map((child, childIndex) => renderComponent(child, depth + 1, childIndex, instance.children!.length));
       }
 
-      // For empty containers that accept children, show a drop zone when dragging
-      if (registryEntry.acceptsChildren && isEditing && isDraggingExternal && renderDropZoneBetween) {
-        return (
-          <NestedDropZone
-            key={`nested-drop-${instance.id}-empty`}
-            parentId={instance.id}
-            index={0}
-            onDropIntoParent={onDropIntoContainer}
-          />
-        );
-      }
-
+      // For empty containers, don't show a NestedDropZone - the EditorWrapper handles drops
       return undefined;
     })();
 

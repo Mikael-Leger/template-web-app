@@ -58,7 +58,7 @@ export default function Layout({items, className, orientation = 'row', space = '
   // If children are passed (from page builder), render them with ratios
   if (children) {
     return (
-      <div className={`layout flex ${getFlexOrientation()} ${getJustify()} gap-4 ${className || ''}`}>
+      <div className={`layout w-full flex ${getFlexOrientation()} ${getJustify()} gap-4 ${className || ''}`}>
         {applyRatiosToChildren(children)}
       </div>
     );
@@ -67,7 +67,7 @@ export default function Layout({items, className, orientation = 'row', space = '
   // If items are passed (for hardcoded usage like newsletter)
   if (items && items.length > 0) {
     return (
-      <div className={`layout flex ${getFlexOrientation()} ${className || ''}`}>
+      <div className={`layout w-full flex ${getFlexOrientation()} ${className || ''}`}>
         {items.map((item, index) => (
           <div className={`flex flex-col ${item.className || ''}`} style={{flex: item.space}} key={index}>{item.node}</div>
         ))}
@@ -77,7 +77,7 @@ export default function Layout({items, className, orientation = 'row', space = '
 
   // Empty layout - show placeholder
   return (
-    <div className={`layout layout-empty flex ${getFlexOrientation()} ${getJustify()} gap-4 ${className || ''}`}>
+    <div className={`layout layout-empty w-full flex ${getFlexOrientation()} ${getJustify()} gap-4 ${className || ''}`}>
       <span className="layout-placeholder">Drop components here</span>
     </div>
   );

@@ -1182,7 +1182,8 @@
 
   .page-renderer {
     flex: 1;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 
