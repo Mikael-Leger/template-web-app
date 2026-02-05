@@ -1,8 +1,16 @@
 .progression {
   &-steps {
     &-step {
+      min-width: 150px;
+      padding: 0 var(--inner-x);
+      white-space: nowrap;
+
       &.step-done {
         color: var(--color-5);
+      }
+
+      &-title {
+        white-space: nowrap;
       }
     }
   }

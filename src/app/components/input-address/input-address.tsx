@@ -15,10 +15,18 @@ import './input-address.scss';
 interface InputAddressProps {
   defaultAddress?: FullAddress;
   calculateDeliveryCost?: boolean;
+  editorMode?: boolean;
   onSubmit: (_fullAddress: FullAddress) => void;
 }
 
-export default function InputAddress({defaultAddress, calculateDeliveryCost, onSubmit}: InputAddressProps) {
+// Default test address for editor mode
+const TEST_ADDRESS: FullAddress = {
+  address: 'Rue de Test',
+  zipCode: '1000',
+  city: 'Brussels'
+};
+
+export default function InputAddress({defaultAddress, calculateDeliveryCost, editorMode = false, onSubmit}: InputAddressProps) {
   const {updateDistance} = useBasket();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -39,6 +47,22 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
   }, []);
   
   useEffect(() => {
+    if (editorMode) {
+      // Use test address in editor mode
+      if (defaultAddress) {
+        // For payment address, use the delivery address checkbox by default
+        setIsDefaultAddress(true);
+      } else {
+        // For delivery address, use test data
+        setAddress(TEST_ADDRESS.address);
+        setZipCode(TEST_ADDRESS.zipCode);
+        setCity(TEST_ADDRESS.city);
+        setIsEditing(false);
+        submitAddress(TEST_ADDRESS);
+      }
+      return;
+    }
+
     if (defaultAddress) {
       const addressLocal = localStorage.getItem('payment-address');
       const zipCodeLocal = localStorage.getItem('payment-zipCode');
@@ -83,9 +107,11 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
 
       }
     }
-  }, []);
+  }, [editorMode]);
   
   useEffect(() => {
+    if (editorMode) return;
+
     if (defaultAddress) {
       localStorage.setItem('payment-address', address);
 
@@ -93,9 +119,11 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       localStorage.setItem('delivery-address', address);
 
     }
-  }, [address]);
-  
+  }, [address, editorMode]);
+
   useEffect(() => {
+    if (editorMode) return;
+
     if (defaultAddress) {
       localStorage.setItem('payment-zipCode', zipCode);
 
@@ -103,9 +131,11 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       localStorage.setItem('delivery-zipCode', zipCode);
 
     }
-  }, [zipCode]);
-  
+  }, [zipCode, editorMode]);
+
   useEffect(() => {
+    if (editorMode) return;
+
     if (defaultAddress) {
       localStorage.setItem('payment-city', city);
 
@@ -113,13 +143,15 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
       localStorage.setItem('delivery-city', city);
 
     }
-  }, [city]);
+  }, [city, editorMode]);
 
   useEffect(() => {
     if (defaultAddress) {
       if (isDefaultAddress) {
         onSubmit(defaultAddress);
-        localStorage.setItem('payment-default', 'true');
+        if (!editorMode) {
+          localStorage.setItem('payment-default', 'true');
+        }
 
       } else {
         onSubmit({
@@ -127,11 +159,13 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
           zipCode: '',
           city: ''
         });
-        localStorage.removeItem('payment-default');
-        
+        if (!editorMode) {
+          localStorage.removeItem('payment-default');
+        }
+
       }
     }
-  }, [isDefaultAddress]);
+  }, [isDefaultAddress, editorMode]);
 
   const isFullAddressValid = (fullAddressLocal?: FullAddress) => {
     if (fullAddressLocal) {
@@ -166,11 +200,11 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
           placeholder={formField.placeholder}
           value={formField.value}
           onChange={(value: string) => {
-            if (formField.name === 'address' && formField.onClick) {
-              autocompleteAddress(formField.value, refAddress.current, formField.onClick);
-            } 
             if (formField.onChange) {
               formField.onChange(value);
+            }
+            if (formField.name === 'address' && formField.onClick) {
+              autocompleteAddress(value, refAddress.current, formField.onClick);
             }
           }}
           onBlur={() => setTimeout(() => formField.name === 'address' && setAddressIsAutocompleteVisible(false), 150)}
@@ -190,8 +224,14 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
 
   const submitAddress = async (fullAddressLocal?: FullAddress) => {
     if (!isFullAddressValid(fullAddressLocal)) return;
-    
+
     if (!calculateDeliveryCost) {
+      const fullAddress: FullAddress = fullAddressLocal ? fullAddressLocal : {
+        address,
+        zipCode,
+        city
+      };
+      onSubmit(fullAddress);
       setIsEditing(false);
 
       return;
@@ -288,6 +328,7 @@ export default function InputAddress({defaultAddress, calculateDeliveryCost, onS
         setAddress(fullAddress.address);
         setZipCode(fullAddress.zipCode);
         setCity(fullAddress.city);
+        submitAddress(fullAddress);
       }
     },
     {

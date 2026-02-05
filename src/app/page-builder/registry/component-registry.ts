@@ -31,6 +31,7 @@ import ParallaxCover from '@/app/components/parallax-cover/parallax-cover';
 import Footer from '@/app/components/footer/footer';
 import DescriptionAndImageWrapper from '@/app/page-builder/components/description-and-image-wrapper';
 import Tooltip from '@/app/components/tooltip/tooltip';
+import OrderProcessWrapper from '@/app/page-builder/components/order-process-wrapper';
 
 /**
  * Helper to create a prop definition
@@ -366,6 +367,21 @@ componentRegistry.set('Catalog', {
     searchBar: true,
     pagination: true,
     itemsPerPage: 6,
+  },
+});
+
+componentRegistry.set('OrderProcess', {
+  component: OrderProcessWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Delivery Process',
+  category: 'business',
+  icon: 'BsTruck',
+  description: 'Full delivery process with basket, address, and payment steps',
+  acceptsChildren: false,
+  propsSchema: {
+    defaultProductCount: prop('number', 'Default Product Count', { defaultValue: 1, min: 0, max: 10 }),
+  },
+  defaultProps: {
+    defaultProductCount: 1,
   },
 });
 

@@ -12,6 +12,7 @@ import { PageConfig, createPageConfig } from '../interfaces/page-config.interfac
 // Import page configs statically (for static site generation)
 // These imports will be resolved at build time
 import homePageConfig from '@/app/data/pages/home.json';
+import deliveryPageConfig from '@/app/data/pages/delivery.json';
 
 /**
  * Cache for loaded pages
@@ -24,6 +25,7 @@ const pageCache: Map<string, PageConfig> = new Map();
  */
 const availablePages: Record<string, PageConfig> = {
   'home': homePageConfig as unknown as PageConfig,
+  'delivery': deliveryPageConfig as unknown as PageConfig,
 };
 
 /**

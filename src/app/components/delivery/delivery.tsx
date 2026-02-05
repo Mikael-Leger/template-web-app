@@ -8,9 +8,11 @@ import { StepErrors } from '@/app/interfaces/step.interface';
 
 import './delivery.scss';
 
-type DeliveryProps = StepErrors;
+interface DeliveryProps extends StepErrors {
+  editorMode?: boolean;
+}
 
-export default function Delivery({hasErrors}: DeliveryProps) {
+export default function Delivery({hasErrors, editorMode = false}: DeliveryProps) {
   const [address, setAddress] = useState<FullAddress>({
     address: '',
     zipCode: '',
@@ -22,19 +24,27 @@ export default function Delivery({hasErrors}: DeliveryProps) {
     city: ''
   });
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
 
   const isFullAddressValid = (fullAddress: FullAddress) => {
     return (fullAddress.address !== '' && fullAddress.zipCode !== '' && fullAddress.city !== '');
   };
 
   useEffect(() => {
-    const phoneLocal = localStorage.getItem('phone');
-    setPhoneNumber(phoneLocal ?? '');
-  }, []);
+    if (editorMode) {
+      // Use test phone number in editor mode
+      setPhoneNumber('486 12 34 56');
+    } else {
+      const phoneLocal = localStorage.getItem('phone');
+      setPhoneNumber(phoneLocal ?? '');
+    }
+  }, [editorMode]);
 
   useEffect(() => {
-    localStorage.setItem('phone', phoneNumber);
-  }, [phoneNumber]);
+    if (!editorMode) {
+      localStorage.setItem('phone', phoneNumber);
+    }
+  }, [phoneNumber, editorMode]);
 
   useEffect(() => {
     if (!isFullAddressValid(address)) {
@@ -43,14 +53,14 @@ export default function Delivery({hasErrors}: DeliveryProps) {
     } else if (!isFullAddressValid(addressPayment)) {
       hasErrors('L\'adresse de facturation n\'est pas valide');
 
-    } else if (phoneNumber === '') {
+    } else if (!isPhoneValid) {
       hasErrors('Le numéro de téléphone n\'est pas valide');
 
     } else {
       hasErrors('');
 
     }
-  }, [address, addressPayment, phoneNumber]);
+  }, [address, addressPayment, isPhoneValid]);
 
   return (
     <div className='delivery'>
@@ -61,19 +71,19 @@ export default function Delivery({hasErrors}: DeliveryProps) {
         <div className='delivery-container-content'>
           <Title text='Adresse de livraison' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddress(fullAddress)} calculateDeliveryCost/>
+            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddress(fullAddress)} calculateDeliveryCost editorMode={editorMode}/>
           </div>
         </div>
         <div className='delivery-container-content'>
           <Title text='Adresse de facturation' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddressPayment(fullAddress)} defaultAddress={address}/>
+            <InputAddress onSubmit={(fullAddress: FullAddress) => setAddressPayment(fullAddress)} defaultAddress={address} editorMode={editorMode}/>
           </div>
         </div>
         <div className='delivery-container-content'>
           <Title text='Numéro de téléphone' orientation='start'/>
           <div className='delivery-container-content-text'>
-            <InputPhone leftGap defaultValue={phoneNumber} onChange={setPhoneNumber}/>
+            <InputPhone leftGap defaultValue={phoneNumber} onChange={setPhoneNumber} onValidationChange={setIsPhoneValid}/>
           </div>
         </div>
       </div>

@@ -17,7 +17,11 @@ import Tooltip from '../tooltip/tooltip';
 
 import './order-process.scss';
 
-export default function OrderProcess() {
+interface OrderProcessProps {
+  editorMode?: boolean;
+}
+
+export default function OrderProcess({ editorMode = false }: OrderProcessProps) {
   const router = useRouter();
   const {isMobile} = useIsMobile();
 
@@ -53,22 +57,42 @@ export default function OrderProcess() {
   };
 
   const renderDelivery = () => {
-    return <Delivery hasErrors={(value: string) => processHasErrors(1, value)}/>;
+    return <Delivery hasErrors={(value: string) => processHasErrors(1, value)} editorMode={editorMode}/>;
   };
 
   const renderPayment = () => {
     return <Payment hasErrors={(value: string) => processHasErrors(2, value)}/>;
   };
 
+  const goToFirstStep = () => {
+    setCurrentProcessus({
+      number: 0,
+      title: 'Votre panier',
+      node: () => renderBasket()
+    });
+  };
+
+  const handleSuccessButtonClick = () => {
+    if (editorMode) {
+      // In editor mode, go back to step 1
+      goToFirstStep();
+    } else {
+      router.push('/');
+    }
+  };
+
   const renderSuccess = () => {
     return (
       <div className='succes-container padding-inner flex flex-row items-center justify-center'>
         <div className='succes-container-text'>La commande a bien été effectuée.</div>
-        <Button title={'Revenir à la page d\'accueil'} underline onClick={() => router.push('/')}/>
+        <Button
+          title={editorMode ? 'Recommencer' : 'Revenir à la page d\'accueil'}
+          underline
+          onClick={handleSuccessButtonClick}/>
       </div>
     );
   };
-  
+
   const processuses: Step[] = [
     {
       number: 0,

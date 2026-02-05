@@ -19,16 +19,46 @@ interface InputPhoneProps {
   required?: boolean;
   leftGap?: boolean;
   onChange?: (_value: string) => void;
+  onValidationChange?: (_isValid: boolean) => void;
   color?: 'error' | 'black';
+}
+
+/**
+ * Validates a phone number based on common international formats
+ * Allows digits, spaces, dashes, dots, and parentheses
+ * After stripping formatting, checks for valid digit count (4-15 digits)
+ */
+function isValidPhoneNumber(phoneNumber: string): boolean {
+  if (!phoneNumber || phoneNumber.trim() === '') {
+    return false;
+  }
+
+  // Remove all formatting characters (spaces, dashes, dots, parentheses)
+  const digitsOnly = phoneNumber.replace(/[\s\-.()\u00A0]/g, '');
+
+  // Check if all remaining characters are digits
+  if (!/^\d+$/.test(digitsOnly)) {
+    return false;
+  }
+
+  // Phone numbers typically have 4-15 digits (national number without country code)
+  // Minimum 4 for short numbers (some countries have 4-digit numbers)
+  // Maximum 15 as per ITU-T E.164 standard (including country code, but we're validating national part)
+  const minDigits = 4;
+  const maxDigits = 15;
+
+  return digitsOnly.length >= minDigits && digitsOnly.length <= maxDigits;
 }
 
 type Country = typeof callingCountries.all[0];
 
-export default function InputPhone({defaultValue, required, title, leftGap, color = 'black', onChange}: InputPhoneProps) {
+export default function InputPhone({defaultValue, required, title, leftGap, color = 'black', onChange, onValidationChange}: InputPhoneProps) {
   const [inputValue, setInputValue] = useState<string>('');
   const [currentCode, setCurrentCode] = useState<PhoneCode | null>(null);
   const [isCodesListVisible, setIsCodesListVisible] = useState<boolean>(false);
   const [phoneCodesList, setPhoneCodesList] = useState<Country[]>([]);
+  const [isTouched, setIsTouched] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   useEffect(() => {
     setPhoneCodesList([...callingCountries.all]);
@@ -47,6 +77,14 @@ export default function InputPhone({defaultValue, required, title, leftGap, colo
       onChange(inputValue);
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    const valid = isValidPhoneNumber(inputValue);
+    setIsValid(valid);
+    if (onValidationChange) {
+      onValidationChange(valid);
+    }
+  }, [inputValue, onValidationChange]);
 
   const switchCodesListVisibility = () => {
     setIsCodesListVisible(prevState => !prevState);
@@ -84,10 +122,10 @@ export default function InputPhone({defaultValue, required, title, leftGap, colo
           {title} {required && '*'}
         </div>
       )}
-      <div className={`input-phone flex flex-row justify-between input-phone-${color} relative`}>
+      <div className={`input-phone flex flex-row justify-between input-phone-${color} ${isTouched && !isValid ? 'input-phone-invalid' : ''} relative`}>
         <div className='input-phone-codes flex flex-row gap-2 justify-center items-center absolute cursor-pointer' onClick={switchCodesListVisibility}>
           <div className='input-phone-codes-flag'>
-            <img src={`icons/flags/${currentCode.value.toLowerCase()}.svg`}/>
+            <img src={`/icons/flags/${currentCode.value.toLowerCase()}.svg`}/>
           </div>
           <div className='input-phone-codes-code'>
             {currentCode.code}
@@ -121,8 +159,16 @@ export default function InputPhone({defaultValue, required, title, leftGap, colo
           placeholder={'1 23 45 67 89'}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onBlur={() => setIsCodesListVisible(false)}/>
+          onBlur={() => {
+            setIsCodesListVisible(false);
+            setIsTouched(true);
+          }}/>
       </div>
+      {isTouched && !isValid && (
+        <div className='input-phone-error'>
+          Veuillez entrer un numéro de téléphone valide
+        </div>
+      )}
     </div>
   );
 }

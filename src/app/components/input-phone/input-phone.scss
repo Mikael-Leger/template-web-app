@@ -25,6 +25,12 @@
 
   &-error {
     color: var(--error);
+    font-size: var(--font-size-1);
+    margin-top: 4px;
+  }
+
+  &-invalid {
+    border-color: var(--error);
   }
 
   &-codes {

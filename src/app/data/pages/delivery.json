@@ -1,0 +1,25 @@
+{
+  "id": "delivery-test",
+  "slug": "delivery",
+  "metadata": {
+    "title": "Delivery Test",
+    "description": "Test page for the full delivery process"
+  },
+  "components": [
+    {
+      "id": "delivery-process-1",
+      "componentType": "OrderProcess",
+      "order": 0,
+      "props": {
+        "defaultProductCount": 1
+      }
+    }
+  ],
+  "settings": {
+    "layout": "default",
+    "spacing": "normal"
+  },
+  "createdAt": "2025-02-05T00:00:00.000Z",
+  "updatedAt": "2025-02-05T00:00:00.000Z",
+  "version": 1
+}

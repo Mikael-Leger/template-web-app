@@ -11,10 +11,15 @@ async function autocompleteAddress(query: string | undefined, suggestionsElement
     body: JSON.stringify({query}),
   });
   if (!response.ok) return;
-  
+
   const json = await response.json();
 
-  const suggestions = json.data.features;
+  const suggestions = json?.data?.features;
+  if (!suggestions || !Array.isArray(suggestions)) {
+    suggestionsElement.innerHTML = '';
+
+    return;
+  }
   suggestionsElement.innerHTML = '';
 
   const maxSuggestions = 4;

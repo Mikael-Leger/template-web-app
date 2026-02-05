@@ -48,7 +48,7 @@ export default function ProductsList({hasErrors}: ProductsListProps) {
             )}
             <div className='products-list-item padding-inner flex flex-row flex-gap justify-end'>
               <div className='products-list-item-image flex flex-col'>
-                <img src={`images/catalog/${item.product.image}`}/>
+                <img src={`/images/catalog/${item.product.image}`}/>
               </div>
               <div className='products-list-item-content flex flex-col flex-1'>
                 <div className='products-list-item-content-title'>
@@ -77,7 +77,7 @@ export default function ProductsList({hasErrors}: ProductsListProps) {
                           icon={{
                             node: action.iconName ? <DynamicIcon iconName={action.iconName} size={18}/> : undefined
                           }}
-                          type='black'
+                          type='white'
                           input={action.input}
                           maxChars={action.maxChars}
                           title={action.title}
