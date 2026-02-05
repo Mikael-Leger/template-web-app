@@ -284,11 +284,11 @@ componentRegistry.set('BannerImage', {
   description: 'Full-width banner image for hero sections',
   acceptsChildren: false,
   propsSchema: {
-    path: prop('image', 'Image Path', { required: true, defaultValue: '/images/banner.jpg' }),
+    path: prop('image', 'Image Path', { required: true, defaultValue: '/images/placeholder.png' }),
     height: prop('number', 'Height (px)', { defaultValue: 400, min: 100, max: 800 }),
   },
   defaultProps: {
-    path: '/images/banner.jpg',
+    path: '/images/placeholder.png',
     height: 400,
   },
 });
