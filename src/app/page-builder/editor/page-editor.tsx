@@ -11,6 +11,7 @@ import ComponentSidebar from './components/component-sidebar';
 import EditorCanvas from './components/editor-canvas';
 import PropertyPanel from './components/property-panel';
 import ContextMenu from './components/context-menu';
+import ConfirmationModal from '../../components/modal/confirmation-modal';
 import './page-editor.scss';
 
 interface PageEditorProps {
@@ -22,6 +23,7 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
   const { state, dispatch, getComponentParentInfo } = useEditor();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   // Load page on mount
   useEffect(() => {
@@ -60,15 +62,22 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
 
   const handleExit = useCallback(() => {
     if (state.hasUnsavedChanges) {
-      const confirmExit = window.confirm(
-        'You have unsaved changes. Are you sure you want to exit?'
-      );
+      setShowExitConfirm(true);
 
-      if (!confirmExit) return;
+      return;
     }
 
     onExit?.();
   }, [state.hasUnsavedChanges, onExit]);
+
+  const handleExitConfirm = useCallback(() => {
+    setShowExitConfirm(false);
+    onExit?.();
+  }, [onExit]);
+
+  const handleExitCancel = useCallback(() => {
+    setShowExitConfirm(false);
+  }, []);
 
   // Handle keyboard shortcuts (Delete, F2, Ctrl+C, Ctrl+X, Ctrl+V)
   useEffect(() => {
@@ -128,6 +137,7 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
     };
 
     window.addEventListener('keydown', handleKeyDown);
+
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [state.selectedComponentId, state.renamingComponentId, state.clipboard.component, state.page?.components.length, getComponentParentInfo, dispatch]);
 
@@ -214,6 +224,16 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
           onExit={handleExit}
         />
         <PageRenderer config={state.page} isEditing={false}/>
+        <ConfirmationModal
+          isOpen={showExitConfirm}
+          title='Unsaved Changes'
+          message='You have unsaved changes. Are you sure you want to exit?'
+          confirmLabel='Exit'
+          cancelLabel='Cancel'
+          variant='danger'
+          onConfirm={handleExitConfirm}
+          onCancel={handleExitCancel}
+        />
       </div>
     );
   }
@@ -244,6 +264,16 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
           canPaste={state.clipboard.component !== null}
         />
       )}
+      <ConfirmationModal
+        isOpen={showExitConfirm}
+        title='Unsaved Changes'
+        message='You have unsaved changes. Are you sure you want to exit?'
+        confirmLabel='Exit'
+        cancelLabel='Cancel'
+        variant='danger'
+        onConfirm={handleExitConfirm}
+        onCancel={handleExitCancel}
+      />
     </div>
   );
 }
