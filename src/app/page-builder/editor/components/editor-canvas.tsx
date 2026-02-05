@@ -6,12 +6,13 @@ import { BsPlus } from 'react-icons/bs';
 import { useEditor } from '../../contexts/editor-context';
 import PageRenderer from '../../renderer/page-renderer';
 import DropZone from './drop-zone';
+import { getComponent } from '../../registry/component-registry';
 
 const SCROLL_EDGE_SIZE = 60; // pixels from edge to trigger scroll
 const SCROLL_SPEED = 10; // pixels per frame
 
 export default function EditorCanvas() {
-  const { state, selectComponent, addComponent, moveComponent, openContextMenu, dispatch } = useEditor();
+  const { state, selectComponent, addComponent, moveComponent, wrapWithModifier, openContextMenu, dispatch } = useEditor();
   const [draggingComponentId, setDraggingComponentId] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [activeDropZone, setActiveDropZone] = useState<{
@@ -253,6 +254,10 @@ export default function EditorCanvas() {
     const isAnyDragging = isDraggingOver || draggingComponentId !== null || state.isDragging;
     if (!isAnyDragging) return null;
 
+    // Don't render drop zones when dragging a modifier
+    const draggedEntry = state.draggedComponentType ? getComponent(state.draggedComponentType) : null;
+    if (draggedEntry?.isModifier) return null;
+
     return (
       <DropZone
         key={`drop-between-${index}`}
@@ -264,7 +269,7 @@ export default function EditorCanvas() {
         onDrop={handleDropZoneDrop}
       />
     );
-  }, [isDraggingOver, draggingComponentId, state.isDragging, activeDropZone, handleDropZoneDrop]);
+  }, [isDraggingOver, draggingComponentId, state.isDragging, state.draggedComponentType, activeDropZone, handleDropZoneDrop]);
 
   // Render all components in a single PageRenderer to maintain proper layout
   const renderComponents = () => {
@@ -280,9 +285,11 @@ export default function EditorCanvas() {
         onDragEnd={handleDragEnd}
         draggingComponentId={draggingComponentId}
         onDropIntoContainer={handleDropIntoContainer}
+        onWrapWithModifier={wrapWithModifier}
         onDropBetween={handleDropBetween}
         onContextMenu={handleContextMenu}
         isDraggingExternal={isDraggingOver || state.isDragging}
+        isDraggingModifier={isDraggingModifier}
         renderDropZoneBetween={renderDropZoneBetween}
       />
     );
@@ -346,6 +353,14 @@ export default function EditorCanvas() {
   const isAnyDragging = isDraggingOver || draggingComponentId !== null || state.isDragging;
   const componentCount = state.page?.components.length || 0;
 
+  // Check if we're dragging a modifier component
+  const isDraggingModifier = state.draggedComponentType
+    ? getComponent(state.draggedComponentType)?.isModifier ?? false
+    : false;
+
+  // Don't show drop zones when dragging a modifier - modifiers can only wrap existing components
+  const showDropZones = isAnyDragging && !isDraggingModifier;
+
   return (
     <main
       className={`editor-canvas ${isAnyDragging ? 'editor-canvas-dragging' : ''}`}
@@ -356,8 +371,8 @@ export default function EditorCanvas() {
       onDragLeave={handleCanvasDragLeave}
     >
       <div className='editor-canvas-inner'>
-        {/* Drop zone at the very beginning - always visible when dragging */}
-        {isAnyDragging && (
+        {/* Drop zone at the very beginning - visible when dragging non-modifiers */}
+        {showDropZones && (
           <DropZone
             key='drop-first'
             parentId={null}
@@ -371,8 +386,8 @@ export default function EditorCanvas() {
 
         {renderComponents()}
 
-        {/* Drop zone at the very end - always visible when dragging */}
-        {isAnyDragging && componentCount > 0 && (
+        {/* Drop zone at the very end - visible when dragging non-modifiers */}
+        {showDropZones && componentCount > 0 && (
           <DropZone
             key='drop-last'
             parentId={null}

@@ -273,6 +273,9 @@
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-2);
         color: var(--foreground);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
       }
 
       &-desc {
@@ -282,6 +285,25 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+    }
+
+    &-modifier {
+      opacity: 0.8;
+      cursor: default;
+
+      &:hover {
+        cursor: grab;
+      }
+    }
+
+    &-modifier-badge {
+      font-size: 9px;
+      padding: 1px 4px;
+      background-color: var(--warn);
+      color: var(--white);
+      border-radius: var(--radius-sm);
+      font-weight: var(--font-weight-3);
+      letter-spacing: 0.5px;
     }
   }
 }

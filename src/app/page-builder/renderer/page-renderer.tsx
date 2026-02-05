@@ -13,6 +13,7 @@ import {
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsTruck,
   BsChatQuote,
   BsImages,
   BsLayers,
@@ -37,6 +38,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsTruck,
   BsChatQuote,
   BsImages,
   BsLayers,
@@ -54,9 +56,11 @@ interface PageRendererProps {
   onDragEnd?: () => void;
   draggingComponentId?: string | null;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string, _index?: number) => void;
+  onWrapWithModifier?: (_targetId: string, _modifierType: string) => void;
   onContextMenu?: (_e: React.MouseEvent, _componentId: string) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   isDraggingExternal?: boolean;
+  isDraggingModifier?: boolean;
   renderDropZoneBetween?: (_index: number) => React.ReactNode;
 }
 
@@ -79,12 +83,14 @@ interface EditorWrapperProps {
   isDragging?: boolean;
   acceptsChildren?: boolean;
   onDropIntoContainer?: (_containerId: string, _componentType?: string, _existingId?: string, _index?: number) => void;
+  onWrapWithModifier?: (_targetId: string, _modifierType: string) => void;
   onDropBetween?: (_index: number, _componentType?: string, _existingId?: string) => void;
   componentIndex: number;
   totalComponents: number;
   depth: number;
   spacingStyle?: React.CSSProperties;
   isDraggingExternal?: boolean;
+  isDraggingModifier?: boolean;
 }
 
 function EditorWrapper({
@@ -102,12 +108,14 @@ function EditorWrapper({
   isDragging,
   acceptsChildren,
   onDropIntoContainer,
+  onWrapWithModifier,
   onDropBetween,
   componentIndex,
   totalComponents,
   depth,
   spacingStyle,
   isDraggingExternal,
+  isDraggingModifier,
 }: EditorWrapperProps) {
   const IconComponent = icon ? iconMap[icon] : null;
 
@@ -168,6 +176,12 @@ function EditorWrapper({
     e.preventDefault();
     e.stopPropagation();
 
+    // Show drop target for modifiers on any component
+    if (isDraggingModifier) {
+      setIsDropTarget(true);
+      return;
+    }
+
     if (acceptsChildren) {
       setIsDropTarget(true);
     } else if (depth > 0) {
@@ -211,6 +225,17 @@ function EditorWrapper({
       setIsDropTarget(false);
       setDropPosition(null);
       return;
+    }
+
+    // Check if dropping a modifier - wrap this component with the modifier
+    if (componentTypeData && onWrapWithModifier) {
+      const droppedComponentEntry = getComponent(componentTypeData);
+      if (droppedComponentEntry?.isModifier) {
+        setIsDropTarget(false);
+        setDropPosition(null);
+        onWrapWithModifier(componentId, componentTypeData);
+        return;
+      }
     }
 
     // Handle drop into container
@@ -354,7 +379,7 @@ function EditorWrapper({
       )}
       {isDropTarget && !isLabelDropTarget && (
         <div className='editor-wrapper-drop-indicator'>
-          Drop inside {displayName}
+          {isDraggingModifier ? `Wrap ${displayName}` : `Drop inside ${displayName}`}
         </div>
       )}
     </div>
@@ -439,9 +464,11 @@ export default function PageRenderer({
   onDragEnd,
   draggingComponentId,
   onDropIntoContainer,
+  onWrapWithModifier,
   onContextMenu,
   onDropBetween,
   isDraggingExternal,
+  isDraggingModifier,
   renderDropZoneBetween,
 }: PageRendererProps) {
   /**
@@ -553,12 +580,14 @@ export default function PageRenderer({
           isDragging={draggingComponentId === instance.id}
           acceptsChildren={registryEntry.acceptsChildren}
           onDropIntoContainer={onDropIntoContainer}
+          onWrapWithModifier={onWrapWithModifier}
           onDropBetween={onDropBetween}
           componentIndex={index}
           totalComponents={totalSiblings}
           depth={depth}
           spacingStyle={spacingStyle}
           isDraggingExternal={isDraggingExternal}
+          isDraggingModifier={isDraggingModifier}
         >
           <Component {...processedProps} isEditing={true}>{children}</Component>
         </EditorWrapper>

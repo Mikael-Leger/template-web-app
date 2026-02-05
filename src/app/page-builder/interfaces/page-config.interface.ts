@@ -83,6 +83,7 @@ export interface PropDefinition {
   objectSchema?: Record<string, PropDefinition>;
   min?: number;
   max?: number;
+  showWhen?: { prop: string; equals: unknown }; // Conditional visibility
 }
 
 /**
@@ -99,6 +100,8 @@ export interface ComponentRegistryEntry {
   allowedChildren?: string[];
   propsSchema: Record<string, PropDefinition>;
   defaultProps: Record<string, unknown>;
+  hideSpacing?: boolean; // Hide padding/margin controls in property panel
+  isModifier?: boolean; // Component wraps existing components (can't be standalone)
 }
 
 /**

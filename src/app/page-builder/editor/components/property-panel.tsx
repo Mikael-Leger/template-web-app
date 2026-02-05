@@ -23,6 +23,7 @@ export default function PropertyPanel() {
   const childrenCount = selectedComponent?.children?.length || 0;
   const isLayoutComponent = selectedComponent?.componentType === 'Layout';
   const isCardComponent = selectedComponent?.componentType === 'Card';
+  const hideSpacing = registryEntry?.hideSpacing || isCardComponent;
 
   // Extract childRatios from props for proper dependency tracking
   const childRatiosFromProps = selectedComponent?.props.childRatios as number[] | undefined;
@@ -238,8 +239,16 @@ export default function PropertyPanel() {
             // Skip childRatios - we render it separately
             if (propName === 'childRatios') return null;
 
-            // Skip rendering checkbox differently
-            if (definition.type === 'boolean') {
+            // Check conditional visibility
+            if (definition.showWhen) {
+              const conditionPropValue = selectedComponent.props[definition.showWhen.prop];
+              if (conditionPropValue !== definition.showWhen.equals) {
+                return null;
+              }
+            }
+
+            // Skip rendering label for types that have their own label
+            if (definition.type === 'boolean' || definition.type === 'dimension') {
               return (
                 <div key={propName} className='editor-panel-field'>
                   {renderField(propName, definition)}
@@ -260,7 +269,7 @@ export default function PropertyPanel() {
         </div>
 
         {/* Spacing Section - available for components without their own spacing props */}
-        {!isCardComponent && (
+        {!hideSpacing && (
           <div className='editor-panel-section'>
             <div className='editor-panel-section-title'>Spacing</div>
             <SpacingEditor

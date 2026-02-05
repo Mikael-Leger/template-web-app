@@ -13,6 +13,7 @@ import {
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsTruck,
   BsLayers,
   BsPuzzle,
   BsChatQuote,
@@ -26,6 +27,7 @@ import { useEditor } from '../../contexts/editor-context';
 import {
   getAllComponents,
   getCategories,
+  getComponent,
 } from '../../registry/component-registry';
 import { ComponentCategory, ComponentRegistryEntry } from '../../interfaces/page-config.interface';
 import LayerTree from './layer-tree';
@@ -43,6 +45,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsHandIndex,
   BsEnvelope,
   BsShop,
+  BsTruck,
   BsChatQuote,
   BsImages,
   BsLayers,
@@ -114,6 +117,11 @@ export default function ComponentSidebar() {
 
   const handleClick = (componentType: string) => {
     if (!componentType) return;
+
+    // Modifier components can only be dropped onto existing components
+    const registryEntry = getComponent(componentType);
+    if (registryEntry?.isModifier) return;
+
     // Add component to root level when clicked
     const index = state.page?.components.length || 0;
 
@@ -174,12 +182,12 @@ export default function ComponentSidebar() {
                   {components.map((comp) => (
                     <div
                       key={comp.type || comp.displayName}
-                      className='editor-sidebar-item'
+                      className={`editor-sidebar-item ${comp.isModifier ? 'editor-sidebar-item-modifier' : ''}`}
                       draggable
                       onDragStart={(e) => handleDragStart(e, comp.type || '')}
                       onDragEnd={handleDragEnd}
                       onClick={() => handleClick(comp.type || '')}
-                      title={comp.description}
+                      title={comp.isModifier ? 'Drag onto an existing component' : comp.description}
                     >
                       <div className='editor-sidebar-item-icon'>
                         {renderIcon(comp.icon)}
@@ -187,6 +195,7 @@ export default function ComponentSidebar() {
                       <div className='editor-sidebar-item-info'>
                         <div className='editor-sidebar-item-info-name'>
                           {comp.displayName}
+                          {comp.isModifier && <span className='editor-sidebar-item-modifier-badge'>MOD</span>}
                         </div>
                         <div className='editor-sidebar-item-info-desc'>
                           {comp.description}

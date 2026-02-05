@@ -79,6 +79,7 @@ type EditorAction =
   | { type: 'COPY_COMPONENT'; payload: string }
   | { type: 'CUT_COMPONENT'; payload: string }
   | { type: 'PASTE_COMPONENT'; payload: { parentId: string | null; index: number } }
+  | { type: 'WRAP_WITH_MODIFIER'; payload: { targetId: string; modifierType: string } }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'SET_SAVING'; payload: boolean }
@@ -375,6 +376,12 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
     if (!registryEntry) return state;
 
+    // Prevent modifiers from being added at root level or as children
+    // Modifiers can only wrap existing components via WRAP_WITH_MODIFIER
+    if (registryEntry.isModifier) {
+      return state;
+    }
+
     const newComponent = createComponentInstance(
       action.payload.componentType,
       { ...registryEntry.defaultProps },
@@ -541,6 +548,49 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     };
   }
 
+  case 'WRAP_WITH_MODIFIER': {
+    if (!state.page) return state;
+
+    const { targetId, modifierType } = action.payload;
+    const modifierEntry = getComponent(modifierType);
+
+    if (!modifierEntry || !modifierEntry.isModifier) return state;
+
+    // Find the target component
+    const targetComponent = findComponentById(state.page.components, targetId);
+    if (!targetComponent) return state;
+
+    // Find parent and index of target
+    const parentInfo = findComponentParentAndIndex(state.page.components, targetId);
+    if (!parentInfo) return state;
+
+    // Create the modifier component with target as its child
+    const modifierComponent = createComponentInstance(
+      modifierType,
+      { ...modifierEntry.defaultProps },
+      parentInfo.index
+    );
+    modifierComponent.children = [{ ...targetComponent, order: 0 }];
+
+    // Remove target from tree
+    let newComponents = removeComponentFromTree(state.page.components, targetId);
+
+    // Add modifier at target's original position
+    newComponents = addComponentToTree(
+      newComponents,
+      parentInfo.parentId,
+      modifierComponent,
+      parentInfo.index
+    );
+
+    const newPage = { ...state.page, components: newComponents };
+
+    return {
+      ...pushHistory(state, newPage),
+      selectedComponentId: modifierComponent.id,
+    };
+  }
+
   case 'UNDO': {
     if (state.historyIndex <= 0) return state;
 
@@ -601,6 +651,7 @@ interface EditorContextValue {
   copyComponent: (_id: string) => void;
   cutComponent: (_id: string) => void;
   pasteComponent: (_parentId: string | null, _index: number) => void;
+  wrapWithModifier: (_targetId: string, _modifierType: string) => void;
   getComponentParentInfo: (_id: string) => { parentId: string | null; index: number } | null;
   setValidationErrors: (_errors: ValidationError[]) => void;
   undo: () => void;
@@ -680,6 +731,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'PASTE_COMPONENT', payload: { parentId, index } });
   }, []);
 
+  const wrapWithModifier = useCallback((targetId: string, modifierType: string) => {
+    dispatch({ type: 'WRAP_WITH_MODIFIER', payload: { targetId, modifierType } });
+  }, []);
+
   const getComponentParentInfo = useCallback((id: string) => {
     if (!state.page) return null;
     return findComponentParentAndIndex(state.page.components, id);
@@ -723,6 +778,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     copyComponent,
     cutComponent,
     pasteComponent,
+    wrapWithModifier,
     getComponentParentInfo,
     setValidationErrors,
     undo,
