@@ -45,6 +45,7 @@ export default function AdminProductsPage() {
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
   // Load products on mount
   useEffect(() => {
@@ -719,8 +720,15 @@ Cookie,sample_3.png,Chocolate chip,,0.89,1.29,nouveau;patisserie`}
 
       {/* Edit Modal */}
       {showEditModal && editingProduct && (
-        <div className="admin-products-modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="admin-products-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="admin-products-modal-overlay"
+          onMouseDown={(e) => e.target === e.currentTarget && setMouseDownOnOverlay(true)}
+          onMouseUp={(e) => {
+            if (mouseDownOnOverlay && e.target === e.currentTarget) setShowEditModal(false);
+            setMouseDownOnOverlay(false);
+          }}
+        >
+          <div className="admin-products-modal" onMouseDown={(e) => e.stopPropagation()}>
             <h2>{editIndex !== null ? 'Edit Product' : 'Add Product'}</h2>
 
             <div className="admin-products-modal-form">

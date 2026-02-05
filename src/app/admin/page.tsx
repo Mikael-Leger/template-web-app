@@ -14,6 +14,7 @@ export default function AdminDashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState('');
   const [newPageSlug, setNewPageSlug] = useState('');
+  const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
   const loadPages = useCallback(async () => {
     setLoading(true);
@@ -164,8 +165,15 @@ export default function AdminDashboard() {
 
       {/* Create Page Modal */}
       {showCreateModal && (
-        <div className='admin-modal-overlay' onClick={() => setShowCreateModal(false)}>
-          <div className='admin-modal' onClick={(e) => e.stopPropagation()}>
+        <div
+          className='admin-modal-overlay'
+          onMouseDown={(e) => e.target === e.currentTarget && setMouseDownOnOverlay(true)}
+          onMouseUp={(e) => {
+            if (mouseDownOnOverlay && e.target === e.currentTarget) setShowCreateModal(false);
+            setMouseDownOnOverlay(false);
+          }}
+        >
+          <div className='admin-modal' onMouseDown={(e) => e.stopPropagation()}>
             <h2>Create New Page</h2>
             <div className='admin-modal-field'>
               <label>Page Title</label>

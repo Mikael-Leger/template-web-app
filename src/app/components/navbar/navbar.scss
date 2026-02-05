@@ -16,6 +16,7 @@
   --navbar-text-transform: uppercase;
   --navbar-letter-spacing: 0.5px;
   --navbar-logo-height: 50px;
+  --navbar-container-gap: 24px;
 
   // Base styles
   position: relative;
@@ -96,6 +97,23 @@
       justify-content: space-between;
       padding: 0 var(--space-4, 16px);
     }
+  }
+
+  // Groups container (parent of all groups)
+  &-groups {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    gap: var(--navbar-container-gap);
+  }
+
+  // Individual group
+  &-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex: 1;
   }
 
   // Logo

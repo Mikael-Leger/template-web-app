@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './confirmation-modal.scss';
 
 export interface ConfirmationModalProps {
@@ -25,6 +25,7 @@ export default function ConfirmationModal({
   onCancel,
 }: ConfirmationModalProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,11 +52,30 @@ export default function ConfirmationModal({
 
   if (!isOpen) return null;
 
+  const handleOverlayMouseDown = (e: React.MouseEvent) => {
+    // Only set true if the mousedown was directly on the overlay
+    if (e.target === e.currentTarget) {
+      setMouseDownOnOverlay(true);
+    }
+  };
+
+  const handleOverlayMouseUp = (e: React.MouseEvent) => {
+    // Only close if both mousedown and mouseup were on the overlay
+    if (mouseDownOnOverlay && e.target === e.currentTarget) {
+      onCancel();
+    }
+    setMouseDownOnOverlay(false);
+  };
+
   return (
-    <div className="confirmation-modal-overlay" onClick={onCancel}>
+    <div
+      className="confirmation-modal-overlay"
+      onMouseDown={handleOverlayMouseDown}
+      onMouseUp={handleOverlayMouseUp}
+    >
       <div
         className="confirmation-modal"
-        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"

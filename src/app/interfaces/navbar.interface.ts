@@ -7,6 +7,17 @@ export interface NavbarItem {
   icon?: string;
   separator?: boolean;
   order: number;
+  groupId: string;
+}
+
+export type JustifyContent = 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly';
+
+export interface NavbarGroup {
+  id: string;
+  name: string;
+  justify: JustifyContent;
+  order: number;
+  gap?: string;
 }
 
 export type ScrollEffect = 'none' | 'shrink' | 'color-change' | 'hide-on-scroll' | 'shrink-and-color';
@@ -21,6 +32,9 @@ export interface NavbarConfig {
     text: string;
     height: string;
   };
+  groups: NavbarGroup[];
+  containerJustify: JustifyContent;
+  containerGap?: string;
   items: NavbarItem[];
   appearance: {
     height: string;

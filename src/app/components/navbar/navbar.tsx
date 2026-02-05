@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { BsList } from 'react-icons/bs';
 
-import { NavbarItem, NavbarConfig, ScrollEffect } from '@/app/interfaces/navbar.interface';
+import { NavbarItem, NavbarConfig, NavbarGroup } from '@/app/interfaces/navbar.interface';
 import languageItemsJson from '@/app/data/languages.json';
 import { LanguageItem } from '@/app/interfaces/language.interface';
 import { useIsMobile } from '@/app/contexts/mobile-context';
@@ -12,7 +12,7 @@ import DynamicIcon from '../dynamic-icon/dynamic-icon';
 import Separator from '../separator/separator';
 import { useSidebar } from '@/app/contexts/sidebar-context';
 import { useLanguage, LanguageType } from '@/app/contexts/language-context';
-import { getNavbarConfig } from '@/app/services/navbar-service';
+import { getNavbarConfig, getGroupItems } from '@/app/services/navbar-service';
 
 import './navbar.scss';
 
@@ -72,7 +72,7 @@ export default function Navbar() {
     if (!config || !navbarRef.current) return;
 
     const navbar = navbarRef.current;
-    const { appearance, typography, behavior } = config;
+    const { appearance, typography } = config;
 
     // Set CSS variables
     navbar.style.setProperty('--navbar-height', appearance.height);
@@ -88,11 +88,10 @@ export default function Navbar() {
     navbar.style.setProperty('--navbar-text-transform', typography.textTransform);
     navbar.style.setProperty('--navbar-letter-spacing', typography.letterSpacing);
     navbar.style.setProperty('--navbar-logo-height', config.logo.height);
+    navbar.style.setProperty('--navbar-container-gap', config.containerGap || '24px');
   }, [config]);
 
   if (!config) return null;
-
-  const navbarItems = config.items;
 
   const handleItemClick = (url: string) => {
     router.push(url);
@@ -191,29 +190,44 @@ export default function Navbar() {
     );
   };
 
-  const renderNavbarItems = () => {
-    const mainItem = navbarItems.find((item) => item.main);
-    const otherItems = navbarItems.filter((item) => !item.main);
+  const renderGroup = (group: NavbarGroup) => {
+    const items = getGroupItems(config, group.id);
+
+    return (
+      <div
+        key={group.id}
+        className="navbar-group"
+        style={{
+          justifyContent: group.justify,
+          gap: group.gap || '8px',
+        }}
+      >
+        {items.map((item) => renderNavbarItem(item))}
+      </div>
+    );
+  };
+
+  const renderNavbarContent = () => {
+    const sortedGroups = [...config.groups].sort((a, b) => a.order - b.order);
 
     return isMobile ? (
       <>
         <div className="navbar-burger" onClick={() => setIsSidebarVisible(true)}>
           <BsList size={32} />
         </div>
-        {mainItem && renderNavbarItem(mainItem)}
+        {/* On mobile, just show the logo */}
+        {renderLogo()}
       </>
     ) : (
-      <>
-        {otherItems
-          .filter((item) => item.order < (mainItem?.order ?? 0))
-          .sort((a, b) => a.order - b.order)
-          .map((item) => renderNavbarItem(item))}
-        {mainItem && renderNavbarItem(mainItem)}
-        {otherItems
-          .filter((item) => item.order > (mainItem?.order ?? 0))
-          .sort((a, b) => a.order - b.order)
-          .map((item) => renderNavbarItem(item))}
-      </>
+      <div
+        className="navbar-groups"
+        style={{
+          justifyContent: config.containerJustify,
+          gap: config.containerGap || '24px',
+        }}
+      >
+        {sortedGroups.map((group) => renderGroup(group))}
+      </div>
     );
   };
 
@@ -235,7 +249,8 @@ export default function Navbar() {
   };
 
   const renderSidebarContent = () => {
-    const mainItem = navbarItems.find((item) => item.main);
+    const allItems = config.items;
+    const mainItem = allItems.find((item) => item.main);
 
     return (
       <div
@@ -245,7 +260,7 @@ export default function Navbar() {
         {mainItem && renderNavbarItem(mainItem, true)}
         <Separator height={2} width={80} />
         <div className="navbar-sidebar-items">
-          {navbarItems
+          {allItems
             .filter((item) => !item.main)
             .sort((a, b) => a.order - b.order)
             .map((item) => renderNavbarItem(item, true))}
@@ -278,7 +293,7 @@ export default function Navbar() {
       ref={navbarRef}
     >
       <div className={`navbar-content ${isMobile ? 'navbar-content--mobile' : ''}`}>
-        {renderNavbarItems()}
+        {renderNavbarContent()}
         {!isMobile && <div className="navbar-flags">{renderFlagItems()}</div>}
       </div>
       {renderSidebar()}

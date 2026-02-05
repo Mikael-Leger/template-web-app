@@ -50,6 +50,7 @@ export default function AdminTestimonialsPage() {
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
   // Load testimonials on mount
   useEffect(() => {
@@ -698,8 +699,15 @@ export default function AdminTestimonialsPage() {
 
       {/* Edit Modal */}
       {showEditModal && editingTestimonial && (
-        <div className="admin-testimonials-modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="admin-testimonials-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="admin-testimonials-modal-overlay"
+          onMouseDown={(e) => e.target === e.currentTarget && setMouseDownOnOverlay(true)}
+          onMouseUp={(e) => {
+            if (mouseDownOnOverlay && e.target === e.currentTarget) setShowEditModal(false);
+            setMouseDownOnOverlay(false);
+          }}
+        >
+          <div className="admin-testimonials-modal" onMouseDown={(e) => e.stopPropagation()}>
             <h2>{editIndex !== null ? 'Edit Testimonial' : 'Add Testimonial'}</h2>
 
             <div className="admin-testimonials-modal-form">

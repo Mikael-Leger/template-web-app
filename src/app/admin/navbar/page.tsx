@@ -12,11 +12,15 @@ import {
   BsArrowDown,
   BsSave,
   BsArrowCounterclockwise,
+  BsFolder,
+  BsArrowRight,
 } from 'react-icons/bs';
 
 import {
   NavbarConfig,
   NavbarItem,
+  NavbarGroup,
+  JustifyContent,
   ScrollEffect,
   ShadowSize,
   TextTransform,
@@ -28,13 +32,26 @@ import {
   addNavbarItem,
   updateNavbarItem,
   removeNavbarItem,
-  reorderNavbarItems,
+  addNavbarGroup,
+  updateNavbarGroup,
+  removeNavbarGroup,
+  moveItemToGroup,
+  getGroupItems,
 } from '@/app/services/navbar-service';
 import ConfirmationModal from '@/app/components/modal/confirmation-modal';
 
 import './navbar-admin.scss';
 
-type TabType = 'items' | 'logo' | 'appearance' | 'scroll' | 'typography';
+type TabType = 'groups' | 'logo' | 'appearance' | 'scroll' | 'typography';
+
+const justifyOptions: { value: JustifyContent; label: string }[] = [
+  { value: 'flex-start', label: 'Start' },
+  { value: 'center', label: 'Center' },
+  { value: 'flex-end', label: 'End' },
+  { value: 'space-between', label: 'Space Between' },
+  { value: 'space-around', label: 'Space Around' },
+  { value: 'space-evenly', label: 'Space Evenly' },
+];
 
 const scrollEffectOptions: { value: ScrollEffect; label: string }[] = [
   { value: 'none', label: 'None' },
@@ -59,14 +76,21 @@ const textTransformOptions: { value: TextTransform; label: string }[] = [
 
 export default function NavbarAdminPage() {
   const [config, setConfig] = useState<NavbarConfig | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('items');
+  const [activeTab, setActiveTab] = useState<TabType>('groups');
   const [hasChanges, setHasChanges] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [editingItem, setEditingItem] = useState<NavbarItem | null>(null);
   const [showItemModal, setShowItemModal] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<NavbarGroup | null>(null);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [mouseDownOnOverlay, setMouseDownOnOverlay] = useState(false);
 
   useEffect(() => {
-    setConfig(getNavbarConfig());
+    const loadedConfig = getNavbarConfig();
+    setConfig(loadedConfig);
+    // Expand all groups by default
+    setExpandedGroups(new Set(loadedConfig.groups.map(g => g.id)));
   }, []);
 
   const handleConfigChange = useCallback((newConfig: NavbarConfig) => {
@@ -84,12 +108,71 @@ export default function NavbarAdminPage() {
   const handleReset = useCallback(() => {
     const defaultConfig = resetNavbarConfig();
     setConfig(defaultConfig);
+    setExpandedGroups(new Set(defaultConfig.groups.map(g => g.id)));
     setHasChanges(false);
     setShowResetModal(false);
   }, []);
 
+  // Group management
+  const handleAddGroup = useCallback(() => {
+    setEditingGroup({
+      id: '',
+      name: '',
+      justify: 'center',
+      order: config?.groups.length || 0,
+      gap: '8px',
+    });
+    setShowGroupModal(true);
+  }, [config]);
+
+  const handleEditGroup = useCallback((group: NavbarGroup) => {
+    setEditingGroup({ ...group });
+    setShowGroupModal(true);
+  }, []);
+
+  const handleSaveGroup = useCallback(() => {
+    if (!config || !editingGroup) return;
+
+    let newConfig: NavbarConfig;
+    if (editingGroup.id) {
+      newConfig = updateNavbarGroup(config, editingGroup.id, editingGroup);
+    } else {
+      newConfig = addNavbarGroup(config, editingGroup);
+    }
+
+    handleConfigChange(newConfig);
+    setShowGroupModal(false);
+    setEditingGroup(null);
+  }, [config, editingGroup, handleConfigChange]);
+
+  const handleDeleteGroup = useCallback(
+    (groupId: string) => {
+      if (!config || config.groups.length <= 1) return;
+      const newConfig = removeNavbarGroup(config, groupId);
+      handleConfigChange(newConfig);
+      setExpandedGroups(prev => {
+        const next = new Set(prev);
+        next.delete(groupId);
+        return next;
+      });
+    },
+    [config, handleConfigChange]
+  );
+
+  const toggleGroupExpanded = useCallback((groupId: string) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  }, []);
+
   // Item management
-  const handleAddItem = useCallback(() => {
+  const handleAddItem = useCallback((groupId: string) => {
     setEditingItem({
       id: '',
       title: '',
@@ -97,10 +180,11 @@ export default function NavbarAdminPage() {
       main: false,
       icon: 'BsLink45Deg',
       separator: false,
-      order: config?.items.length || 0,
+      order: 0,
+      groupId,
     });
     setShowItemModal(true);
-  }, [config]);
+  }, []);
 
   const handleEditItem = useCallback((item: NavbarItem) => {
     setEditingItem({ ...item });
@@ -131,18 +215,30 @@ export default function NavbarAdminPage() {
     [config, handleConfigChange]
   );
 
-  const handleMoveItem = useCallback(
-    (index: number, direction: 'up' | 'down') => {
+  const handleMoveItemToGroup = useCallback(
+    (itemId: string, targetGroupId: string) => {
       if (!config) return;
-      const items = [...config.items].sort((a, b) => a.order - b.order);
-      const newIndex = direction === 'up' ? index - 1 : index + 1;
-      if (newIndex < 0 || newIndex >= items.length) return;
+      const newConfig = moveItemToGroup(config, itemId, targetGroupId);
+      handleConfigChange(newConfig);
+    },
+    [config, handleConfigChange]
+  );
 
-      [items[index], items[newIndex]] = [items[newIndex], items[index]];
-      const newConfig = reorderNavbarItems(
-        config,
-        items.map((i) => i.id)
-      );
+  const handleMoveItemInGroup = useCallback(
+    (groupId: string, itemIndex: number, direction: 'up' | 'down') => {
+      if (!config) return;
+
+      const groupItems = getGroupItems(config, groupId);
+      const newIndex = direction === 'up' ? itemIndex - 1 : itemIndex + 1;
+      if (newIndex < 0 || newIndex >= groupItems.length) return;
+
+      // Swap orders
+      const item1 = groupItems[itemIndex];
+      const item2 = groupItems[newIndex];
+
+      let newConfig = updateNavbarItem(config, item1.id, { order: item2.order });
+      newConfig = updateNavbarItem(newConfig, item2.id, { order: item1.order });
+
       handleConfigChange(newConfig);
     },
     [config, handleConfigChange]
@@ -156,7 +252,64 @@ export default function NavbarAdminPage() {
     );
   }
 
-  const sortedItems = [...config.items].sort((a, b) => a.order - b.order);
+  const sortedGroups = [...config.groups].sort((a, b) => a.order - b.order);
+
+  const renderPreview = () => (
+    <div className="navbar-admin-preview">
+      <div
+        className="navbar-admin-preview-bar"
+        style={{
+          height: config.appearance.height,
+          backgroundColor: config.appearance.backgroundColor,
+          color: config.appearance.textColor,
+          borderBottom: config.appearance.borderBottom ? '1px solid rgba(0,0,0,0.1)' : 'none',
+          justifyContent: config.containerJustify,
+          gap: config.containerGap || '24px',
+        }}
+      >
+        {sortedGroups.map((group) => {
+          const items = getGroupItems(config, group.id);
+          return (
+            <div
+              key={group.id}
+              className="navbar-admin-preview-group"
+              style={{ justifyContent: group.justify, gap: group.gap || '8px' }}
+            >
+              {items.map((item) =>
+                item.main ? (
+                  config.logo.type === 'image' ? (
+                    <img
+                      key={item.id}
+                      src={config.logo.imageUrl}
+                      alt="Logo"
+                      style={{ height: config.logo.height }}
+                    />
+                  ) : (
+                    <span key={item.id} className="navbar-admin-preview-logo">
+                      {config.logo.text}
+                    </span>
+                  )
+                ) : (
+                  <span
+                    key={item.id}
+                    className="navbar-admin-preview-item"
+                    style={{
+                      fontSize: config.typography.fontSize,
+                      fontWeight: config.typography.fontWeight,
+                      textTransform: config.typography.textTransform as React.CSSProperties['textTransform'],
+                      letterSpacing: config.typography.letterSpacing,
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                )
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <div className="navbar-admin">
@@ -184,62 +337,17 @@ export default function NavbarAdminPage() {
         </div>
       </div>
 
-      {hasChanges && (
-        <div className="navbar-admin-unsaved">You have unsaved changes</div>
-      )}
+      {hasChanges && <div className="navbar-admin-unsaved">You have unsaved changes</div>}
 
-      {/* Preview */}
-      <div className="navbar-admin-preview">
-        <div
-          className="navbar-admin-preview-bar"
-          style={{
-            height: config.appearance.height,
-            backgroundColor: config.appearance.backgroundColor,
-            color: config.appearance.textColor,
-            borderBottom: config.appearance.borderBottom
-              ? '1px solid rgba(0,0,0,0.1)'
-              : 'none',
-          }}
-        >
-          {sortedItems.map((item) =>
-            item.main ? (
-              config.logo.type === 'image' ? (
-                <img
-                  key={item.id}
-                  src={config.logo.imageUrl}
-                  alt="Logo"
-                  style={{ height: config.logo.height }}
-                />
-              ) : (
-                <span key={item.id} className="navbar-admin-preview-logo">
-                  {config.logo.text}
-                </span>
-              )
-            ) : (
-              <span
-                key={item.id}
-                className="navbar-admin-preview-item"
-                style={{
-                  fontSize: config.typography.fontSize,
-                  fontWeight: config.typography.fontWeight,
-                  textTransform: config.typography.textTransform as React.CSSProperties['textTransform'],
-                  letterSpacing: config.typography.letterSpacing,
-                }}
-              >
-                {item.title}
-              </span>
-            )
-          )}
-        </div>
-      </div>
+      {renderPreview()}
 
       {/* Tabs */}
       <div className="navbar-admin-tabs">
         <button
-          className={`navbar-admin-tab ${activeTab === 'items' ? 'active' : ''}`}
-          onClick={() => setActiveTab('items')}
+          className={`navbar-admin-tab ${activeTab === 'groups' ? 'active' : ''}`}
+          onClick={() => setActiveTab('groups')}
         >
-          Menu Items
+          Groups & Items
         </button>
         <button
           className={`navbar-admin-tab ${activeTab === 'logo' ? 'active' : ''}`}
@@ -269,62 +377,177 @@ export default function NavbarAdminPage() {
 
       {/* Tab Content */}
       <div className="navbar-admin-content">
-        {activeTab === 'items' && (
-          <div className="navbar-admin-items">
-            <div className="navbar-admin-items-header">
-              <h2>Menu Items</h2>
-              <button className="navbar-admin-btn" onClick={handleAddItem}>
-                <BsPlus /> Add Item
+        {activeTab === 'groups' && (
+          <div className="navbar-admin-groups">
+            {/* Container Settings */}
+            <div className="navbar-admin-container-settings">
+              <h3>Container Layout</h3>
+              <div className="navbar-admin-field-row">
+                <div className="navbar-admin-field">
+                  <label>Container Justify</label>
+                  <select
+                    value={config.containerJustify}
+                    onChange={(e) =>
+                      handleConfigChange({
+                        ...config,
+                        containerJustify: e.target.value as JustifyContent,
+                      })
+                    }
+                  >
+                    {justifyOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="navbar-admin-field">
+                  <label>Container Gap</label>
+                  <input
+                    type="text"
+                    value={config.containerGap || '24px'}
+                    onChange={(e) =>
+                      handleConfigChange({ ...config, containerGap: e.target.value })
+                    }
+                    placeholder="24px"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Groups */}
+            <div className="navbar-admin-groups-header">
+              <h3>Groups</h3>
+              <button className="navbar-admin-btn" onClick={handleAddGroup}>
+                <BsPlus /> Add Group
               </button>
             </div>
-            <div className="navbar-admin-items-list">
-              {sortedItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`navbar-admin-item ${item.main ? 'main' : ''}`}
-                >
-                  <div className="navbar-admin-item-grip">
-                    <BsGripVertical />
+
+            <div className="navbar-admin-groups-list">
+              {sortedGroups.map((group) => {
+                const groupItems = getGroupItems(config, group.id);
+                const isExpanded = expandedGroups.has(group.id);
+
+                return (
+                  <div key={group.id} className={`navbar-admin-group ${isExpanded ? 'expanded' : ''}`}>
+                    <div
+                      className="navbar-admin-group-header"
+                      onClick={() => toggleGroupExpanded(group.id)}
+                    >
+                      <div className="navbar-admin-group-info">
+                        <BsFolder />
+                        <span className="navbar-admin-group-name">{group.name}</span>
+                        <span className="navbar-admin-group-meta">
+                          {groupItems.length} items · {justifyOptions.find((o) => o.value === group.justify)?.label}
+                        </span>
+                      </div>
+                      <div className="navbar-admin-group-actions">
+                        <button
+                          className="navbar-admin-item-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditGroup(group);
+                          }}
+                        >
+                          <BsPencil />
+                        </button>
+                        <button
+                          className="navbar-admin-item-btn danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteGroup(group.id);
+                          }}
+                          disabled={config.groups.length <= 1}
+                        >
+                          <BsTrash />
+                        </button>
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="navbar-admin-group-items">
+                        <div className="navbar-admin-group-items-header">
+                          <span>Items in this group</span>
+                          <button
+                            className="navbar-admin-btn navbar-admin-btn--small"
+                            onClick={() => handleAddItem(group.id)}
+                          >
+                            <BsPlus /> Add Item
+                          </button>
+                        </div>
+
+                        {groupItems.length === 0 ? (
+                          <div className="navbar-admin-group-empty">No items in this group</div>
+                        ) : (
+                          groupItems.map((item, index) => (
+                            <div key={item.id} className={`navbar-admin-item ${item.main ? 'main' : ''}`}>
+                              <div className="navbar-admin-item-grip">
+                                <BsGripVertical />
+                              </div>
+                              <div className="navbar-admin-item-info">
+                                <span className="navbar-admin-item-title">
+                                  {item.title}
+                                  {item.main && <span className="navbar-admin-item-badge">Logo</span>}
+                                </span>
+                                <span className="navbar-admin-item-url">{item.url}</span>
+                              </div>
+                              <div className="navbar-admin-item-actions">
+                                {config.groups.length > 1 && (
+                                  <select
+                                    className="navbar-admin-item-move"
+                                    value=""
+                                    onChange={(e) => {
+                                      if (e.target.value) {
+                                        handleMoveItemToGroup(item.id, e.target.value);
+                                      }
+                                    }}
+                                    title="Move to group"
+                                  >
+                                    <option value="">Move to...</option>
+                                    {config.groups
+                                      .filter((g) => g.id !== group.id)
+                                      .map((g) => (
+                                        <option key={g.id} value={g.id}>
+                                          {g.name}
+                                        </option>
+                                      ))}
+                                  </select>
+                                )}
+                                <button
+                                  className="navbar-admin-item-btn"
+                                  onClick={() => handleMoveItemInGroup(group.id, index, 'up')}
+                                  disabled={index === 0}
+                                >
+                                  <BsArrowUp />
+                                </button>
+                                <button
+                                  className="navbar-admin-item-btn"
+                                  onClick={() => handleMoveItemInGroup(group.id, index, 'down')}
+                                  disabled={index === groupItems.length - 1}
+                                >
+                                  <BsArrowDown />
+                                </button>
+                                <button
+                                  className="navbar-admin-item-btn"
+                                  onClick={() => handleEditItem(item)}
+                                >
+                                  <BsPencil />
+                                </button>
+                                <button
+                                  className="navbar-admin-item-btn danger"
+                                  onClick={() => handleDeleteItem(item.id)}
+                                >
+                                  <BsTrash />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div className="navbar-admin-item-info">
-                    <span className="navbar-admin-item-title">
-                      {item.title}
-                      {item.main && (
-                        <span className="navbar-admin-item-badge">Logo</span>
-                      )}
-                    </span>
-                    <span className="navbar-admin-item-url">{item.url}</span>
-                  </div>
-                  <div className="navbar-admin-item-actions">
-                    <button
-                      className="navbar-admin-item-btn"
-                      onClick={() => handleMoveItem(index, 'up')}
-                      disabled={index === 0}
-                    >
-                      <BsArrowUp />
-                    </button>
-                    <button
-                      className="navbar-admin-item-btn"
-                      onClick={() => handleMoveItem(index, 'down')}
-                      disabled={index === sortedItems.length - 1}
-                    >
-                      <BsArrowDown />
-                    </button>
-                    <button
-                      className="navbar-admin-item-btn"
-                      onClick={() => handleEditItem(item)}
-                    >
-                      <BsPencil />
-                    </button>
-                    <button
-                      className="navbar-admin-item-btn danger"
-                      onClick={() => handleDeleteItem(item.id)}
-                    >
-                      <BsTrash />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -452,10 +675,7 @@ export default function NavbarAdminPage() {
                   onChange={(e) =>
                     handleConfigChange({
                       ...config,
-                      appearance: {
-                        ...config.appearance,
-                        backgroundColorScrolled: e.target.value,
-                      },
+                      appearance: { ...config.appearance, backgroundColorScrolled: e.target.value },
                     })
                   }
                   placeholder="rgba(255, 255, 255, 0.98)"
@@ -633,10 +853,7 @@ export default function NavbarAdminPage() {
                 onChange={(e) =>
                   handleConfigChange({
                     ...config,
-                    behavior: {
-                      ...config.behavior,
-                      mobileBreakpoint: parseInt(e.target.value) || 768,
-                    },
+                    behavior: { ...config.behavior, mobileBreakpoint: parseInt(e.target.value) || 768 },
                   })
                 }
                 placeholder="768"
@@ -686,10 +903,7 @@ export default function NavbarAdminPage() {
                   onChange={(e) =>
                     handleConfigChange({
                       ...config,
-                      typography: {
-                        ...config.typography,
-                        textTransform: e.target.value as TextTransform,
-                      },
+                      typography: { ...config.typography, textTransform: e.target.value as TextTransform },
                     })
                   }
                 >
@@ -719,11 +933,11 @@ export default function NavbarAdminPage() {
         )}
       </div>
 
-      {/* Reset Confirmation Modal */}
+      {/* Reset Modal */}
       <ConfirmationModal
         isOpen={showResetModal}
         title="Reset Navbar"
-        message="Are you sure you want to reset the navbar to default settings? This will discard all your customizations."
+        message="Are you sure you want to reset the navbar to default settings?"
         confirmLabel="Reset"
         cancelLabel="Cancel"
         variant="danger"
@@ -731,10 +945,80 @@ export default function NavbarAdminPage() {
         onCancel={() => setShowResetModal(false)}
       />
 
+      {/* Group Edit Modal */}
+      {showGroupModal && editingGroup && (
+        <div
+          className="navbar-admin-modal-overlay"
+          onMouseDown={(e) => e.target === e.currentTarget && setMouseDownOnOverlay(true)}
+          onMouseUp={(e) => {
+            if (mouseDownOnOverlay && e.target === e.currentTarget) setShowGroupModal(false);
+            setMouseDownOnOverlay(false);
+          }}
+        >
+          <div className="navbar-admin-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <h2>{editingGroup.id ? 'Edit Group' : 'Add Group'}</h2>
+            <div className="navbar-admin-modal-form">
+              <div className="navbar-admin-field">
+                <label>Group Name *</label>
+                <input
+                  type="text"
+                  value={editingGroup.name}
+                  onChange={(e) => setEditingGroup({ ...editingGroup, name: e.target.value })}
+                  placeholder="Group name"
+                />
+              </div>
+              <div className="navbar-admin-field">
+                <label>Justify Content</label>
+                <select
+                  value={editingGroup.justify}
+                  onChange={(e) =>
+                    setEditingGroup({ ...editingGroup, justify: e.target.value as JustifyContent })
+                  }
+                >
+                  {justifyOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="navbar-admin-field">
+                <label>Gap</label>
+                <input
+                  type="text"
+                  value={editingGroup.gap || '8px'}
+                  onChange={(e) => setEditingGroup({ ...editingGroup, gap: e.target.value })}
+                  placeholder="8px"
+                />
+              </div>
+            </div>
+            <div className="navbar-admin-modal-actions">
+              <button className="navbar-admin-btn" onClick={() => setShowGroupModal(false)}>
+                Cancel
+              </button>
+              <button
+                className="navbar-admin-btn navbar-admin-btn--primary"
+                onClick={handleSaveGroup}
+                disabled={!editingGroup.name}
+              >
+                {editingGroup.id ? 'Save Changes' : 'Add Group'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Item Edit Modal */}
       {showItemModal && editingItem && (
-        <div className="navbar-admin-modal-overlay" onClick={() => setShowItemModal(false)}>
-          <div className="navbar-admin-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="navbar-admin-modal-overlay"
+          onMouseDown={(e) => e.target === e.currentTarget && setMouseDownOnOverlay(true)}
+          onMouseUp={(e) => {
+            if (mouseDownOnOverlay && e.target === e.currentTarget) setShowItemModal(false);
+            setMouseDownOnOverlay(false);
+          }}
+        >
+          <div className="navbar-admin-modal" onMouseDown={(e) => e.stopPropagation()}>
             <h2>{editingItem.id ? 'Edit Menu Item' : 'Add Menu Item'}</h2>
             <div className="navbar-admin-modal-form">
               <div className="navbar-admin-field">
@@ -789,9 +1073,7 @@ export default function NavbarAdminPage() {
                     <input
                       type="checkbox"
                       checked={editingItem.separator || false}
-                      onChange={(e) =>
-                        setEditingItem({ ...editingItem, separator: e.target.checked })
-                      }
+                      onChange={(e) => setEditingItem({ ...editingItem, separator: e.target.checked })}
                     />
                     Add Separator (mobile)
                   </label>
@@ -799,10 +1081,7 @@ export default function NavbarAdminPage() {
               </div>
             </div>
             <div className="navbar-admin-modal-actions">
-              <button
-                className="navbar-admin-btn"
-                onClick={() => setShowItemModal(false)}
-              >
+              <button className="navbar-admin-btn" onClick={() => setShowItemModal(false)}>
                 Cancel
               </button>
               <button
