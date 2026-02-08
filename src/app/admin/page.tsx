@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { BsPlus, BsPencil, BsTrash, BsEye, BsGrid, BsFileEarmarkText, BsBoxSeam, BsChatQuote, BsMenuButtonWide } from 'react-icons/bs';
+import { BsPlus, BsPencil, BsTrash, BsEye, BsGrid, BsFileEarmarkText, BsBoxSeam, BsChatQuote, BsMenuButtonWide, BsGrid3X3Gap } from 'react-icons/bs';
 
 import { PageConfig } from '../page-builder/interfaces/page-config.interface';
 import { getAllPages, deletePage, createPage } from '../page-builder/services/page-service';
@@ -92,6 +92,10 @@ export default function AdminDashboard() {
           <Link href='/admin/navbar' className='admin-header-btn admin-header-btn--secondary'>
             <BsMenuButtonWide/>
             Navbar
+          </Link>
+          <Link href='/admin/showcases' className='admin-header-btn admin-header-btn--secondary'>
+            <BsGrid3X3Gap/>
+            Showcases
           </Link>
           <button
             className='admin-header-btn'

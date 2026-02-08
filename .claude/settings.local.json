@@ -36,7 +36,12 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__drag",
       "Bash(tree:*)",
       "Bash(find:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(cmd /c \"taskkill /PID 36376 /T /F\")",
+      "Bash(powershell -Command \"Stop-Process -Id 36376 -Force\")",
+      "Bash(ping:*)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for",
+      "Bash(del \"D:\\\\Dev\\\\template-web-app\\\\nul\")"
     ]
   }
 }

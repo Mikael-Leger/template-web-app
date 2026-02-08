@@ -1,0 +1,170 @@
+[
+  {
+    "title": "Nos produits",
+    "url": "/products",
+    "images": [
+      {
+        "path": "/images/showcases/products/sample_1.png",
+        "style": {
+          "width": 120,
+          "top": 20,
+          "right": 10,
+          "transform": "rotate(20deg)",
+          "scale": 1
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -20,
+              "x": 10,
+              "scale": 0.9,
+              "rotate": 10
+            }
+          }
+        ]
+      },
+      {
+        "path": "/images/showcases/products/sample_2.png",
+        "style": {
+          "width": 70,
+          "bottom": 10,
+          "right": 10,
+          "transform": "translateX(0%)",
+          "rotate": 0
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -10,
+              "x": 10,
+              "rotate": 20
+            }
+          }
+        ]
+      },
+      {
+        "path": "/images/showcases/products/sample_3.png",
+        "style": {
+          "width": 100,
+          "bottom": 0,
+          "left": 0,
+          "transform": "translateX(-5%)",
+          "scale": 1
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -10,
+              "x": 5,
+              "scale": 1.1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Contactez-nous",
+    "url": "/contact",
+    "images": [
+      {
+        "path": "/images/showcases/contact/sample_1.png",
+        "style": {
+          "width": 80,
+          "top": 30,
+          "left": 10,
+          "transform": "rotate(-10deg)"
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -20,
+              "x": -10,
+              "transform": "rotate(-20deg)"
+            }
+          }
+        ]
+      },
+      {
+        "path": "/images/showcases/contact/sample_2.png",
+        "style": {
+          "width": 60,
+          "top": 40,
+          "right": 10,
+          "transform": "rotate(10deg)"
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -20,
+              "x": 10,
+              "transform": "rotate(20deg)"
+            }
+          }
+        ]
+      },
+      {
+        "path": "/images/showcases/contact/sample_3.png",
+        "style": {
+          "width": 120,
+          "left": "50%",
+          "transform": "translateX(-50%)",
+          "bottom": 0,
+          "scale": 1
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -10,
+              "scale": 1.2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Commandez",
+    "url": "/order",
+    "images": [
+      {
+        "path": "/images/showcases/order/sample_1.png",
+        "style": {
+          "width": 180,
+          "bottom": 0,
+          "left": "50%",
+          "transform": "translateX(-50%)"
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -10,
+              "x": -5,
+              "transform": "rotate(-5deg) translateX(-50%)"
+            }
+          }
+        ]
+      },
+      {
+        "path": "/images/showcases/order/sample_2.png",
+        "style": {
+          "width": 40,
+          "bottom": 70,
+          "scale": 1,
+          "left": "50%",
+          "transform": "translateX(-50%)"
+        },
+        "animations": [
+          {
+            "to": {
+              "y": -10,
+              "x": -5,
+              "scale": 1.2,
+              "transform": "rotate(-5deg) translateX(-50%)"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

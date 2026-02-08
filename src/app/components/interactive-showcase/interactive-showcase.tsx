@@ -76,11 +76,14 @@ export default function InteractiveShowcase({title, onClick, images}: Interactiv
   );
 }
 
-interface InteractiveShowcasesProps {
+export interface InteractiveShowcasesProps {
   showcases: InteractiveShowcaseProps[];
+  cardWidth?: number;
+  cardHeight?: number;
+  backgroundColor?: 'default' | 'gradient';
 }
 
-export function InteractiveShowcases({showcases}: InteractiveShowcasesProps) {
+export function InteractiveShowcases({showcases, cardWidth = 250, cardHeight = 250, backgroundColor = 'gradient'}: InteractiveShowcasesProps) {
   const {isMobile} = useIsMobile();
 
   return (
@@ -89,12 +92,12 @@ export function InteractiveShowcases({showcases}: InteractiveShowcasesProps) {
         showcases.map(showcase => (
           <Card
             className='border-black border border-solid'
-            background='gradient'
+            background={backgroundColor}
             borderColor='primary'
             padding={'inner'}
             margin={'none'}
-            width={250}
-            height={250}
+            width={cardWidth}
+            height={cardHeight}
             key={showcase.title}>
             <InteractiveShowcase {...showcase}/>
           </Card>

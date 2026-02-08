@@ -84,6 +84,7 @@ export interface PropDefinition {
   min?: number;
   max?: number;
   showWhen?: { prop: string; equals: unknown }; // Conditional visibility
+  dataSource?: string; // Dynamic options loaded from a data source
 }
 
 /**

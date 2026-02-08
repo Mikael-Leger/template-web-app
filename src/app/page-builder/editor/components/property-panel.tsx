@@ -1,14 +1,19 @@
 'use client';
 
 import React, { useEffect, useMemo, useCallback } from 'react';
-import { BsSliders, BsTrash } from 'react-icons/bs';
+import { BsSliders, BsTrash, BsPlus, BsX } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
 import { getComponent } from '../../registry/component-registry';
 import { PropDefinition } from '../../interfaces/page-config.interface';
+import { getAllShowcases } from '@/app/services/showcase-service';
 import RatioEditor from './ratio-editor';
 import SpacingEditor, { SpacingValue, DEFAULT_SPACING } from './spacing-editor';
 import DimensionEditor from './dimension-editor';
+
+const dataSourceResolvers: Record<string, () => { label: string; value: string }[]> = {
+  'showcases': () => getAllShowcases().filter(s => !s.hide).map(s => ({ label: s.title, value: s.id! })),
+};
 
 export default function PropertyPanel() {
   const { selectedComponent, updateComponentProps, removeComponent } = useEditor();
@@ -137,20 +142,26 @@ export default function PropertyPanel() {
         </div>
       );
 
-    case 'select':
+    case 'select': {
+      let selectOptions = definition.options || [];
+      if (definition.dataSource && dataSourceResolvers[definition.dataSource]) {
+        const dynamicOptions = dataSourceResolvers[definition.dataSource]();
+        selectOptions = [{ label: 'None', value: '' }, ...dynamicOptions, ...selectOptions.filter(o => !dynamicOptions.some(d => d.value === o.value))];
+      }
       return (
         <select
           className='editor-panel-field-select'
           value={(value as string) || ''}
           onChange={(e) => handlePropChange(propName, e.target.value)}
         >
-          {definition.options?.map((opt) => (
+          {selectOptions.map((opt) => (
             <option key={String(opt.value)} value={String(opt.value)}>
               {opt.label}
             </option>
           ))}
         </select>
       );
+    }
 
     case 'image':
       return (
@@ -183,6 +194,79 @@ export default function PropertyPanel() {
           placeholder={definition.defaultValue as string}
         />
       );
+
+    case 'array': {
+      const items = (value as unknown[]) || [];
+      const itemSchema = definition.arrayItemSchema;
+
+      const handleAddItem = () => {
+        const defaultVal = itemSchema?.defaultValue ?? '';
+        handlePropChange(propName, [...items, defaultVal]);
+      };
+
+      const handleRemoveItem = (index: number) => {
+        handlePropChange(propName, items.filter((_, i) => i !== index));
+      };
+
+      const handleUpdateItem = (index: number, newVal: unknown) => {
+        const updated = [...items];
+        updated[index] = newVal;
+        handlePropChange(propName, updated);
+      };
+
+      // Resolve options for select items with dataSource
+      let itemOptions: { label: string; value: unknown }[] | undefined;
+      if (itemSchema?.type === 'select') {
+        itemOptions = itemSchema.options || [];
+        if (itemSchema.dataSource && dataSourceResolvers[itemSchema.dataSource]) {
+          const dynamicOptions = dataSourceResolvers[itemSchema.dataSource]();
+          itemOptions = [...dynamicOptions, ...itemOptions.filter(o => !dynamicOptions.some(d => d.value === o.value))];
+        }
+      }
+
+      return (
+        <div className='editor-panel-field-array'>
+          {items.map((item, index) => (
+            <div key={index} className='editor-panel-field-array-row'>
+              {itemSchema?.type === 'select' && itemOptions ? (
+                <select
+                  className='editor-panel-field-select'
+                  value={String(item || '')}
+                  onChange={(e) => handleUpdateItem(index, e.target.value)}
+                >
+                  <option value=''>Select...</option>
+                  {itemOptions.map((opt) => (
+                    <option key={String(opt.value)} value={String(opt.value)}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={itemSchema?.type === 'number' ? 'number' : 'text'}
+                  className='editor-panel-field-input'
+                  value={String(item ?? '')}
+                  onChange={(e) => handleUpdateItem(index, itemSchema?.type === 'number' ? Number(e.target.value) : e.target.value)}
+                />
+              )}
+              <button
+                className='editor-panel-field-array-remove'
+                onClick={() => handleRemoveItem(index)}
+                title='Remove'
+              >
+                <BsX />
+              </button>
+            </div>
+          ))}
+          <button
+            className='editor-panel-field-array-add'
+            onClick={handleAddItem}
+          >
+            <BsPlus /> Add
+          </button>
+        </div>
+      );
+    }
 
     default:
       return (

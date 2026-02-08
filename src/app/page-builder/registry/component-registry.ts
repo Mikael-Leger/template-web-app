@@ -32,6 +32,7 @@ import Footer from '@/app/components/footer/footer';
 import DescriptionAndImageWrapper from '@/app/page-builder/components/description-and-image-wrapper';
 import Tooltip from '@/app/components/tooltip/tooltip';
 import OrderProcessWrapper from '@/app/page-builder/components/order-process-wrapper';
+import InteractiveShowcasesWrapper from '@/app/page-builder/components/interactive-showcases-wrapper';
 
 /**
  * Helper to create a prop definition
@@ -346,6 +347,40 @@ componentRegistry.set('Newsletter', {
   defaultProps: {
     titles: ['Subscribe to our Newsletter', 'Thank you!'],
     descriptions: ['Stay updated with our latest news and offers.', 'You have successfully subscribed.'],
+  },
+});
+
+componentRegistry.set('InteractiveShowcases', {
+  component: InteractiveShowcasesWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Interactive Showcases',
+  category: 'interactive',
+  icon: 'BsGrid3X3Gap',
+  description: 'Interactive showcase cards with hover animations',
+  acceptsChildren: false,
+  propsSchema: {
+    showcases: {
+      type: 'array',
+      label: 'Showcases',
+      defaultValue: [],
+      arrayItemSchema: {
+        type: 'select',
+        label: 'Showcase',
+        dataSource: 'showcases',
+        defaultValue: '',
+      },
+    },
+    cardWidth: prop('number', 'Card Width', { defaultValue: 250, min: 100, max: 600 }),
+    cardHeight: prop('number', 'Card Height', { defaultValue: 250, min: 100, max: 600 }),
+    backgroundColor: selectProp('Background', [
+      { label: 'Gradient', value: 'gradient' },
+      { label: 'Default (White)', value: 'default' },
+    ], 'gradient'),
+  },
+  defaultProps: {
+    showcases: [],
+    cardWidth: 250,
+    cardHeight: 250,
+    backgroundColor: 'gradient',
   },
 });
 
