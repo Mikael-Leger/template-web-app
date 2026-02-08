@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useCallback } from 'react';
-import { BsSliders, BsTrash, BsPlus, BsX } from 'react-icons/bs';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import { BsSliders, BsTrash, BsPlus, BsX, BsChevronDown, BsChevronRight, BsArrowUp, BsArrowDown } from 'react-icons/bs';
 
 import { useEditor } from '../../contexts/editor-context';
 import { getComponent } from '../../registry/component-registry';
@@ -16,6 +16,239 @@ const dataSourceResolvers: Record<string, () => { label: string; value: string }
   'showcases': () => getAllShowcases().filter(s => !s.hide).map(s => ({ label: s.title, value: s.id! })),
   'forms': () => getAllForms().filter(f => !f.hide).map(f => ({ label: f.name, value: f.id! })),
 };
+
+/**
+ * ObjectArrayEditor - Renders an array of objects with collapsible sections
+ */
+function ObjectArrayEditor({
+  items,
+  objectSchema,
+  onAdd,
+  onRemove,
+  onFieldChange,
+  onMove,
+  itemLabel,
+}: {
+  items: Record<string, unknown>[];
+  objectSchema: Record<string, PropDefinition>;
+  onAdd: () => void;
+  onRemove: (index: number) => void;
+  onFieldChange: (index: number, fieldName: string, value: unknown) => void;
+  onMove: (index: number, direction: 'up' | 'down') => void;
+  itemLabel: string;
+}) {
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+
+  const toggleExpanded = (index: number) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
+  const renderObjectField = (
+    item: Record<string, unknown>,
+    index: number,
+    fieldName: string,
+    fieldDef: PropDefinition
+  ) => {
+    const fieldValue = item[fieldName] ?? fieldDef.defaultValue;
+
+    // Nested array (e.g., descriptions)
+    if (fieldDef.type === 'array') {
+      const nestedItems = (fieldValue as unknown[]) || [];
+      const nestedSchema = fieldDef.arrayItemSchema;
+
+      const handleAddNested = () => {
+        onFieldChange(index, fieldName, [...nestedItems, nestedSchema?.defaultValue ?? '']);
+      };
+
+      const handleRemoveNested = (ni: number) => {
+        onFieldChange(index, fieldName, nestedItems.filter((_, i) => i !== ni));
+      };
+
+      const handleUpdateNested = (ni: number, val: unknown) => {
+        const updated = [...nestedItems];
+        updated[ni] = val;
+        onFieldChange(index, fieldName, updated);
+      };
+
+      return (
+        <div className='editor-panel-field' key={fieldName}>
+          <label className='editor-panel-field-label'>{fieldDef.label}</label>
+          <div className='editor-panel-field-array'>
+            {nestedItems.map((nestedItem, ni) => (
+              <div key={ni} className='editor-panel-field-array-row'>
+                <input
+                  type='text'
+                  className='editor-panel-field-input'
+                  value={String(nestedItem ?? '')}
+                  onChange={(e) => handleUpdateNested(ni, e.target.value)}
+                />
+                <button
+                  className='editor-panel-field-array-remove'
+                  onClick={() => handleRemoveNested(ni)}
+                  title='Remove'
+                >
+                  <BsX />
+                </button>
+              </div>
+            ))}
+            <button className='editor-panel-field-array-add' onClick={handleAddNested}>
+              <BsPlus /> Add
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // String, icon, image, color, number fields
+    let input: React.ReactNode;
+    switch (fieldDef.type) {
+    case 'icon':
+    case 'string':
+    case 'image':
+      input = (
+        <input
+          type='text'
+          className='editor-panel-field-input'
+          value={(fieldValue as string) || ''}
+          onChange={(e) => onFieldChange(index, fieldName, e.target.value)}
+          placeholder={fieldDef.type === 'image' ? '/images/example.png' : (fieldDef.defaultValue as string)}
+        />
+      );
+      break;
+    case 'color':
+      input = (
+        <input
+          type='color'
+          className='editor-panel-field-input'
+          value={(fieldValue as string) || '#000000'}
+          onChange={(e) => onFieldChange(index, fieldName, e.target.value)}
+          style={{ padding: '2px', height: '36px' }}
+        />
+      );
+      break;
+    case 'number':
+      input = (
+        <input
+          type='number'
+          className='editor-panel-field-input'
+          value={(fieldValue as number) ?? ''}
+          min={fieldDef.min}
+          max={fieldDef.max}
+          onChange={(e) => onFieldChange(index, fieldName, Number(e.target.value))}
+        />
+      );
+      break;
+    case 'boolean':
+      input = (
+        <div className='editor-panel-field-checkbox'>
+          <input
+            type='checkbox'
+            id={`obj-${index}-${fieldName}`}
+            checked={(fieldValue as boolean) || false}
+            onChange={(e) => onFieldChange(index, fieldName, e.target.checked)}
+          />
+          <label htmlFor={`obj-${index}-${fieldName}`}>{fieldDef.label}</label>
+        </div>
+      );
+      break;
+    case 'select': {
+      const opts = fieldDef.options || [];
+      input = (
+        <select
+          className='editor-panel-field-select'
+          value={(fieldValue as string) || ''}
+          onChange={(e) => onFieldChange(index, fieldName, e.target.value)}
+        >
+          {opts.map((opt) => (
+            <option key={String(opt.value)} value={String(opt.value)}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      );
+      break;
+    }
+    default:
+      input = (
+        <input
+          type='text'
+          className='editor-panel-field-input'
+          value={String(fieldValue || '')}
+          onChange={(e) => onFieldChange(index, fieldName, e.target.value)}
+        />
+      );
+    }
+
+    if (fieldDef.type === 'boolean') {
+      return <div className='editor-panel-field' key={fieldName}>{input}</div>;
+    }
+
+    return (
+      <div className='editor-panel-field' key={fieldName}>
+        <label className='editor-panel-field-label'>{fieldDef.label}</label>
+        {input}
+      </div>
+    );
+  };
+
+  return (
+    <div className='editor-panel-field-object-array'>
+      {items.map((item, index) => {
+        const isExpanded = expandedItems.has(index);
+        const title = (item.title as string) || (item.name as string) || `${itemLabel} ${index + 1}`;
+
+        return (
+          <div key={index} className='editor-panel-field-object-array-item'>
+            <div className='editor-panel-field-object-array-item-header' onClick={() => toggleExpanded(index)}>
+              <span className='editor-panel-field-object-array-item-header-chevron'>
+                {isExpanded ? <BsChevronDown /> : <BsChevronRight />}
+              </span>
+              <span className='editor-panel-field-object-array-item-header-title'>{title}</span>
+              <div className='editor-panel-field-object-array-item-header-actions'>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onMove(index, 'up'); }}
+                  disabled={index === 0}
+                  title='Move up'
+                >
+                  <BsArrowUp />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onMove(index, 'down'); }}
+                  disabled={index === items.length - 1}
+                  title='Move down'
+                >
+                  <BsArrowDown />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onRemove(index); }}
+                  title='Remove'
+                  className='editor-panel-field-object-array-item-header-actions-remove'
+                >
+                  <BsX />
+                </button>
+              </div>
+            </div>
+            {isExpanded && (
+              <div className='editor-panel-field-object-array-item-body'>
+                {Object.entries(objectSchema).map(([fieldName, fieldDef]) =>
+                  renderObjectField(item, index, fieldName, fieldDef)
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <button className='editor-panel-field-array-add' onClick={onAdd}>
+        <BsPlus /> Add {itemLabel}
+      </button>
+    </div>
+  );
+}
 
 export default function PropertyPanel() {
   const { selectedComponent, updateComponentProps, removeComponent } = useEditor();
@@ -200,6 +433,53 @@ export default function PropertyPanel() {
     case 'array': {
       const items = (value as unknown[]) || [];
       const itemSchema = definition.arrayItemSchema;
+
+      // Object array: items are objects with objectSchema
+      if (itemSchema?.type === 'object' && itemSchema.objectSchema) {
+        const objectSchema = itemSchema.objectSchema;
+
+        const handleAddObjectItem = () => {
+          const newItem: Record<string, unknown> = {};
+          for (const [fieldName, fieldDef] of Object.entries(objectSchema)) {
+            if (fieldDef.type === 'array') {
+              newItem[fieldName] = fieldDef.defaultValue ?? [''];
+            } else {
+              newItem[fieldName] = fieldDef.defaultValue ?? '';
+            }
+          }
+          handlePropChange(propName, [...items, newItem]);
+        };
+
+        const handleRemoveObjectItem = (index: number) => {
+          handlePropChange(propName, items.filter((_, i) => i !== index));
+        };
+
+        const handleObjectFieldChange = (index: number, fieldName: string, fieldValue: unknown) => {
+          const updated = [...items];
+          updated[index] = { ...(updated[index] as Record<string, unknown>), [fieldName]: fieldValue };
+          handlePropChange(propName, updated);
+        };
+
+        const handleMoveItem = (index: number, direction: 'up' | 'down') => {
+          const updated = [...items];
+          const targetIndex = direction === 'up' ? index - 1 : index + 1;
+          if (targetIndex < 0 || targetIndex >= updated.length) return;
+          [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
+          handlePropChange(propName, updated);
+        };
+
+        return (
+          <ObjectArrayEditor
+            items={items as Record<string, unknown>[]}
+            objectSchema={objectSchema}
+            onAdd={handleAddObjectItem}
+            onRemove={handleRemoveObjectItem}
+            onFieldChange={handleObjectFieldChange}
+            onMove={handleMoveItem}
+            itemLabel={itemSchema.label || 'Item'}
+          />
+        );
+      }
 
       const handleAddItem = () => {
         const defaultVal = itemSchema?.defaultValue ?? '';

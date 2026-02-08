@@ -930,6 +930,108 @@
     }
   }
 
+  &-field-object-array {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+
+    &-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+
+      &-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        background-color: var(--gray-50);
+        cursor: pointer;
+        user-select: none;
+        transition: background-color var(--transition-fast);
+
+        @media (prefers-color-scheme: dark) {
+          background-color: var(--gray-800);
+        }
+
+        &:hover {
+          background-color: var(--gray-100);
+
+          @media (prefers-color-scheme: dark) {
+            background-color: var(--gray-700);
+          }
+        }
+
+        &-chevron {
+          display: flex;
+          align-items: center;
+          color: var(--gray-500);
+          font-size: var(--font-size-xs);
+          flex-shrink: 0;
+        }
+
+        &-title {
+          flex: 1;
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-2);
+          color: var(--foreground);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &-actions {
+          display: flex;
+          gap: var(--space-1);
+          flex-shrink: 0;
+
+          button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: 10px;
+            transition: all var(--transition-fast);
+
+            &:hover:not(:disabled) {
+              border-color: var(--primary);
+              color: var(--primary);
+            }
+
+            &:disabled {
+              opacity: 0.3;
+              cursor: not-allowed;
+            }
+          }
+
+          &-remove:hover {
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+          }
+        }
+      }
+
+      &-body {
+        padding: var(--space-3);
+        border-top: 1px solid var(--border);
+
+        .editor-panel-field {
+          margin-bottom: var(--space-3);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
   &-field-description {
     font-size: var(--font-size-xs);
     color: var(--gray-500);
