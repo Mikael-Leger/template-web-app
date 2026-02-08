@@ -7,12 +7,14 @@ import { useEditor } from '../../contexts/editor-context';
 import { getComponent } from '../../registry/component-registry';
 import { PropDefinition } from '../../interfaces/page-config.interface';
 import { getAllShowcases } from '@/app/services/showcase-service';
+import { getAllForms } from '@/app/services/form-service';
 import RatioEditor from './ratio-editor';
 import SpacingEditor, { SpacingValue, DEFAULT_SPACING } from './spacing-editor';
 import DimensionEditor from './dimension-editor';
 
 const dataSourceResolvers: Record<string, () => { label: string; value: string }[]> = {
   'showcases': () => getAllShowcases().filter(s => !s.hide).map(s => ({ label: s.title, value: s.id! })),
+  'forms': () => getAllForms().filter(f => !f.hide).map(f => ({ label: f.name, value: f.id! })),
 };
 
 export default function PropertyPanel() {

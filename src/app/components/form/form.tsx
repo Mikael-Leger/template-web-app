@@ -16,10 +16,11 @@ export interface FormField {
 interface FormProps {
   fieldsByRows: FormField[];
   successMessage: string;
+  buttonLabel?: string;
   onSubmit: () => Promise<boolean>;
 }
 
-export default function Form({fieldsByRows, successMessage, onSubmit}: FormProps) {
+export default function Form({fieldsByRows, successMessage, buttonLabel = 'Envoyer', onSubmit}: FormProps) {
   const {isMobile} = useIsMobile();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -61,11 +62,37 @@ export default function Form({fieldsByRows, successMessage, onSubmit}: FormProps
             return (
               <div className='form-content-fields flex flex-row flex-gap flex-wrap padding-inner' key={index}>
                 {fields.items.map(field => {
-                  if (field.name === 'phone') {
-                    return <InputPhone 
+                  if (field.name === 'phone' || field.type === 'phone') {
+                    return <InputPhone
                       defaultValue=''
                       {...field}
                       key={field.name}/>;
+                  }
+
+                  if (field.type === 'select') {
+                    return (
+                      <div key={field.name} className='input-text flex flex-col gap-1 relative'>
+                        {field.title && (
+                          <div className='input-text-title'>
+                            {field.title} {field.required && '*'}
+                          </div>
+                        )}
+                        <div className='input-text-content input-text-content-border input-text-black'>
+                          <select
+                            name={field.name}
+                            required={field.required}
+                            className='flex-1 resize-none min-w-0'
+                            style={{ background: 'transparent', border: 'none', outline: 'none', font: 'inherit', color: 'inherit', padding: 0 }}
+                            defaultValue=''
+                          >
+                            <option value='' disabled>{field.placeholder || 'Select...'}</option>
+                            {(field as unknown as { options?: { label: string; value: string }[] }).options?.map((opt) => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    );
                   }
 
                   return (
@@ -79,7 +106,7 @@ export default function Form({fieldsByRows, successMessage, onSubmit}: FormProps
             );
           })}
           <div className='form-content-button padding-inner'>
-            <Button title={'Envoyer'} buttonType={'submit'} fullWidth size='big'/>
+            <Button title={buttonLabel} buttonType={'submit'} fullWidth size='big'/>
           </div>
           {isLoading && renderLoading()}
         </div>

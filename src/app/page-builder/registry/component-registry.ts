@@ -33,6 +33,8 @@ import DescriptionAndImageWrapper from '@/app/page-builder/components/descriptio
 import Tooltip from '@/app/components/tooltip/tooltip';
 import OrderProcessWrapper from '@/app/page-builder/components/order-process-wrapper';
 import InteractiveShowcasesWrapper from '@/app/page-builder/components/interactive-showcases-wrapper';
+import ContactFormWrapper from '@/app/page-builder/components/contact-form-wrapper';
+import DetailsSectionWrapper from '@/app/page-builder/components/details-section-wrapper';
 
 /**
  * Helper to create a prop definition
@@ -381,6 +383,94 @@ componentRegistry.set('InteractiveShowcases', {
     cardWidth: 250,
     cardHeight: 250,
     backgroundColor: 'gradient',
+  },
+});
+
+// ===== FORM COMPONENTS =====
+
+componentRegistry.set('ContactForm', {
+  component: ContactFormWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Contact Form',
+  category: 'form',
+  icon: 'BsEnvelopePaper',
+  description: 'Contact form with configurable fields and validation',
+  acceptsChildren: false,
+  propsSchema: {
+    formId: { type: 'select', label: 'Form', dataSource: 'forms', defaultValue: '' },
+    successMessage: prop('string', 'Success Message Override', { defaultValue: '' }),
+    buttonLabel: prop('string', 'Button Label Override', { defaultValue: '' }),
+  },
+  defaultProps: {
+    formId: '',
+    successMessage: '',
+    buttonLabel: '',
+  },
+});
+
+componentRegistry.set('DetailsSection', {
+  component: DetailsSectionWrapper as unknown as React.ComponentType<Record<string, unknown>>,
+  displayName: 'Details Section',
+  category: 'content',
+  icon: 'BsCardList',
+  description: 'Contact details with icons (address, phone, hours)',
+  acceptsChildren: false,
+  propsSchema: {
+    item1Title: prop('string', 'Item 1 - Title', { defaultValue: 'Adresse' }),
+    item1Icon: prop('icon', 'Item 1 - Icon', { defaultValue: 'BsPinMap' }),
+    item1Line1: prop('string', 'Item 1 - Line 1', { defaultValue: 'Rue Brederode, 16' }),
+    item1Line2: prop('string', 'Item 1 - Line 2', { defaultValue: '1000 Bruxelles, Belgique' }),
+    item1Line3: prop('string', 'Item 1 - Line 3', { defaultValue: '' }),
+    item1Line4: prop('string', 'Item 1 - Line 4', { defaultValue: '' }),
+
+    item2Title: prop('string', 'Item 2 - Title', { defaultValue: 'Téléphone' }),
+    item2Icon: prop('icon', 'Item 2 - Icon', { defaultValue: 'BsTelephone' }),
+    item2Line1: prop('string', 'Item 2 - Line 1', { defaultValue: '01 23 45 67 89' }),
+    item2Line2: prop('string', 'Item 2 - Line 2', { defaultValue: '' }),
+    item2Line3: prop('string', 'Item 2 - Line 3', { defaultValue: '' }),
+    item2Line4: prop('string', 'Item 2 - Line 4', { defaultValue: '' }),
+
+    item3Title: prop('string', 'Item 3 - Title', { defaultValue: 'Horaires' }),
+    item3Icon: prop('icon', 'Item 3 - Icon', { defaultValue: 'BsClock' }),
+    item3Line1: prop('string', 'Item 3 - Line 1', { defaultValue: 'Lundi - Vendredi' }),
+    item3Line2: prop('string', 'Item 3 - Line 2', { defaultValue: '9h-18h' }),
+    item3Line3: prop('string', 'Item 3 - Line 3', { defaultValue: 'Samedi et Dimanche' }),
+    item3Line4: prop('string', 'Item 3 - Line 4', { defaultValue: '10h-12h' }),
+
+    item4Title: prop('string', 'Item 4 - Title', { defaultValue: '' }),
+    item4Icon: prop('icon', 'Item 4 - Icon', { defaultValue: 'BsInfoCircle' }),
+    item4Line1: prop('string', 'Item 4 - Line 1', { defaultValue: '' }),
+    item4Line2: prop('string', 'Item 4 - Line 2', { defaultValue: '' }),
+    item4Line3: prop('string', 'Item 4 - Line 3', { defaultValue: '' }),
+    item4Line4: prop('string', 'Item 4 - Line 4', { defaultValue: '' }),
+  },
+  defaultProps: {
+    item1Title: 'Adresse',
+    item1Icon: 'BsPinMap',
+    item1Line1: 'Rue Brederode, 16',
+    item1Line2: '1000 Bruxelles, Belgique',
+    item1Line3: '',
+    item1Line4: '',
+
+    item2Title: 'Téléphone',
+    item2Icon: 'BsTelephone',
+    item2Line1: '01 23 45 67 89',
+    item2Line2: '',
+    item2Line3: '',
+    item2Line4: '',
+
+    item3Title: 'Horaires',
+    item3Icon: 'BsClock',
+    item3Line1: 'Lundi - Vendredi',
+    item3Line2: '9h-18h',
+    item3Line3: 'Samedi et Dimanche',
+    item3Line4: '10h-12h',
+
+    item4Title: '',
+    item4Icon: 'BsInfoCircle',
+    item4Line1: '',
+    item4Line2: '',
+    item4Line3: '',
+    item4Line4: '',
   },
 });
 

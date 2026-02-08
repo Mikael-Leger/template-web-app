@@ -16,7 +16,7 @@ export interface InputTextProps {
   border?: boolean;
   required?: boolean;
   disabled?: boolean;
-  type?: 'text' | 'email' | 'textarea';
+  type?: 'text' | 'email' | 'textarea' | 'number' | 'phone' | 'select';
   hide?: boolean;
   error?: string;
   className?: string;
