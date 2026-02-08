@@ -3,7 +3,9 @@
 import React, { useMemo } from 'react';
 import {
   BsCardChecklist,
+  BsCardList,
   BsGrid,
+  BsGrid3X3Gap,
   BsDash,
   BsType,
   BsTextLeft,
@@ -12,6 +14,7 @@ import {
   BsCardImage,
   BsHandIndex,
   BsEnvelope,
+  BsEnvelopePaper,
   BsShop,
   BsTruck,
   BsChatQuote,
@@ -28,7 +31,9 @@ import { getComponent } from '../registry/component-registry';
 // Icon map for component icons
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsCardChecklist,
+  BsCardList,
   BsGrid,
+  BsGrid3X3Gap,
   BsDash,
   BsType,
   BsTextLeft,
@@ -37,6 +42,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   BsCardImage,
   BsHandIndex,
   BsEnvelope,
+  BsEnvelopePaper,
   BsShop,
   BsTruck,
   BsChatQuote,

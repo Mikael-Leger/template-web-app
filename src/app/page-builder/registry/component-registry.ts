@@ -390,10 +390,10 @@ componentRegistry.set('InteractiveShowcases', {
 
 componentRegistry.set('ContactForm', {
   component: ContactFormWrapper as unknown as React.ComponentType<Record<string, unknown>>,
-  displayName: 'Contact Form',
+  displayName: 'Form',
   category: 'form',
   icon: 'BsEnvelopePaper',
-  description: 'Contact form with configurable fields and validation',
+  description: 'Form with configurable fields and validation',
   acceptsChildren: false,
   propsSchema: {
     formId: { type: 'select', label: 'Form', dataSource: 'forms', defaultValue: '' },

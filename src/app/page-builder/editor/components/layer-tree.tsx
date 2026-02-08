@@ -3,7 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   BsCardChecklist,
+  BsCardList,
   BsGrid,
+  BsGrid3X3Gap,
   BsDash,
   BsType,
   BsTextLeft,
@@ -12,6 +14,7 @@ import {
   BsCardImage,
   BsHandIndex,
   BsEnvelope,
+  BsEnvelopePaper,
   BsShop,
   BsChevronDown,
   BsChevronRight,
