@@ -94,6 +94,76 @@
     background-color: var(--border);
   }
 
+  &-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+
+    &:hover {
+      background-color: var(--gray-50);
+
+      .editor-header-meta-icon {
+        opacity: 1;
+      }
+    }
+
+    &-icon {
+      font-size: var(--font-size-xs);
+      color: var(--gray-400);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    &-edit {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    &-field {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+
+      label {
+        font-size: var(--font-size-xs);
+        color: var(--gray-500);
+        font-weight: var(--font-weight-2);
+        white-space: nowrap;
+      }
+
+      input {
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-sm);
+        background-color: var(--surface);
+        color: var(--foreground);
+        width: 160px;
+        transition: border-color var(--transition-fast);
+
+        &:focus {
+          outline: none;
+          border-color: var(--primary);
+        }
+      }
+    }
+  }
+
+  &-slug {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+  }
+
+  &-btn--sm {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+  }
+
   &-status {
     font-size: var(--font-size-xs);
     color: var(--gray-500);

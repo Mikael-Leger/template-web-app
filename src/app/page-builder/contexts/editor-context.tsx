@@ -85,7 +85,8 @@ type EditorAction =
   | { type: 'SET_SAVING'; payload: boolean }
   | { type: 'MARK_SAVED' }
   | { type: 'TOGGLE_PREVIEW' }
-  | { type: 'SET_VALIDATION_ERRORS'; payload: ValidationError[] };
+  | { type: 'SET_VALIDATION_ERRORS'; payload: ValidationError[] }
+  | { type: 'UPDATE_PAGE_META'; payload: { title: string; slug: string } };
 
 /**
  * Initial state
@@ -624,6 +625,24 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
   case 'SET_VALIDATION_ERRORS':
     return { ...state, validationErrors: action.payload };
+
+  case 'UPDATE_PAGE_META': {
+    if (!state.page) return state;
+
+    const updatedPage: PageConfig = {
+      ...state.page,
+      slug: action.payload.slug,
+      metadata: { ...state.page.metadata, title: action.payload.title },
+    };
+
+    return {
+      ...state,
+      page: updatedPage,
+      hasUnsavedChanges: true,
+      history: [...state.history.slice(0, state.historyIndex + 1), updatedPage],
+      historyIndex: state.historyIndex + 1,
+    };
+  }
 
   default:
     return state;

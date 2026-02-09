@@ -220,6 +220,7 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
       <div className='editor-preview'>
         <EditorHeader
           pageTitle={state.page.metadata.title}
+          pageSlug={state.page.slug}
           onSave={handleSave}
           onExit={handleExit}
         />
@@ -243,6 +244,7 @@ function EditorContent({ pageId, onExit }: PageEditorProps) {
     <div className='page-editor'>
       <EditorHeader
         pageTitle={state.page?.metadata.title || 'Untitled'}
+        pageSlug={state.page?.slug || ''}
         onSave={handleSave}
         onExit={handleExit}
       />
